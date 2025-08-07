@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/06 14:24:36 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/07 18:17:00 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_prompt(void)
 	char	*username;
 
 	username = getenv("USER");
-	prompt = malloc(sizeof(char) * (strlen(username) + 3));
+	prompt = malloc(sizeof(char) * (ft_strlen(username) + 3));
 	if (!prompt)
 		return (NULL);
 	memcpy(prompt, username, strlen(username));
@@ -36,6 +36,7 @@ int	main(int argc, char *argv[], char *envp[])
 	char	**env;
 	t_lexer	lexer;
 	char	*prompt;
+	//t_token	*token;
 
 	(void)argc;
 	(void)argv;
@@ -59,8 +60,14 @@ int	main(int argc, char *argv[], char *envp[])
 			add_history(line_read);
 		lexer = (t_lexer){line_read, NULL, 0, 0, 0, NULL};
 		lex(&lexer);
-		for (t_token *token = lexer.tokens; token; token = token->next)
+		ft_check_syntax(&lexer);
+		/*
+		token = lexer.tokens;
+		while (token)
+		{
 			printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
+			token = token->next;
+		}*/
 		/*
 		if (strcmp(line_read, "env") == 0)
 			ft_env(env);

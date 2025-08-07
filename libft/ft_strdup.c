@@ -1,39 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/06 14:13:06 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/07 17:28:32 by mkugan           ###   ########.fr       */
+/*   Created: 2025/08/07 17:26:16 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/07 17:26:31 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "libft.h"
 
-char	**ft_clone_env(char *envp[])
+char	*ft_strdup(const char *s)
 {
-	size_t	len;
-	char	**env;
+	char	*new;
+	size_t	s_len;
+	size_t	i;
 
-	len = 0;
-	while (envp[len])
-		len++;
-	env = malloc(sizeof(char *) * len + 1);
-	if (!env)
+	s_len = ft_strlen(s);
+	new = (char *)malloc(sizeof(char) * s_len + 1);
+	if (!new)
 		return (NULL);
-	env[len] = NULL;
-	while (len > 0)
+	i = 0;
+	while (i < s_len)
 	{
-		env[len - 1] = ft_strdup(envp[len - 1]);
-		len--;
+		new[i] = s[i];
+		i++;
 	}
-	return (env);
-}
-
-void	ft_env(char *env[])
-{
-	while (*env != NULL)
-		printf("%s\n", *env);
+	new[i] = '\0';
+	return (new);
 }

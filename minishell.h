@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/06 14:19:48 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/07 18:15:52 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <signal.h>
 # include <string.h>
 # include <unistd.h>
+# include "libft/libft.h"
 
 typedef struct s_token	t_token;
 
@@ -55,6 +56,7 @@ typedef struct s_lexer
 }	t_lexer;
 
 void	lex(t_lexer *lexer);
+void	ft_check_syntax(t_lexer *lexer);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);
