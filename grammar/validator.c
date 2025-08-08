@@ -32,11 +32,13 @@ void	ft_check_syntax(t_lexer *lexer)
 			&& ft_isoperator(token->token_kind))
 		{
 			printf("minishell: syntax error near unexpected token `%s`\n", token->data);
+			ft_free_lexer(lexer);
 			return ;
 		}
 		if ((ft_isoperator(token->token_kind) && next && ft_isoperator(next->token_kind)))
 		{
 			printf("minishell: syntax error near unexpected token `%s`\n", next->data);
+			ft_free_lexer(lexer);
 			return ;
 		}
 		i++;

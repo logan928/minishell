@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <stdlib.h>
 
 t_token	*ft_new_token(t_token_kind kind, char *data)
 {
@@ -38,4 +39,28 @@ void	ft_add_token(t_token **head, t_token *token)
 			cur = cur->next;
 		cur->next = token;
 	}
+}
+
+void	ft_free_tokens(t_token *head)
+{
+	t_token	*cur;
+	t_token	*next;
+
+	cur = head;
+	while (cur)
+	{
+		next = cur->next;
+		free(cur->data);
+		free(cur);
+		cur = next;
+	}
+}
+
+void	ft_free_lexer(t_lexer *lexer)
+{
+	if (lexer && lexer->word)
+		free(lexer->word);
+	if (lexer && lexer->tokens)
+		ft_free_tokens(lexer->tokens);
+	lexer->tokens = NULL;
 }

@@ -20,7 +20,7 @@ char	**ft_clone_env(char *envp[])
 	len = 0;
 	while (envp[len])
 		len++;
-	env = malloc(sizeof(char *) * len + 1);
+	env = malloc(sizeof(char *) * (len + 1));
 	if (!env)
 		return (NULL);
 	env[len] = NULL;
@@ -35,5 +35,18 @@ char	**ft_clone_env(char *envp[])
 void	ft_env(char *env[])
 {
 	while (*env != NULL)
+	{
 		printf("%s\n", *env);
+		env++;
+	}
+}
+
+void	ft_free_env(char *envp[])
+{
+	int	i;
+
+	i = 0;
+	while (envp[i])
+		free(envp[i++]);
+	free(envp);
 }

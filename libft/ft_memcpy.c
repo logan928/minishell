@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/06 14:20:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/06 14:24:15 by mkugan           ###   ########.fr       */
+/*   Created: 2025/08/08 16:16:35 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/08 16:24:35 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-extern sig_atomic_t	g_sig;
-
-void	ft_sigint_handler(int sig)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	(void)sig;
-	g_sig = 1;
-	write(STDOUT_FILENO, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-}
+	size_t				i;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-void	ft_sigquit_trap(int sig)
-{
-	(void)sig;
-	return ;
+	d = (unsigned char *)dest;
+	s = (const unsigned char *)src;
+	i = 0;
+	while (i < n)
+	{
+		d[i] = s[i];
+		i++;
+	}
+	return (dest);
 }
