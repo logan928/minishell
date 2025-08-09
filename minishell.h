@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/08 17:12:56 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/09 14:48:33 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ typedef struct s_lexer
 }	t_lexer;
 
 void	lex(t_lexer *lexer);
-void	ft_check_syntax(t_lexer *lexer);
+int		ft_check_syntax(t_lexer *lexer);
 void	ft_free_lexer(t_lexer *lexer);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);

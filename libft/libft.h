@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:06:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/08 16:25:21 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/09 14:41:49 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@ char	*ft_strndup(const char *s, size_t n);
 char	*ft_strdup(const char *s);
 size_t	ft_strlen(const char *s);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*ft_strjoin(char const *s1, char const *s2, char const *s3);
 
 #endif

@@ -6,12 +6,13 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/08 17:18:07 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/09 15:04:11 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft/libft.h"
+#include <stdlib.h>
 
 volatile sig_atomic_t	g_sig = 0;
 
@@ -42,6 +43,7 @@ int	main(int argc, char *argv[], char *envp[])
 	t_lexer	lexer;
 	char	*prompt;
 	t_token	*token;
+	int		syntax_status;
 
 	(void)argc;
 	(void)argv;
@@ -53,8 +55,8 @@ int	main(int argc, char *argv[], char *envp[])
 	signal(SIGQUIT, ft_sigquit_trap);
 	prompt = get_prompt();
 	if (!prompt)
-		return 0;
-	ft_env(env);
+		return (0);
+	//ft_env(env);
 	while (1)
 	{
 		line_read = readline(prompt);
@@ -71,8 +73,8 @@ int	main(int argc, char *argv[], char *envp[])
 			add_history(line_read);
 		lexer = (t_lexer){line_read, NULL, 0, 0, 0, NULL};
 		lex(&lexer);
-		ft_check_syntax(&lexer);
-		if (lexer.tokens)
+		syntax_status = ft_check_syntax(&lexer);
+		if (syntax_status == 1)
 		{
 			token = lexer.tokens;
 			while (token)
@@ -81,7 +83,6 @@ int	main(int argc, char *argv[], char *envp[])
 				token = token->next;
 			}
 		}
-		free(prompt);
 		free(line_read);
 		if (g_sig)
 			g_sig = 0;
