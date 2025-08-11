@@ -12,7 +12,7 @@ SRCS := minishell.c signals.c \
 		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
 		$(GRAMMAR_DIR)/validator.c
 
-CFLAGS := -Wall -Wextra -Werror -I$(INCLUDES) -I$(LIBFT_DIR)
+CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline
 
 OBJS := $(SRCS:.c=.o)

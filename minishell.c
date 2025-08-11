@@ -71,9 +71,10 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		if (line_read && *line_read)
 			add_history(line_read);
-		lexer = (t_lexer){line_read, NULL, 0, 0, 0, NULL};
+		lexer = (t_lexer){line_read, NULL, 0, -1, 0, NULL};
 		lex(&lexer);
 		syntax_status = ft_check_syntax(&lexer);
+		ft_expand(&lexer);
 		if (syntax_status == 1)
 		{
 			token = lexer.tokens;

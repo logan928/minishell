@@ -39,7 +39,9 @@ static t_token_kind	ft_get_token_kind(const char *s)
 	else if (s[0] == '<')
 		return (LESS);
 	else if (s[0] == '>' && s[1] == '>')
-		return (DLESS);
+		return (DGREAT);
+	else if (s[0] == '>')
+		return (GREAT);
 	else if (s[0] == '(')
 		return (L_PAREN);
 	else if (s[0] == ')')
@@ -63,37 +65,12 @@ void	lex(t_lexer *lexer)
 
 	while (lexer->src[lexer->pos])
 	{
-		if (ft_isspace(lexer->src[lexer->pos]))
+		while (ft_isspace(lexer->src[lexer->pos]) && lexer->quote == 0)
 		{
 			lexer->pos++;
-			continue ;
+			continue;
 		}
-		else if (ft_isquote(lexer->src[lexer->pos]))
-		{
-			lexer->quote = lexer->src[lexer->pos];
-			lexer->start = lexer->pos++;
-			while (lexer->src[lexer->pos] && lexer->src[lexer->pos] != lexer->quote)
-				lexer->pos++;
-			if (lexer->src[lexer->pos] == lexer->quote)
-				lexer->pos++;
-			lexer->word = ft_strndup(&lexer->src[lexer->start], lexer->pos - lexer->start);
-			if (!lexer->word)
-			{
-				perror("ft_strndup | TODO: clean memory, refactor");
-				exit(EXIT_FAILURE);
-			}
-			next_token = ft_new_token(WORD, lexer->word);
-			if (!next_token)
-			{
-				perror("ft_new_token | TODO: clean memory, refactor");
-				exit(EXIT_FAILURE);
-			}
-			ft_add_token(&lexer->tokens, next_token);
-			if (lexer->src[lexer->pos] == lexer->quote)
-				lexer->pos++;
-			lexer->quote = 0;
-		}
-		else if (ft_is_operator_char(lexer->src[lexer->pos]))
+		if (ft_is_operator_char(lexer->src[lexer->pos]) && lexer->quote == 0)
 		{
 			kind = ft_get_token_kind(&lexer->src[lexer->pos]);
 			len = ft_get_operator_length(kind);
@@ -112,12 +89,20 @@ void	lex(t_lexer *lexer)
 			ft_add_token(&lexer->tokens, next_token);
 			lexer->pos += len;
 		}
-		else
+		else if (lexer->src[lexer->pos])
 		{
 			lexer->start = lexer->pos;
-			while (lexer->src[lexer->pos] && !ft_isspace(lexer->src[lexer->pos])
-				&& !ft_is_operator_char(lexer->src[lexer->pos]))
+			while (lexer->src[lexer->pos]
+				&& ((ft_isspace(lexer->src[lexer->pos]) && lexer->quote)
+				|| (ft_is_operator_char(lexer->src[lexer->pos]) && lexer->quote)
+				|| (!ft_isspace(lexer->src[lexer->pos]) && !ft_is_operator_char(lexer->src[lexer->pos]))))
+			{
+				if (ft_isquote(lexer->src[lexer->pos]) && !lexer->quote)
+					lexer->quote = lexer->src[lexer->pos];
+				else if (ft_isquote(lexer->src[lexer->pos]) && lexer->quote)
+					lexer->quote = 0;
 				lexer->pos++;
+			}
 			lexer->word = ft_strndup(&lexer->src[lexer->start], lexer->pos - lexer->start);
 			if (!lexer->word)
 			{
@@ -131,6 +116,33 @@ void	lex(t_lexer *lexer)
 				exit(EXIT_FAILURE);
 			}
 			ft_add_token(&lexer->tokens, next_token);
+			lexer->quote = 0;
 		}
+	}
+	op = ft_strdup("newline");
+	if (!op)
+	{
+		perror("ft_strndup | TODO: clean memory, refactor");
+		exit(EXIT_FAILURE);
+	}
+	next_token = ft_new_token(NL, op);
+	if (!next_token)
+	{
+		perror("ft_new_token | TODO: clean memory, refactor");
+		exit(EXIT_FAILURE);
+	}
+	ft_add_token(&lexer->tokens, next_token);
+}
+
+void	ft_expand(t_lexer *l)
+{
+	t_token	*t;
+
+	t = l->tokens;
+	while (t)
+	{
+		if (t->token_kind == WORD)
+			printf("Word: %s\n", t->data);
+		t = t->next;
 	}
 }

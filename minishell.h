@@ -37,6 +37,7 @@ typedef enum e_token_kind
 	LESS,
 	GREAT,
 	DGREAT,
+	NL,
 }	t_token_kind;
 
 typedef struct s_token
@@ -78,6 +79,7 @@ typedef struct s_lexer
 
 void	lex(t_lexer *lexer);
 int		ft_check_syntax(t_lexer *lexer);
+void	ft_expand(t_lexer *l);
 void	ft_free_lexer(t_lexer *lexer);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
