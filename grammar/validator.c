@@ -26,7 +26,7 @@ static int	ft_syntax_error(t_lexer *lexer, char *token)
 {
 	char		*error;
 
-	error = ft_strjoin("minishell: syntax error near unexpected token `",
+	error = ft_strjoin("minish: syntax error near unexpected token `",
 			token, "'\n");
 	if (!error)
 	{

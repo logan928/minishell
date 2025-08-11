@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/07 17:26:16 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/07 17:26:31 by mkugan           ###   ########.fr       */
+/*   Created: 2025/08/11 15:22:00 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/11 15:22:09 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	char	*new;
-	size_t	s_len;
-	size_t	i;
-	
-	s_len = ft_strlen(s);
-	new = (char *)malloc(sizeof(char) * s_len + 1);
-	if (!new)
-		return (NULL);
-	i = 0;
-	while (i < s_len)
+	while (*s1 && n > 0 && (unsigned char)*s1 == (unsigned char)*s2)
 	{
-		new[i] = s[i];
-		i++;
+		s1++;
+		s2++;
+		n--;
 	}
-	new[i] = '\0';
-	return (new);
+	if (n == 0)
+		return (0);
+	return ((unsigned char)*s1 - (unsigned char)*s2);
 }

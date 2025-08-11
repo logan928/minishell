@@ -1,33 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/07 17:26:16 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/07 17:26:31 by mkugan           ###   ########.fr       */
+/*   Created: 2025/08/11 15:22:55 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/11 15:28:00 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-char	*ft_strdup(const char *s)
+int	ft_valid_env_char(int c)
 {
-	char	*new;
-	size_t	s_len;
-	size_t	i;
-	
-	s_len = ft_strlen(s);
-	new = (char *)malloc(sizeof(char) * s_len + 1);
-	if (!new)
-		return (NULL);
+	if ((c >= 65 && c <= 90)
+		|| (c >= 97 && c <= 122)
+		|| (c == 95))
+		return (1);
+	return (0);
+}
+
+char	*ft_get_env_var(char *s, size_t len, char **env)
+{
+	size_t	i = 0;
+
 	i = 0;
-	while (i < s_len)
+	while (env[i] != NULL)
 	{
-		new[i] = s[i];
-		i++;
+		if (!ft_strncmp(s, env[i], len))
+		{
+			if (env[i][len] == '=')
+				return (ft_strdup(env[i] + len + 1));
+		}
+		env++;
 	}
-	new[i] = '\0';
-	return (new);
+	return (ft_strdup(""));
 }
