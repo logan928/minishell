@@ -83,6 +83,9 @@ int	main(int argc, char *argv[], char *envp[])
 				token = token->next;
 			}
 		}
+		t_ast *root = parse_tokens(&lexer.tokens);
+		print_ast(root, 0);
+		free_ast(root);// Check
 		free(line_read);
 		if (g_sig)
 			g_sig = 0;

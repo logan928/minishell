@@ -56,7 +56,7 @@ typedef enum e_lexem_kind
 	REDIRECTION,
 }	t_lexem_kind;
 
-typedef struct s_lexem
+typedef struct s_lexem 			//map with t_ast_type
 {
 	t_lexem_kind	lexem_kind;
 	char			*path;
@@ -66,7 +66,7 @@ typedef struct s_lexem
 	char			*file;
 }	t_lexem;
 
-typedef struct s_lexer
+typedef struct s_lexer 			//map with t_ast
 {
 	char	*src;
 	char	*word;
@@ -89,5 +89,33 @@ void	ft_free_env(char *envp[]);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
+
+typedef enum e_ast_type
+{
+	AST_COMMAND, // seperate to built-in and external
+	AST_PIPE,
+	AST_AND,
+	AST_OR,
+	AST_SUBSHELL,
+	AST_REDIR
+}	t_ast_type;
+
+typedef struct s_ast
+{
+	t_ast_type		type;
+	char			**argv;       // for commands : can include path
+	char			**env;		 // can also be inside argv
+	char			*file;        // for redirections
+	t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
+	struct s_ast	*left;        // for binary ops
+	struct s_ast	*right;       // for binary ops
+	int				ast_depth;
+}	t_ast;
+
+t_ast	*parse_tokens(t_token **tokens);
+void	free_ast(t_ast *node);
+void	print_ast(t_ast *node, int depth);
+
+
 
 #endif
