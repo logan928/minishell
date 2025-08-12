@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/09 14:48:33 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/11 15:37:13 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef enum e_token_kind
 	LESS,
 	GREAT,
 	DGREAT,
+	NL,
 }	t_token_kind;
 
 typedef struct s_token
@@ -74,11 +75,15 @@ typedef struct s_lexer 			//map with t_ast
 	int		start;
 	char	quote;
 	t_token	*tokens;
+	char	**env;
 }	t_lexer;
 
 void	lex(t_lexer *lexer);
 int		ft_check_syntax(t_lexer *lexer);
+void	ft_expand(t_lexer *l);
 void	ft_free_lexer(t_lexer *lexer);
+int		ft_valid_env_char(int c);
+char	*ft_get_env_var(char *s, size_t len, char **env);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);

@@ -14,14 +14,19 @@
 
 static int	ft_isoperator(t_token_kind kind)
 {
-	return (kind == PIPE || kind == OR_IF);
+	return (kind == PIPE || kind == OR_IF || kind == AND_IF || kind == NL);
+}
+
+static int	ft_isredirection(t_token_kind kind)
+{
+	return (kind == LESS || kind == DLESS || kind == GREAT || kind == DGREAT);
 }
 
 static int	ft_syntax_error(t_lexer *lexer, char *token)
 {
 	char		*error;
 
-	error = ft_strjoin("minishell: syntax error near unexpected token `",
+	error = ft_strjoin("minish: syntax error near unexpected token `",
 			token, "'\n");
 	if (!error)
 	{
@@ -50,10 +55,11 @@ int	ft_check_syntax(t_lexer *lexer)
 	while (token)
 	{
 		next = token->next;
-		if (((i == 0 || next == NULL) && ft_isoperator(token->token_kind))
-			|| (ft_isoperator(token->token_kind) && next
-				&& ft_isoperator(next->token_kind)))
-			return (ft_syntax_error(lexer, token->data));
+		if ((i == 0 && ft_isoperator(token->token_kind))
+			|| (ft_isoperator(token->token_kind) && next && ft_isoperator(next->token_kind)))
+			return (ft_syntax_error(lexer, next->data));
+		if (ft_isredirection(token->token_kind) && next->token_kind != WORD)
+			return (ft_syntax_error(lexer, next->data));
 		i++;
 		token = next;
 	}
