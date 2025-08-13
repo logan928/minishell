@@ -7,7 +7,7 @@ BUILTINS_DIR := ./builtins
 GRAMMAR_DIR := ./grammar
 
 NAME := minishell
-SRCS := minishell.c signals.c \
+SRCS := minishell.c signals.c shell.c \
 		$(BUILTINS_DIR)/env.c \
 		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
 		$(GRAMMAR_DIR)/validator.c $(GRAMMAR_DIR)/expansion.c

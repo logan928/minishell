@@ -6,17 +6,18 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:32:53 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/06 13:43:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/12 21:55:33 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <stdlib.h>
 
 t_token	*ft_new_token(t_token_kind kind, char *data)
 {
 	t_token	*token;
 
+	if (!data)
+		return (NULL);
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
@@ -58,9 +59,27 @@ void	ft_free_tokens(t_token *head)
 
 void	ft_free_lexer(t_lexer *lexer)
 {
-	if (lexer && lexer->word)
+	if (!lexer)
+		return ;
+	if (lexer->word)
+	{
 		free(lexer->word);
-	if (lexer && lexer->tokens)
+		lexer->word = NULL;
+	}
+	if (lexer->tokens)
+	{
 		ft_free_tokens(lexer->tokens);
-	lexer->tokens = NULL;
+		lexer->tokens = NULL;
+	}
 }
+
+void ft_reset_lexer(t_lexer *lexer)
+{
+	if (!lexer)
+		return ;
+	ft_free_lexer(lexer);
+    lexer->pos = 0;
+    lexer->start = -1;
+    lexer->quote = 0;
+}
+
