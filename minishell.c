@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/09 15:04:11 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/12 21:49:02 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,61 +36,62 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
+void	ft_free_exit(t_shell *shell)
+{
+	ft_free_lexer(shell->lexer);
+	free(shell->prompt);
+	ft_free_env(shell->env);
+	rl_clear_history();
+	if (isatty(STDIN_FILENO))
+		write(2, "exit\n", 6);
+	exit(EXIT_SUCCESS);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
-	char	*line_read;
-	char	**env;
-	t_lexer	lexer;
-	char	*prompt;
+	t_shell	shell;
 	t_token	*token;
 	int		syntax_status;
 
 	(void)argc;
 	(void)argv;
-	env = ft_clone_env(envp);
-	if (!env)
-		return (0);
-	rl_catch_signals = 0;
-	signal(SIGINT, ft_sigint_handler);
-	signal(SIGQUIT, ft_sigquit_trap);
-	prompt = get_prompt();
-	if (!prompt)
-		return (0);
-	//ft_env(env);
+	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
+	ft_init_shell(&shell, envp);
+	shell.lexer = &(t_lexer){NULL, 0, -1, 0, NULL};
 	while (1)
 	{
-		line_read = readline(prompt);
-		if (!line_read)
+		shell.input = readline(shell.prompt);
+		if (!shell.input)
+			ft_free_exit(&shell);
+		if (shell.input)
 		{
-			free(prompt);
-			ft_free_env(env);
-			rl_clear_history();
-			if (isatty(STDIN_FILENO))
-				write(2, "exit\n", 6);
-			break ;
+			if (*shell.input)
+				add_history(shell.input);
+			else
+			{	
+				free(shell.input);
+				continue;
+			}
 		}
-		if (line_read && *line_read)
-			add_history(line_read);
-		lexer = (t_lexer){line_read, NULL, 0, -1, 0, NULL, env};
-		lex(&lexer);
-		syntax_status = ft_check_syntax(&lexer);
-		ft_expand(&lexer);
+		lex(&shell);
+		syntax_status = ft_check_syntax(shell.lexer);
+		ft_expand(&shell);
 		if (syntax_status == 1)
 		{
-			token = lexer.tokens;
+			token = shell.lexer->tokens;
 			while (token)
 			{
 				printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
 				token = token->next;
 			}
 		}
-		t_ast *root = parse_tokens(&lexer.tokens);
+		t_ast *root = parse_tokens(&shell.lexer->tokens);
 		print_ast(root, 0);//remove 
 		free_ast(root);// Check
-		free(line_read);
+		free(shell.input);
+		ft_reset_lexer(shell.lexer);
 		if (g_sig)
 			g_sig = 0;
 	}
-	rl_clear_history();
 	return (0);
 }

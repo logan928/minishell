@@ -52,7 +52,7 @@ int	ft_check_syntax(t_lexer *lexer)
 
 	i = 0;
 	token = lexer->tokens;
-	while (token)
+	while (token && token->token_kind != NL)
 	{
 		next = token->next;
 		if ((i == 0 && ft_isoperator(token->token_kind))

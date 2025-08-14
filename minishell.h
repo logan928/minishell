@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/11 15:37:13 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/12 21:48:05 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,21 +69,33 @@ typedef struct s_lexem 			//map with t_ast_type
 
 typedef struct s_lexer 			//map with t_ast
 {
-	char	*src;
 	char	*word;
 	int		pos;
 	int		start;
 	char	quote;
 	t_token	*tokens;
-	char	**env;
 }	t_lexer;
 
-void	lex(t_lexer *lexer);
+typedef struct s_shell
+{
+	char	*prompt;
+	int		exit_status;
+	t_lexer	*lexer;
+	char	**env;
+	char	*input;
+}	t_shell;
+
+char	*get_prompt(void);
+void	ft_init_shell(t_shell *shell, char *envp[]);
+void	ft_critical_error(t_shell *shell);
+
+void	lex(t_shell *shell);
 int		ft_check_syntax(t_lexer *lexer);
-void	ft_expand(t_lexer *l);
+void	ft_expand(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(char *s, size_t len, char **env);
+void	ft_reset_lexer(t_lexer *lexr);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);

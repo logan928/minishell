@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:19:02 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/11 15:40:13 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/12 21:27:11 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,126 +56,157 @@ static int	ft_get_operator_length(t_token_kind kind)
 	return (1);
 }
 
-void	ft_tokenize_op(t_lexer *l)
+void	ft_tokenize_op(t_shell *shell)
 {
 	t_token			*next_token;
 	t_token_kind	kind;
 	size_t			len;
-	char			*op;
 	
-	kind = ft_get_token_kind(&l->src[l->pos]);
+	kind = ft_get_token_kind(&(shell->input[shell->lexer->pos]));
 	len = ft_get_operator_length(kind);
-	op = ft_strndup(&l->src[l->pos], len);
-	if (!op)
-	{
-		perror("ft_strndup | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
-	next_token = ft_new_token(kind, op);
+	next_token = ft_new_token(kind, ft_strndup(&(shell->input[shell->lexer->pos]), len));
 	if (!next_token)
-	{
-		perror("ft_new_token | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
-	ft_add_token(&l->tokens, next_token);
-	l->pos += len;
+		ft_critical_error(shell);
+	ft_add_token(&(shell->lexer->tokens), next_token);
+	shell->lexer->pos += len;
 }
 
-void	ft_tokenize_nl(t_lexer *l)
+void	ft_tokenize_nl(t_shell *shell)
 {
 	t_token			*next_token;
-	char			*op;
 
-	op = ft_strdup("newline");
-	if (!op)
-	{
-		perror("ft_strndup | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
-	next_token = ft_new_token(NL, op);
+	next_token = ft_new_token(NL, ft_strdup("newline"));
 	if (!next_token)
-	{
-		perror("ft_new_token | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
-	ft_add_token(&l->tokens, next_token);
+		ft_critical_error(shell);
+	ft_add_token(&shell->lexer->tokens, next_token);
 }
 
-void	ft_tokenize_word(t_lexer *l)
+void	ft_tokenize_word(t_shell *shell)
 {
-	t_token			*next_token;
-	
-	l->word = ft_strndup(&l->src[l->start], l->pos - l->start);
-	if (!l->word)
-	{
-		perror("ft_strndup | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
-	next_token = ft_new_token(WORD, l->word);
+	t_token	*next_token;
+	t_lexer	*l;
+	char	*input;
+
+	l = shell->lexer;
+	input = shell->input;
+	next_token = ft_new_token(WORD, ft_strndup(&input[l->start], l->pos - l->start));
 	if (!next_token)
-	{
-		perror("ft_new_token | TODO: clean memory, refactor");
-		exit(EXIT_FAILURE);
-	}
+		ft_critical_error(shell);
 	ft_add_token(&l->tokens, next_token);
 	l->quote = 0;
 }
 
-void	lex(t_lexer *lexer)
+void	lex(t_shell *shell)
 {
+	t_lexer *lexer;
+	char	*input;
 
-	while (lexer->src[lexer->pos])
+	lexer = shell->lexer;
+	input = shell->input;
+	while (input[lexer->pos])
 	{
-		while (ft_isspace(lexer->src[lexer->pos]) && lexer->quote == 0)
+		while (ft_isspace(input[lexer->pos]) && lexer->quote == 0)
 			lexer->pos++;
-		if (ft_is_operator_char(lexer->src[lexer->pos]) && lexer->quote == 0)
-			ft_tokenize_op(lexer);
-		else if (lexer->src[lexer->pos])
+		if (ft_is_operator_char(input[lexer->pos]) && lexer->quote == 0)
+			ft_tokenize_op(shell);
+		else if (input[lexer->pos])
 		{
 			lexer->start = lexer->pos;
-			while (lexer->src[lexer->pos]
-				&& ((ft_isspace(lexer->src[lexer->pos]) && lexer->quote)
-				|| (ft_is_operator_char(lexer->src[lexer->pos]) && lexer->quote)
-				|| (!ft_isspace(lexer->src[lexer->pos]) && !ft_is_operator_char(lexer->src[lexer->pos]))))
+			while (input[lexer->pos]
+				&& ((ft_isspace(input[lexer->pos]) && lexer->quote)
+				|| (ft_is_operator_char(input[lexer->pos]) && lexer->quote)
+				|| (!ft_isspace(input[lexer->pos]) && !ft_is_operator_char(input[lexer->pos]))))
 			{
-				if (ft_isquote(lexer->src[lexer->pos]) && !lexer->quote)
-					lexer->quote = lexer->src[lexer->pos];
-				else if (ft_isquote(lexer->src[lexer->pos]) && lexer->quote)
+				if (ft_isquote(input[lexer->pos]) && !lexer->quote)
+					lexer->quote = input[lexer->pos];
+				else if (ft_isquote(input[lexer->pos]) && lexer->quote)
 					lexer->quote = 0;
 				lexer->pos++;
 			}
-			ft_tokenize_word(lexer);
+			ft_tokenize_word(shell);
 		}
 	}
-	ft_tokenize_nl(lexer);
+	ft_tokenize_nl(shell);
 }
 
-void	ft_expand(t_lexer *l)
+size_t ft_str_size(char *s)
+{
+	if (s)
+		return (ft_strlen(s));
+	else
+		return 0;
+}
+
+char	*ft_str_join_free(char *s1, char *s2)
+{
+	size_t	size1;
+	size_t	size2;
+	char	*res;
+
+	if (!s1 && !s2)
+		return (NULL);
+	size1 = ft_str_size(s1);
+	size2 = ft_str_size(s2);
+	res = malloc(size1 + size2 + 1);
+	if (!res)
+	{
+		free(s1);
+		free(s2);
+		return (NULL);
+	}
+	if (s1)
+		ft_memcpy(res, s1, size1);
+	if (s2)
+		ft_memcpy(res + size1, s2, size2);
+	res[size1 + size2] = '\0';
+	free(s1);
+	free(s2);
+	return (res);
+}
+
+void	ft_expand(t_shell *shell)
 {
 	t_token	*t;
-	size_t	pos;
-	char	quote;
-	size_t	start;
+	char	*res;
+	t_lexer *l;
 
-	t = l->tokens;
+	t = shell->lexer->tokens;
+	l = shell->lexer;
 	while (t)
 	{
 		if (t->token_kind == WORD)
 		{
-			printf("Word: %s\n", t->data);
-			pos = 0;
-			quote = 0;
-			while (t->data[pos])
+			res = ft_strdup("");
+			l->pos = 0;
+			l->quote = 0;
+			l->start = -1;
+			while (t->data[l->pos])
 			{
-				if (t->data[pos] && t->data[pos] == '$' && quote != '\'')
+				if (ft_isquote(t->data[l->pos]) && l->quote == 0)
+					l->quote = t->data[(l->pos)++];
+				else if (ft_isquote(t->data[l->pos]) && l->quote == t->data[l->pos])
 				{
-					start = ++pos;
-					while (ft_valid_env_char(t->data[pos]))
-						pos++;
-					printf("%s\n", ft_get_env_var(&t->data[start], pos - start + 1, l->env));
+					l->quote = 0;
+					l->pos++;
 				}
-				pos++;
+				else if ((l->quote == 0 || l->quote == '"') && t->data[l->pos] == '$'
+					&& (t->data[l->pos + 1] && ft_valid_env_char(t->data[l->pos + 1])))
+				{
+					l->start = ++(l->pos);
+					while (t->data[l->pos] && ft_valid_env_char(t->data[l->pos]))
+						(l->pos)++;
+					res = ft_str_join_free(res, ft_get_env_var(&t->data[l->start], l->pos - l->start, shell->env));
+				}
+				else
+				{
+					l->start = (l->pos)++;
+					while (t->data[l->pos] && !ft_isquote(t->data[l->pos]) && t->data[l->pos] != '$')
+						l->pos++;
+					res = ft_str_join_free(res, ft_strndup(&t->data[l->start], l->pos - l->start));
+				}
 			}
+			free(t->data);
+			t->data = res;
 		}
 		t = t->next;
 	}

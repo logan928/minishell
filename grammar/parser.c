@@ -111,7 +111,7 @@ static void	redir_push(t_redir_node **head, t_token_kind kind, char *file)
 	}
 }
 
-/* free temporary lists but NOT the strings they hold (strings go into AST) */
+/* free temporary lists but NOT the strings they hold (strings go into AST)???? check how the expander works */
 static void	free_arg_list(t_arg_node *head)
 {
 	t_arg_node *tmp;
@@ -136,7 +136,7 @@ static void	free_redir_list(t_redir_node *head)
 	}
 }
 
-/* build argv array from arg_list; consumes the arg_list nodes but not arg strings */
+
 static char	**arglist_to_argv(t_arg_node *head)
 {
 	int count = 0;
@@ -166,7 +166,8 @@ static char	**arglist_to_argv(t_arg_node *head)
 	return (argv);
 }
 
-/* Wrap base with redirections in order (first encountered becomes outermost wrapper) */
+/* Wrap base (i.e. the root node of sub-tree) with redirections in order (first encountered becomes outermost wrapper)  
+- what to do with the file? is it a branch or just an attribute of the node?*/
 static t_ast	*apply_redirs(t_redir_node *redirs, t_ast *base)
 {
 	t_redir_node *it = redirs;
@@ -185,7 +186,7 @@ static t_ast	*apply_redirs(t_redir_node *redirs, t_ast *base)
 	return (base);
 }
 
-
+/*the following commented function does not handle redirections. For quick thests we can use this one. */
 /*
 static t_ast	*parse_command(t_token **tokens)
 {
@@ -225,11 +226,9 @@ static t_ast	*parse_command(t_token **tokens)
  * parse_command:
  * Handles:
  *   - words (command + args)
- *   - subshells: ( logical )
+ *   - subshells: '(' logical ')'
  *   - redirections placed before/after words/subshell
- *
- * On success returns an AST node (command or subshell possibly wrapped in AST_REDIR nodes).
- * On error returns NULL.
+
  */
 static t_ast	*parse_command(t_token **tokens)
 {
@@ -238,26 +237,24 @@ static t_ast	*parse_command(t_token **tokens)
 	t_ast			*base = NULL;
 	t_token			*tok;
 
-	/* loop until we hit a pipeline/operator/paren close or end */
+	/* keep eating tokens until we hit a pipeline/operator/paren close or end */
 	while (*tokens)
 	{
 		t_token_kind k = (*tokens)->token_kind;
 		if (k == WORD)
 		{
-			/* collect words for argv */
-			tok = eat_token(tokens); /* take ownership of tok->data */
+			tok = eat_token(tokens); 
 			arg_push(&args, tok->data);
-			free(tok); /* free token struct, keep tok->data for AST */
+			free(tok); /* free token struct, keep tok->data for AST : Not sure this is  a good practice*/
 		}
 		else if (is_redir_kind(k))
 		{
 			/* redirection operator followed by a WORD (filename/delimiter) */
-			tok = eat_token(tokens); /* operator token */
-			/* after operator we must have a WORD (filename/delimiter) */
+			tok = eat_token(tokens); 
+			/* after operator we must have a WORD (filename/delimiter) ???? check this logic with Mikhail*/
 			if (!*tokens || (*tokens)->token_kind != WORD)
 			{
-				fprintf(stderr, "syntax error near unexpected token `%s'\n", tok->data);
-				/* cleanup */
+				printf(stderr, "syntax error near unexpected token `%s'\n", tok->data); // use ft_printf
 				free(tok->data);
 				free(tok);
 				free_arg_list(args);
@@ -265,29 +262,28 @@ static t_ast	*parse_command(t_token **tokens)
 				return (NULL);
 			}
 			t_token *file_tok = eat_token(tokens);
-			/* record redirection: take file_tok->data ownership, free token structs */
 			redir_push(&redirs, k, file_tok->data);
 			free(file_tok);      /* keep data pointer */
-			free(tok->data);     /* we don't need operator text */
+			free(tok->data);     /* we don't need operator text ??*/
 			free(tok);
 		}
 		else if (k == L_PAREN)
 		{
 			/* subshell: consume '(' then parse logical then expect ')' */
-			tok = eat_token(tokens); /* '(' token */
+			tok = eat_token(tokens); /* this will get the left '(' token */
 			free(tok->data);
 			free(tok);
-			t_ast *inner = parse_logical(tokens);
+			t_ast *inner = parse_logical(tokens); //recursion
 			if (!inner)
 			{
 				free_arg_list(args);
 				free_redir_list(redirs);
 				return (NULL);
 			}
-			/* expect ) */
+			/* looking for ) */
 			if (!*tokens || (*tokens)->token_kind != R_PAREN)
 			{
-				fprintf(stderr, "syntax error: missing ')'\n");
+				printf(stderr, "syntax error: missing ')'\n");// use ft_printf
 				free_ast(inner);
 				free_arg_list(args);
 				free_redir_list(redirs);
@@ -312,14 +308,14 @@ static t_ast	*parse_command(t_token **tokens)
 	if (args)
 	{
 		/* If base is subshell but also words were found (invalid), we'll create command instead.
-		   Typical shell grammar doesn't allow a word immediately after a subshell without operator, so
+		   NOTE: (Check this??) shell grammar doesn't allow a word immediately after a subshell without operator, so
 		   we treat words as a command (i.e., '( ... ) ls' is separate tokens usually). */
 		t_ast *cmd = new_ast_node(AST_COMMAND);
 		cmd->argv = arglist_to_argv(args);
-		base = (base ? base : cmd);
+		base = (base ? base : cmd);// refactor
 		/* If base existed (subshell) and we also parsed args, we should treat that as a separate command.
-		   For simplicity we prefer the last created node as base (cmd). If you want stricter validation,
-		   detect and report syntax error here. */
+		    the last created node taken as as base (cmd). If need stricter validation,
+		   detect and report syntax error here.???? */
 		if (base != cmd && cmd->argv)
 		{
 			/* attach cmd as right child of a PIPE? This is context-specific; we keep base==cmd */
@@ -335,7 +331,7 @@ static t_ast	*parse_command(t_token **tokens)
 	/* if we never created a base but have redirections, that's a syntax error (like: '< file | ...') */
 	if (!base && redirs)
 	{
-		fprintf(stderr, "syntax error: redirection without command\n");
+		printf(stderr, "syntax error: redirection without command\n"); // use ft_printf
 		free_redir_list(redirs);
 		return (NULL);
 	}
@@ -347,27 +343,6 @@ static t_ast	*parse_command(t_token **tokens)
 	return (base);
 }
 
-
-/*
-static t_ast	*parse_pipeline(t_token **tokens)
-{
-	t_ast	*left = parse_command(tokens);
-	t_ast	*node;
-	t_token	*tok;
-
-	while (*tokens && (*tokens)->token_kind == PIPE)
-	{
-		tok = eat_token(tokens);
-		free(tok->data);
-		free(tok);
-		node = new_ast_node(AST_PIPE);
-		node->left = left;
-		node->right = parse_command(tokens);
-		left = node;
-	}
-	return (left);
-}
-*/
 
 /* parse_pipeline: command ('|' command)* */
 static t_ast	*parse_pipeline(t_token **tokens)
@@ -389,7 +364,7 @@ static t_ast	*parse_pipeline(t_token **tokens)
 		right = parse_command(tokens);
 		if (!right)
 		{
-			fprintf(stderr, "syntax error: expected command after '|'\n");
+			printf(stderr, "syntax error: expected command after '|'\n");//use ft_printf
 			free_ast(left);
 			return (NULL);
 		}
@@ -401,30 +376,7 @@ static t_ast	*parse_pipeline(t_token **tokens)
 	return (left);
 }
 
-/*
-static t_ast	*parse_logical(t_token **tokens)
-{
-	t_ast	*left = parse_pipeline(tokens);
-	t_ast	*node;
-	t_token	*tok;
-
-	while (*tokens && ((*tokens)->token_kind == AND_IF
-			|| (*tokens)->token_kind == OR_IF))
-	{
-		tok = eat_token(tokens);
-		node = new_ast_node((*tok).token_kind == AND_IF ? AST_AND : AST_OR); // refactor
-		free(tok->data);
-		free(tok);
-		node->left = left;
-		node->right = parse_pipeline(tokens);
-		left = node;
-	}
-	return (left);
-}
-
-*/
-
-/* parse_logical: pipeline ( (AND_IF|OR_IF) pipeline )* */
+/* parse_logical: pipeline ( (AND_IF|OR_IF) pipeline )* start of recutsion */
 static t_ast	*parse_logical(t_token **tokens)
 {
 	t_ast	*left;
@@ -439,13 +391,13 @@ static t_ast	*parse_logical(t_token **tokens)
 	while (*tokens && ((*tokens)->token_kind == AND_IF || (*tokens)->token_kind == OR_IF))
 	{
 		tok = eat_token(tokens);
-		t_ast_type type = (tok->token_kind == AND_IF) ? AST_AND : AST_OR;
+		t_ast_type type = (tok->token_kind == AND_IF) ? AST_AND : AST_OR; // refactor
 		free(tok->data);
 		free(tok);
 		right = parse_pipeline(tokens);
 		if (!right)
 		{
-			fprintf(stderr, "syntax error: expected pipeline after logical operator\n");
+			printf(stderr, "syntax error: expected pipeline after logical operator\n");
 			free_ast(left);
 			return (NULL);
 		}
@@ -458,20 +410,13 @@ static t_ast	*parse_logical(t_token **tokens)
 }
 
 
-/* Entry point */
-/*
-t_ast	*parse_tokens(t_token **tokens)
-{
-	return (parse_logical(tokens));
-}
-*/
 
-/* Public entry: parse_tokens */
+/* Entry point */
 t_ast	*parse_tokens(t_token **tokens)
 {
 	t_ast *root = parse_logical(tokens);
 
-	/* If there are leftover tokens (unexpected), treat as syntax error */
+	/* This function intends to ....If there are leftover tokens (unexpected), treat as syntax error */
 	/* This does not work. Check 
 	if (root && *tokens)
 	{
@@ -485,29 +430,10 @@ t_ast	*parse_tokens(t_token **tokens)
 	return (root);
 }
 
-/*
-void	free_ast(t_ast *node) // Transfer: parser_Utils.c
-{
-	int	i;
 
-	if (!node)
-		return ;
-	free_ast(node->left);
-	free_ast(node->right);
-	if (node->argv)
-	{
-		for (i = 0; node->argv[i]; i++)
-			free(node->argv[i]);
-		free(node->argv);
-	}
-	if (node->file)
-		free(node->file);
-	free(node);
-}
-*/
 
-/* Free AST and owned strings */
-void	free_ast(t_ast *node)
+
+void	free_ast(t_ast *node) 
 {
 	int i;
 
@@ -517,7 +443,7 @@ void	free_ast(t_ast *node)
 	free_ast(node->right);
 	if (node->argv)
 	{
-		for (i = 0; node->argv[i]; i++)
+		for (i = 0; node->argv[i]; i++) // refactor to while
 			free(node->argv[i]);
 		free(node->argv);
 	}
@@ -526,47 +452,6 @@ void	free_ast(t_ast *node)
 	free(node);
 }
 
-/*
-void	print_ast(t_ast *node, int depth)
-{
-	int	i;
-
-	if (!node)
-		return ;
-	for (i = 0; i < depth; i++)
-		printf("  ");
-	printf("Node: ");
-	if (node->type == AST_COMMAND)
-	{
-		printf("COMMAND");
-		if (node->argv)
-		{
-			printf(" [");
-			for (i = 0; node->argv[i]; i++)
-			{
-				printf("%s", node->argv[i]);
-				if (node->argv[i + 1])
-					printf(", ");
-			}
-			printf("]");
-		}
-		printf("\n");
-	}
-	else if (node->type == AST_PIPE)
-		printf("PIPE\n");
-	else if (node->type == AST_AND)
-		printf("AND\n");
-	else if (node->type == AST_OR)
-		printf("OR\n");
-	else
-		printf("UNKNOWN\n");
-	print_ast(node->left, depth + 1);
-	print_ast(node->right, depth + 1);
-}
-
-*/
-
-/* Helper to stringify redirection operator */
 static const char	*redir_name(t_token_kind k)
 {
 	if (k == LESS) return ("<");

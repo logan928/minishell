@@ -21,7 +21,7 @@ char	*ft_strjoin(char const *s1, char const *s2, char const *s3)
 
 	s1_len = ft_strlen(s1);
 	s2_len = ft_strlen(s2);
-	if (*s3)
+	if (s3 && *s3)
 		s3_len = ft_strlen(s3);
 	else
 		s3_len = 0;
@@ -30,7 +30,7 @@ char	*ft_strjoin(char const *s1, char const *s2, char const *s3)
 		return (NULL);
 	ft_memcpy(new, s1, s1_len);
 	ft_memcpy(new + s1_len, s2, s2_len);
-	if (*s3)
+	if (s3 && *s3)
 		ft_memcpy(new + s1_len + s2_len, s3, s3_len);
 	new[s1_len + s2_len + s3_len] = '\0';
 	return (new);
