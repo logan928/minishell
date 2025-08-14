@@ -114,7 +114,7 @@ typedef struct s_ast
 	t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
 	struct s_ast	*left;        // for binary ops
 	struct s_ast	*right;       // for binary ops
-	int				ast_depth;
+	int				ast_depth;	//tol: will this be useful for traversing?
 }	t_ast;
 
 t_ast	*parse_tokens(t_token **tokens);
