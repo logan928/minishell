@@ -11,7 +11,8 @@ COLOR_RESET := \033[0m
 NAME := libft.a
 
 SRCS := ft_isquote.c ft_isspace.c ft_strndup.c ft_strdup.c \
-		ft_strlen.c ft_memcpy.c ft_strjoin.c ft_strncmp.c
+		ft_strlen.c ft_memcpy.c ft_strjoin.c ft_strncmp.c \
+		ft_isdigit.c ft_itoa.c
 
 OBJS := $(SRCS:.c=.o)
 

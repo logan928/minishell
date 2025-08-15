@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:06:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/11 15:39:38 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/15 11:04:04 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 
 int		ft_isquote(char c);
 int		ft_isspace(char c);
+int		ft_isdigit(int c);
+char	*ft_itoa(long n);
 char	*ft_strndup(const char *s, size_t n);
 char	*ft_strdup(const char *s);
 size_t	ft_strlen(const char *s);
