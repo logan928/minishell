@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:19:02 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/12 21:27:11 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/15 11:54:08 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,17 @@ char	*ft_str_join_free(char *s1, char *s2)
 	return (res);
 }
 
+
+/*
+	* ft_expand processes each word segment by segment
+	* A segment can be one of three types:
+	* 	- Unquoted: $ is expanded;
+	* 	- Single-quoted: every character is treated literally
+	* 	- Double-quoted: $ is expanded
+	* #? is expanded to the value of shell->exit_code
+	* Single quotes are preserved inside double quotes, and vice versa
+	* Outer quotes are removed during this stage (???)
+*/
 void	ft_expand(t_shell *shell)
 {
 	t_token	*t;
@@ -189,13 +200,19 @@ void	ft_expand(t_shell *shell)
 					l->quote = 0;
 					l->pos++;
 				}
-				else if ((l->quote == 0 || l->quote == '"') && t->data[l->pos] == '$'
-					&& (t->data[l->pos + 1] && ft_valid_env_char(t->data[l->pos + 1])))
+				else if ((l->quote != '\'') && t->data[l->pos] == '$'
+					&& ft_valid_env_char(t->data[l->pos + 1]))
 				{
 					l->start = ++(l->pos);
 					while (t->data[l->pos] && ft_valid_env_char(t->data[l->pos]))
 						(l->pos)++;
 					res = ft_str_join_free(res, ft_get_env_var(&t->data[l->start], l->pos - l->start, shell->env));
+				}
+				else if ((l->quote != '\'') && t->data[l->pos] == '$'
+					&& t->data[l->pos + 1] == '?')
+				{
+					res = ft_str_join_free(res, ft_itoa((long) shell->exit_status));
+					l->pos += 2;
 				}
 				else
 				{

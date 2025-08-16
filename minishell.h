@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/12 21:48:05 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/15 18:03:42 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <string.h>
 # include <unistd.h>
 # include "libft/libft.h"
+# include <sys/types.h>
+# include <dirent.h>
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
