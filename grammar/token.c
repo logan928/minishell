@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:32:53 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/12 21:55:33 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/18 13:04:15 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ void	ft_free_tokens(t_token *head)
 		cur = next;
 	}
 }
+
+void	ft_insert_after(t_token *target, t_token *token)
+{
+	token->next = target->next;
+	target->next = token;
+}
+
 
 void	ft_free_lexer(t_lexer *lexer)
 {

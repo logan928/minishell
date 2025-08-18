@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/12 21:49:02 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/18 10:46:49 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,9 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		lex(&shell);
 		syntax_status = ft_check_syntax(shell.lexer);
-		ft_expand(&shell);
+		ft_vars_expansion(&shell);
+		ft_field_splitting(&shell);
+		ft_filename_expansion(&shell);
 		if (syntax_status == 1)
 		{
 			token = shell.lexer->tokens;
