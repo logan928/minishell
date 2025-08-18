@@ -11,7 +11,7 @@ SRCS := minishell.c signals.c shell.c \
 		$(BUILTINS_DIR)/env.c \
 		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
 		$(GRAMMAR_DIR)/validator.c $(GRAMMAR_DIR)/expansion.c	\
-		$(GRAMMAR_DIR)/parser.c
+		$(GRAMMAR_DIR)/parser.c $(GRAMMAR_DIR)/command_formatter.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

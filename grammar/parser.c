@@ -254,7 +254,7 @@ static t_ast	*parse_command(t_token **tokens)
 			/* after operator we must have a WORD (filename/delimiter) ???? check this logic with Mikhail*/
 			if (!*tokens || (*tokens)->token_kind != WORD)
 			{
-				printf(stderr, "syntax error near unexpected token `%s'\n", tok->data); // use ft_printf
+				fprintf(stderr, "syntax error near unexpected token `%s'\n", tok->data); // use ft_printf
 				free(tok->data);
 				free(tok);
 				free_arg_list(args);
@@ -283,7 +283,7 @@ static t_ast	*parse_command(t_token **tokens)
 			/* looking for ) */
 			if (!*tokens || (*tokens)->token_kind != R_PAREN)
 			{
-				printf(stderr, "syntax error: missing ')'\n");// use ft_printf
+				fprintf(stderr, "syntax error: missing ')'\n");// use ft_printf
 				free_ast(inner);
 				free_arg_list(args);
 				free_redir_list(redirs);
@@ -331,7 +331,7 @@ static t_ast	*parse_command(t_token **tokens)
 	/* if we never created a base but have redirections, that's a syntax error (like: '< file | ...') */
 	if (!base && redirs)
 	{
-		printf(stderr, "syntax error: redirection without command\n"); // use ft_printf
+		fprintf(stderr, "syntax error: redirection without command\n"); // use ft_printf
 		free_redir_list(redirs);
 		return (NULL);
 	}
@@ -364,7 +364,7 @@ static t_ast	*parse_pipeline(t_token **tokens)
 		right = parse_command(tokens);
 		if (!right)
 		{
-			printf(stderr, "syntax error: expected command after '|'\n");//use ft_printf
+			fprintf(stderr, "syntax error: expected command after '|'\n");//use ft_printf
 			free_ast(left);
 			return (NULL);
 		}
@@ -397,7 +397,7 @@ static t_ast	*parse_logical(t_token **tokens)
 		right = parse_pipeline(tokens);
 		if (!right)
 		{
-			printf(stderr, "syntax error: expected pipeline after logical operator\n");
+			fprintf(stderr, "syntax error: expected pipeline after logical operator\n");
 			free_ast(left);
 			return (NULL);
 		}

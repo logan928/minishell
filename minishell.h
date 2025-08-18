@@ -59,7 +59,7 @@ typedef enum e_lexem_kind
 	REDIRECTION,
 }	t_lexem_kind;
 
-typedef struct s_lexem 			//map with t_ast_type
+/*typedef struct s_lexem 			//map with t_ast_type
 {
 	t_lexem_kind	lexem_kind;
 	char			*path;
@@ -67,7 +67,7 @@ typedef struct s_lexem 			//map with t_ast_type
 	char			**env;
 	char			*op;
 	char			*file;
-}	t_lexem;
+}	t_lexem; */
 
 typedef struct s_lexer 			//map with t_ast
 {
@@ -135,6 +135,36 @@ t_ast	*parse_tokens(t_token **tokens);
 void	free_ast(t_ast *node);
 void	print_ast(t_ast *node, int depth);
 
+
+
+typedef enum e_redir_kind
+{
+	R_IN,     // <
+	R_OUT,    // >
+	R_APP,    // >>
+	R_HDOC    // <<
+}	t_redir_kind;
+
+typedef struct s_redir
+{
+	t_redir_kind	kind;
+	char			*file;     // filename or heredoc limiter
+	struct s_redir	*next;
+}	t_redir;
+
+typedef struct s_lexem
+{
+	t_lexem_kind	lexem_kind;
+	char			*path;
+	char			**args;   // argv for execve()
+	char			**env;
+	t_redir			*redirs;  // linked list of redirections
+	char			*op;
+	char			*file;
+}	t_lexem;
+
+t_lexem	*command_formatter(t_token **tokptr);
+void	print_lexem(t_lexem *cmd);
 
 
 #endif
