@@ -2,15 +2,24 @@
 
 static char	*str_append(char *s1, const char *s2)
 {
-	size_t	len1 = s1 ? strlen(s1) : 0;
-	size_t	len2 = s2 ? strlen(s2) : 0;
-	char	*res = malloc(len1 + len2 + 1);
+	size_t	len1; 
+	size_t	len2; 
+	char	*res; 
+
+
+	len1 = 0;
+	len2 = 0;
+	if (s1)
+		len1 = ft_strlen(s1);
+	if(s2)
+		len2 = ft_strlen(s2);
+	res = malloc(len1 + len2 + 1);
 	if (!res)
 		return (NULL);
 	if (s1)
-		memcpy(res, s1, len1);
+		ft_memcpy(res, s1, len1);
 	if (s2)
-		memcpy(res + len1, s2, len2);
+		ft_memcpy(res + len1, s2, len2);
 	res[len1 + len2] = '\0';
 	free(s1);
 	return (res);
@@ -42,7 +51,7 @@ static t_lexem	*lexem_new(void)
 	t_lexem	*lx = calloc(1, sizeof(t_lexem));
 	if (!lx)
 		return (NULL);
-	lx->lexem_kind = EXTERNAL; // default, refine later
+	lx->lexem_kind = CMAND; // default, refine later
 	lx->args = NULL;
 	lx->op = NULL;
 	lx->file = NULL;
@@ -87,7 +96,9 @@ t_lexem	*command_formatter(t_token **tokptr)
 	{
 		if (tok->token_kind == WORD)
 		{
-			// glue consecutive WORDs
+			// glue consecutive WORDs - discuss with Mikhail whetehr to pass as an string or separate words (i.e. without space)
+			if (current_word)
+				current_word = str_append(current_word, " "); //can'use ft_strjoin_free or ft_strjoin
 			current_word = str_append(current_word, tok->data);
 			if (!tok->next || tok->next->token_kind != WORD)
 			{
@@ -95,6 +106,8 @@ t_lexem	*command_formatter(t_token **tokptr)
 				free(current_word);
 				current_word = NULL;
 			}
+
+			//todo: add cmd to the cmd list & make a new cmd (lexem_new())
 		}
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
 			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)
@@ -113,17 +126,23 @@ t_lexem	*command_formatter(t_token **tokptr)
 			tok = tok->next;
 			if (!tok || tok->token_kind != WORD)
 			{
-				fprintf(stderr, "minishell: syntax error near redirection\n");
+				printf("minishell: syntax error near redirection\n");
 				break;
 			}
 			redir_add(cmd, redir_new(kind, tok->data));
+			
+			//todo: add cmd to the cmd list & make a new cmd (lexem_new())
+
 		}
 		else if (tok->token_kind == PIPE || tok->token_kind == AND_IF
 			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
 			|| tok->token_kind == R_PAREN || tok->token_kind == NL)
 		{
-			// stop and let parser handle higher-level ops
-			break;
+			// stop here and let parser handle higher-level ops
+
+						//todo: add cmd to the cmd list & make a new cmd (lexem_new())
+
+			break; //continue
 		}
 		tok = tok->next;
 	}

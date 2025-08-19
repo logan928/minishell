@@ -51,8 +51,8 @@ typedef struct s_token
 
 typedef enum e_lexem_kind
 {
-	BUILTIN,
-	EXTERNAL,
+	//BUILTIN, - //builtin/external to be identified at executor
+	CMAND,
 	LOGICAL,
 	PIPELINE,
 	PAREN,
@@ -162,8 +162,8 @@ typedef struct s_lexem
 	char			**args;   // argv for execve()
 	char			**env;
 	t_redir			*redirs;  // linked list of redirections
-	char			*op;
-	char			*file;
+	char			*op; //may not be needed if t_redir is used
+	char			*file; //may not be needed if t_redir is used
 }	t_lexem;
 
 t_lexem	*command_formatter(t_token **tokptr);
