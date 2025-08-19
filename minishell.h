@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 13:04:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/19 14:13:43 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int		ft_check_syntax(t_lexer *lexer);
 void	ft_vars_expansion(t_shell *shell);
 void	ft_field_splitting(t_shell *shell);
 void	ft_filename_expansion(t_shell *shell);
+void	ft_quote_removal(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(char *s, size_t len, char **env);
@@ -105,6 +106,7 @@ void	ft_reset_lexer(t_lexer *lexr);
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);
 void	ft_insert_after(t_token *target, t_token *token);
+void	ft_free_tokens(t_token *head);
 
 char	**ft_clone_env(char *envp[]);
 void	ft_env(char *env[]);
@@ -112,5 +114,7 @@ void	ft_free_env(char *envp[]);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
+
+int	ft_echo(char **args);
 
 #endif

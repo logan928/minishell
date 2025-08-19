@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-t_token	*ft_split_ifs(char *s)
+t_token	*ft_split_ifs(char *s, t_shell *shell)
 {
 	t_token	*split;
 	t_token *new_token;
@@ -38,6 +38,11 @@ t_token	*ft_split_ifs(char *s)
 			pos++;
 		}
 		new_token = ft_new_token(WORD, ft_strndup(&s[start], pos - start));
+		if (!new_token)
+		{
+			ft_free_tokens(split);
+			ft_critical_error(shell);
+		}
 		ft_add_token(&split, new_token);
 	}
 	
@@ -55,7 +60,7 @@ void	ft_field_splitting(t_shell *shell)
 	{
 		if (t->token_kind == WORD)
 		{
-			split = ft_split_ifs(t->data);
+			split = ft_split_ifs(t->data, shell);
 			if (split && split->next != NULL)
 			{
 				free(t->data);
@@ -69,6 +74,10 @@ void	ft_field_splitting(t_shell *shell)
 					tmp = tmp->next;
 				tmp->next = t->next;
 				t->next = split;
+			}
+			else if (split)
+			{
+				ft_free_tokens(split);
 			}
 		}
 		t = t->next;
