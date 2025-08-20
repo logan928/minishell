@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 15:21:30 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 17:40:56 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
-	shell.lexer = &(t_lexer){NULL, 0, -1, 0, NULL, NULL};
+	shell.lexer = &(t_lexer){NULL, 0, 0, 0, NULL, NULL};
 	while (1)
 	{
 		shell.input = readline(shell.prompt);

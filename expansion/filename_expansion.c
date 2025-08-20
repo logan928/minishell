@@ -6,11 +6,28 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:39:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 10:40:29 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 18:07:51 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	ft_set_quote_advance(const char *pattern, int *p, int *quote)
+{
+	if (ft_isquote(pattern[*p]) && !*quote)
+	{
+		*quote = pattern[*p];
+		(*p)++;
+		return (1);
+	}
+	else if (ft_isquote(pattern[*p]) && *quote == pattern[*p])
+	{
+		*quote = 0;
+		(*p)++;
+		return (1);
+	}
+	return (0);
+}
 
 int	ft_match(const char *pattern, const char *filename, int p, int f)
 {
@@ -27,7 +44,9 @@ int	ft_match(const char *pattern, const char *filename, int p, int f)
 		p += 2;
 	while (filename[f])
 	{
-		if (ft_isquote(pattern[p]) && !quote)
+		if (ft_set_quote_advance(pattern, &p, &quote))
+			continue ;
+		/*if (ft_isquote(pattern[p]) && !quote)
 		{
 			quote = pattern[p];
 			p++;
@@ -38,7 +57,7 @@ int	ft_match(const char *pattern, const char *filename, int p, int f)
 			quote = 0;
 			p++;
 			continue ;
-		}
+		}*/
 		if (pattern[p] == filename[f])
 		{
 			p++;
@@ -63,6 +82,7 @@ int	ft_match(const char *pattern, const char *filename, int p, int f)
 	return (pattern[p] == '\0');
 }
 
+//TODO: fix ./.* and ./*
 t_token	*ft_matcher(const char *pattern)
 {
 	DIR				*dir;
