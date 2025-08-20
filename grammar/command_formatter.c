@@ -48,7 +48,7 @@ static char	**argv_add(char **argv, int *argc, const char *word)
 
 static t_command	*command_new(void)
 {
-	t_command	*lx = calloc(1, sizeof(t_command));
+	t_command	*lx = calloc(1, sizeof(t_command)); // TODO: replace with ft_calloc;
 	if (!lx)
 		return (NULL);
 	lx->lexem_kind = CMAND; // default, refine later
@@ -60,7 +60,7 @@ static t_command	*command_new(void)
 
 static t_redir	*redir_new(t_redir_type kind, const char *file)
 {
-	t_redir	*r = calloc(1, sizeof(t_redir));
+	t_redir	*r = calloc(1, sizeof(t_redir)); // TODO: replace with ft_calloc;
 	if (!r)
 		return (NULL);
 	r->kind = kind;
@@ -84,6 +84,22 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 	}
 }
 
+static int is_builtin(const char *cmd)
+{
+	size_t len;
+    if (!cmd)
+        return 0;
+	len = ft_strlen(cmd);
+    return (
+        ft_strncmp(cmd, "echo", len) == 0 ||
+        ft_strncmp(cmd, "cd", len) == 0 ||
+        ft_strncmp(cmd, "pwd", len) == 0 ||
+        ft_strncmp(cmd, "export", len) == 0 ||
+        ft_strncmp(cmd, "unset", len) == 0 ||
+        ft_strncmp(cmd, "env", len) == 0 ||
+        ft_strncmp(cmd, "exit", len) == 0
+    );
+}
 
 t_command	*command_formatter(t_token **tokptr)
 {
