@@ -83,7 +83,7 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 		cur->next = redir;
 	}
 }
-
+/*
 static int is_builtin(const char *cmd)
 {
 	size_t len;
@@ -100,7 +100,7 @@ static int is_builtin(const char *cmd)
         ft_strncmp(cmd, "exit", len) == 0
     );
 }
-
+*/
 t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;

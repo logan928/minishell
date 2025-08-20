@@ -6,14 +6,57 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:38:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 11:13:31 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 15:04:51 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int	ft_valid_env_char(int c)
+{
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c == 95))
+		return (1);
+	return (0);
+}
+
+char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env)
+{
+	size_t	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (!ft_strncmp(s, env[i], len))
+		{
+			if (env[i][len] == '=')
+				return (ft_strdup_safe(shell, env[i] + len + 1));
+		}
+		env++;
+	}
+	return (ft_strdup_safe(shell, ""));
+}
+
+void	ft_find_next_append(t_shell *s, t_lexer *l, t_token *t, char **res)
+{
+	while (t->data[l->pos])
+	{
+		if (ft_isquote(t->data[l->pos]) && l->quote == 0)
+			ft_append_unquoted_quote(s, t, res);
+		else if (ft_isquote(t->data[l->pos]) && l->quote == t->data[l->pos])
+			ft_append_quoted_quote(s, t, res);
+		else if ((l->quote != '\'') && t->data[l->pos] == '$'
+			&& ft_valid_env_char(t->data[l->pos + 1]))
+			ft_append_variable(s, t, res);
+		else if ((l->quote != '\'') && t->data[l->pos] == '$'
+			&& t->data[l->pos + 1] == '?')
+			ft_append_exit_status(s, res);
+		else
+			ft_append_normal_chars(s, t, res);
+	}
+}
+
 /*
-	* ft_expand processes each word segment by segment
+	* ft_variable_expansion processes each word segment by segment
 	* A segment can be one of three types:
 	* 	- Unquoted: $ is expanded;
 	* 	- Single-quoted: every character is treated literally
@@ -21,11 +64,11 @@
 	* #? is expanded to the value of shell->exit_code
 	* Single quotes are preserved inside double quotes, and vice versa
 */
-void	ft_vars_expansion(t_shell *shell)
+void	ft_variable_expansion(t_shell *shell)
 {
 	t_token	*t;
 	char	*res;
-	t_lexer *l;
+	t_lexer	*l;
 
 	t = shell->lexer->tokens;
 	l = shell->lexer;
@@ -33,44 +76,12 @@ void	ft_vars_expansion(t_shell *shell)
 	{
 		if (t->token_kind == WORD)
 		{
-			res = ft_strdup("");
+			res = ft_strdup_safe(shell, "");
 			l->pos = 0;
 			l->quote = 0;
 			l->start = -1;
 			while (t->data[l->pos])
-			{
-				if (ft_isquote(t->data[l->pos]) && l->quote == 0)
-				{
-					l->quote = t->data[(l->pos)];
-					res = ft_strjoin_free(res, ft_strndup(&t->data[l->pos++], 1));
-				}
-				else if (ft_isquote(t->data[l->pos]) && l->quote == t->data[l->pos])
-				{
-					res = ft_strjoin_free(res, ft_strndup(&t->data[l->pos++], 1));
-					l->quote = 0;
-				}
-				else if ((l->quote != '\'') && t->data[l->pos] == '$'
-					&& ft_valid_env_char(t->data[l->pos + 1]))
-				{
-					l->start = ++(l->pos);
-					while (t->data[l->pos] && ft_valid_env_char(t->data[l->pos]))
-						(l->pos)++;
-					res = ft_strjoin_free(res, ft_get_env_var(&t->data[l->start], l->pos - l->start, shell->env));
-				}
-				else if ((l->quote != '\'') && t->data[l->pos] == '$'
-					&& t->data[l->pos + 1] == '?')
-				{
-					res = ft_strjoin_free(res, ft_itoa((long) shell->exit_status));
-					l->pos += 2;
-				}
-				else
-				{
-					l->start = (l->pos)++;
-					while (t->data[l->pos] && !ft_isquote(t->data[l->pos]) && t->data[l->pos] != '$')
-						l->pos++;
-					res = ft_strjoin_free(res, ft_strndup(&t->data[l->start], l->pos - l->start));
-				}
-			}
+				ft_find_next_append(shell, l, t, &res);
 			free(t->data);
 			t->data = res;
 		}

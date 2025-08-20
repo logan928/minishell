@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:19:02 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 10:42:53 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 13:23:20 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	ft_is_operator_char(char c)
 {
 	const char	*chars;
 
-	chars = "|&;<>()";
+	chars = "|&<>()";
 	while (*chars)
 	{
 		if (c == *chars)
@@ -24,6 +24,11 @@ static int	ft_is_operator_char(char c)
 		chars++;
 	}
 	return (0);
+}
+
+static int	ft_is_normal_char(char c)
+{
+	return (!ft_isspace(c) && !ft_is_operator_char(c));
 }
 
 static t_token_kind	ft_get_token_kind(const char *s)
@@ -58,72 +63,66 @@ static int	ft_get_operator_length(t_token_kind kind)
 
 void	ft_tokenize_op(t_shell *shell)
 {
-	t_token			*next_token;
+	t_token			*next;
 	t_token_kind	kind;
 	size_t			len;
-	
+	char			*data;
+
 	kind = ft_get_token_kind(&(shell->input[shell->lexer->pos]));
 	len = ft_get_operator_length(kind);
-	next_token = ft_new_token(kind, ft_strndup(&(shell->input[shell->lexer->pos]), len));
-	if (!next_token)
-		ft_critical_error(shell);
-	ft_add_token(&(shell->lexer->tokens), next_token);
+	data = ft_strndup_safe(shell, &shell->input[shell->lexer->pos], len);
+	next = ft_new_token_safe(shell, kind, data);
+	ft_add_token(&(shell->lexer->tokens), next);
 	shell->lexer->pos += len;
 }
 
 void	ft_tokenize_nl(t_shell *shell)
 {
-	t_token			*next_token;
+	t_token	*next;
+	char	*data;
 
-	next_token = ft_new_token(NL, ft_strdup("newline"));
-	if (!next_token)
-		ft_critical_error(shell);
-	ft_add_token(&shell->lexer->tokens, next_token);
+	data = ft_strdup_safe(shell, "newline");
+	next = ft_new_token_safe(shell, NL, data);
+	ft_add_token(&shell->lexer->tokens, next);
 }
 
 void	ft_tokenize_word(t_shell *shell)
 {
-	t_token	*next_token;
-	t_lexer	*l;
+	t_token	*next;
 	char	*input;
+	char	*data;
+	int		start;
+	int		end;
 
-	l = shell->lexer;
+	start = shell->lexer->start;
+	end = shell->lexer->pos;
 	input = shell->input;
-	next_token = ft_new_token(WORD, ft_strndup(&input[l->start], l->pos - l->start));
-	if (!next_token)
-		ft_critical_error(shell);
-	ft_add_token(&l->tokens, next_token);
+	data = ft_strndup_safe(shell, &input[start], end - start);
+	next = ft_new_token_safe(shell, WORD, data);
+	ft_add_token(&shell->lexer->tokens, next);
 }
 
-void	lex(t_shell *shell)
+void	lex(t_shell *s, char *in, t_lexer *l)
 {
-	t_lexer *lexer;
-	char	*input;
-
-	lexer = shell->lexer;
-	input = shell->input;
-	while (input[lexer->pos])
+	while (in[l->pos])
 	{
-		while (ft_isspace(input[lexer->pos]) && lexer->quote == 0)
-			lexer->pos++;
-		if (ft_is_operator_char(input[lexer->pos]) && lexer->quote == 0)
-			ft_tokenize_op(shell);
-		else if (input[lexer->pos])
+		while (ft_isspace(in[l->pos]) && l->quote == 0)
+			l->pos++;
+		if (ft_is_operator_char(in[l->pos]) && l->quote == 0)
+			ft_tokenize_op(s);
+		else if (in[l->pos])
 		{
-			lexer->start = lexer->pos;
-			while (input[lexer->pos]
-				&& ((ft_isspace(input[lexer->pos]) && lexer->quote)
-				|| (ft_is_operator_char(input[lexer->pos]) && lexer->quote)
-				|| (!ft_isspace(input[lexer->pos]) && !ft_is_operator_char(input[lexer->pos]))))
+			l->start = l->pos;
+			while (in[l->pos] && (l->quote || ft_is_normal_char(in[l->pos])))
 			{
-				if (ft_isquote(input[lexer->pos]) && !lexer->quote)
-					lexer->quote = input[lexer->pos];
-				else if (ft_isquote(input[lexer->pos]) && lexer->quote)
-					lexer->quote = 0;
-				lexer->pos++;
+				if (ft_isquote(in[l->pos]) && !l->quote)
+					l->quote = in[l->pos];
+				else if (ft_isquote(in[l->pos]) && l->quote)
+					l->quote = 0;
+				l->pos++;
 			}
-			ft_tokenize_word(shell);
+			ft_tokenize_word(s);
 		}
 	}
-	ft_tokenize_nl(shell);
+	ft_tokenize_nl(s);
 }

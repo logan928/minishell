@@ -8,12 +8,13 @@ GRAMMAR_DIR := ./grammar
 EXPANSION_DIR := ./expansion
 
 NAME := minishell
-SRCS := minishell.c signals.c shell.c \
+SRCS := minishell.c signals.c shell.c safe_wrappers.c \
 		$(BUILTINS_DIR)/env.c $(BUILTINS_DIR)/echo.c \
 		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
-		$(GRAMMAR_DIR)/validator.c $(GRAMMAR_DIR)/expansion.c \
+		$(GRAMMAR_DIR)/validator.c \
 		$(EXPANSION_DIR)/variable_expansion.c $(EXPANSION_DIR)/field_splitting.c \
 		$(EXPANSION_DIR)/filename_expansion.c $(EXPANSION_DIR)/quote_removal.c \
+		$(EXPANSION_DIR)/variable_expansion_append.c \
 		$(GRAMMAR_DIR)/command_formatter.c
 
 

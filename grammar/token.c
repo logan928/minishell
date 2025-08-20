@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:32:53 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 13:04:15 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 15:41:41 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ t_token	*ft_new_token(t_token_kind kind, char *data)
 	token = malloc(sizeof(t_token));
 	if (!token)
 	{
-		free(data);
+		if (data)
+			free(data);
 		return (NULL);
 	}
 	token->token_kind = kind;
@@ -81,6 +82,11 @@ void	ft_free_lexer(t_lexer *lexer)
 		ft_free_tokens(lexer->tokens);
 		lexer->tokens = NULL;
 	}
+	if (lexer->split_tmp)
+	{
+		ft_free_tokens(lexer->split_tmp);
+		lexer->split_tmp = NULL;
+	}
 }
 
 void ft_reset_lexer(t_lexer *lexer)
@@ -92,4 +98,3 @@ void ft_reset_lexer(t_lexer *lexer)
     lexer->start = -1;
     lexer->quote = 0;
 }
-

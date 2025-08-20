@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/19 15:01:28 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 15:21:30 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
-	shell.lexer = &(t_lexer){NULL, 0, -1, 0, NULL};
+	shell.lexer = &(t_lexer){NULL, 0, -1, 0, NULL, NULL};
 	while (1)
 	{
 		shell.input = readline(shell.prompt);
@@ -74,9 +74,9 @@ int	main(int argc, char *argv[], char *envp[])
 				continue;
 			}
 		}
-		lex(&shell);
+		lex(&shell, shell.input, shell.lexer);
 		syntax_status = ft_check_syntax(shell.lexer);
-		ft_vars_expansion(&shell);
+		ft_variable_expansion(&shell);
 		ft_field_splitting(&shell);
 		ft_filename_expansion(&shell);
 		ft_quote_removal(&shell);
@@ -89,8 +89,8 @@ int	main(int argc, char *argv[], char *envp[])
 				token = token->next;
 			}
 		}
-		t_command *cmd = command_formatter(&shell.lexer->tokens);
-		print_lexem(cmd);
+		//t_command *cmd = command_formatter(&shell.lexer->tokens);
+		//print_lexem(cmd);
 		//t_ast *root = parse_tokens(&shell.lexer->tokens);
 		//print_ast(root, 0);//remove 
 		//free_ast(root);// Check

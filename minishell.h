@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/19 14:13:43 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 16:57:56 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_lexer 			//map with t_ast
 	int		start;
 	char	quote;
 	t_token	*tokens;
+	t_token	*split_tmp;
 }	t_lexer;
 
 typedef struct s_shell
@@ -91,15 +92,20 @@ char	*get_prompt(void);
 void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
 
-void	lex(t_shell *shell);
+void	lex(t_shell *shell, char *input, t_lexer *lexer);
 int		ft_check_syntax(t_lexer *lexer);
-void	ft_vars_expansion(t_shell *shell);
+void	ft_variable_expansion(t_shell *shell);
+int		ft_valid_env_char(int c);
+char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env);
+void	ft_append_unquoted_quote(t_shell *s, t_token *t, char **res);
+void	ft_append_quoted_quote(t_shell *s, t_token *t, char **res);
+void	ft_append_variable(t_shell *s, t_token *t, char **res);
+void	ft_append_exit_status(t_shell *s, char **res);
+void	ft_append_normal_chars(t_shell *s, t_token *t, char **res);
 void	ft_field_splitting(t_shell *shell);
 void	ft_filename_expansion(t_shell *shell);
 void	ft_quote_removal(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
-int		ft_valid_env_char(int c);
-char	*ft_get_env_var(char *s, size_t len, char **env);
 void	ft_reset_lexer(t_lexer *lexr);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
@@ -108,11 +114,17 @@ void	ft_insert_after(t_token *target, t_token *token);
 void	ft_free_tokens(t_token *head);
 
 char	**ft_clone_env(char *envp[]);
-void	ft_env(char *env[]);
+void	ft_env(chargsar *env[]);
 void	ft_free_env(char *envp[]);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
+
+char	*ft_strdup_safe(t_shell *shell, const char *s);
+char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
+t_token	*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
+char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
+char	*ft_itoa_safe(t_shell *shell, long n);
 
 typedef enum e_ast_type
 {
@@ -127,10 +139,10 @@ typedef enum e_ast_type
 typedef struct s_ast
 {
 	t_ast_type		type;
-	char			**argv;       // for commands : can include path
-	char			**env;		 // can also be inside argv
-	char			*file;        // for redirections
-	t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
+	//char			**argv;       // for commands : can include path
+	//char			**env;		 // can also be inside argv
+	//char			*file;        // for redirections
+	//t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
 	struct s_ast	*left;        // for binary ops
 	struct s_ast	*right;       // for binary ops
 	int				ast_depth;	//tol: will this be useful for traversing?
