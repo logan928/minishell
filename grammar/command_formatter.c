@@ -1,5 +1,6 @@
 #include "../minishell.h"
 
+/*
 static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for this. 
 {
 	size_t	len1; 
@@ -24,6 +25,7 @@ static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for 
 	free(s1);
 	return (res);
 }
+*/
 
 static char	**argv_add(char **argv, int *argc, const char *word)
 {
@@ -105,16 +107,14 @@ t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;
 	t_command	*cmd = command_new();
-	char	*current_word = NULL;
+	//char	*current_word = NULL;
 	int		argc = 0;
 
 	while (tok)
 	{
 		if (tok->token_kind == WORD)
 		{
-			// combine consecutive WORDs - discuss with Mikhail whetehr to pass as an string or separate words (i.e. without space)
-			if (current_word)
-				current_word = str_append(current_word, " "); //can'use ft_strjoin_free or ft_strjoin
+			/*
 			current_word = str_append(current_word, tok->data);
 			if (!tok->next || tok->next->token_kind != WORD)
 			{
@@ -122,6 +122,8 @@ t_command	*command_formatter(t_token **tokptr)
 				free(current_word);
 				current_word = NULL;
 			}
+			*/
+			cmd->args = argv_add(cmd->args, &argc, tok->data);
 		}
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
 			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)

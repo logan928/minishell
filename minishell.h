@@ -114,7 +114,7 @@ void	ft_insert_after(t_token *target, t_token *token);
 void	ft_free_tokens(t_token *head);
 
 char	**ft_clone_env(char *envp[]);
-void	ft_env(chargsar *env[]);
+void	ft_env(char *env[]);
 void	ft_free_env(char *envp[]);
 
 void	ft_sigint_handler(int sig);
@@ -128,7 +128,7 @@ char	*ft_itoa_safe(t_shell *shell, long n);
 
 typedef enum e_ast_type
 {
-	AST_COMMAND, // seperate to built-in and external
+	AST_CMD, // seperate to built-in and external
 	AST_PIPE,
 	AST_AND,
 	AST_OR,
@@ -136,21 +136,9 @@ typedef enum e_ast_type
 	AST_REDIR
 }	t_ast_type;
 
-typedef struct s_ast
-{
-	t_ast_type		type;
-	//char			**argv;       // for commands : can include path
-	//char			**env;		 // can also be inside argv
-	//char			*file;        // for redirections
-	//t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
-	struct s_ast	*left;        // for binary ops
-	struct s_ast	*right;       // for binary ops
-	int				ast_depth;	//tol: will this be useful for traversing?
-}	t_ast;
 
-t_ast	*parse_tokens(t_token **tokens);
-void	free_ast(t_ast *node);
-void	print_ast(t_ast *node, int depth);
+
+
 
 
 
@@ -181,9 +169,28 @@ typedef struct s_command
 	//char			*file; //may not be needed if t_redir is used
 }	t_command;
 
+typedef struct s_ast
+{
+	t_ast_type		type;
+	//char			**argv;       // for commands : can include path
+	//char			**env;		 // can also be inside argv
+	//char			*file;        // for redirections
+	t_command		*cmd;
+	//t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
+	struct s_ast	*left;        // for binary ops
+	struct s_ast	*right;       // for binary ops
+	int				ast_depth;	//tol: will this be useful for traversing?
+}	t_ast;
+
+
 t_command	*command_formatter(t_token **tokptr);
 void	print_lexem(t_command *cmd);
 
 int	ft_echo(char **args);
+
+t_ast *parse(t_token **tokptr);
+t_ast	*parse_tokens(t_token **tokens);
+void	free_ast(t_ast *node);
+void	print_ast(t_ast *node, int depth);
 
 #endif
