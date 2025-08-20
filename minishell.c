@@ -6,13 +6,14 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 10:46:49 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/19 15:01:28 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft/libft.h"
 #include <stdlib.h>
+#include <string.h>
 
 volatile sig_atomic_t	g_sig = 0;
 
@@ -44,7 +45,7 @@ void	ft_free_exit(t_shell *shell)
 	rl_clear_history();
 	if (isatty(STDIN_FILENO))
 		write(2, "exit\n", 6);
-	exit(EXIT_SUCCESS);
+	exit(shell->exit_status);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -78,6 +79,7 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_vars_expansion(&shell);
 		ft_field_splitting(&shell);
 		ft_filename_expansion(&shell);
+		ft_quote_removal(&shell);
 		if (syntax_status == 1)
 		{
 			token = shell.lexer->tokens;
@@ -87,7 +89,7 @@ int	main(int argc, char *argv[], char *envp[])
 				token = token->next;
 			}
 		}
-		t_lexem *cmd = command_formatter(&shell.lexer->tokens);
+		t_command *cmd = command_formatter(&shell.lexer->tokens);
 		print_lexem(cmd);
 		//t_ast *root = parse_tokens(&shell.lexer->tokens);
 		//print_ast(root, 0);//remove 

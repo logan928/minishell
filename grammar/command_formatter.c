@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static char	*str_append(char *s1, const char *s2)
+static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for this. 
 {
 	size_t	len1; 
 	size_t	len2; 
@@ -46,19 +46,19 @@ static char	**argv_add(char **argv, int *argc, const char *word)
 	return (newv);
 }
 
-static t_lexem	*lexem_new(void)
+static t_command	*command_new(void)
 {
-	t_lexem	*lx = calloc(1, sizeof(t_lexem));
+	t_command	*lx = calloc(1, sizeof(t_command));
 	if (!lx)
 		return (NULL);
 	lx->lexem_kind = CMAND; // default, refine later
 	lx->args = NULL;
-	lx->op = NULL;
-	lx->file = NULL;
+	//lx->op = NULL;
+	//lx->file = NULL;
 	return (lx);
 }
 
-static t_redir	*redir_new(t_redir_kind kind, const char *file)
+static t_redir	*redir_new(t_redir_type kind, const char *file)
 {
 	t_redir	*r = calloc(1, sizeof(t_redir));
 	if (!r)
@@ -69,7 +69,7 @@ static t_redir	*redir_new(t_redir_kind kind, const char *file)
 	return (r);
 }
 
-static void	redir_add(t_lexem *cmd, t_redir *redir)
+static void	redir_add(t_command *cmd, t_redir *redir)
 {
 	t_redir	*cur;
 
@@ -85,10 +85,10 @@ static void	redir_add(t_lexem *cmd, t_redir *redir)
 }
 
 
-t_lexem	*command_formatter(t_token **tokptr)
+t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;
-	t_lexem	*cmd = lexem_new();
+	t_command	*cmd = command_new();
 	char	*current_word = NULL;
 	int		argc = 0;
 
@@ -96,7 +96,7 @@ t_lexem	*command_formatter(t_token **tokptr)
 	{
 		if (tok->token_kind == WORD)
 		{
-			// glue consecutive WORDs - discuss with Mikhail whetehr to pass as an string or separate words (i.e. without space)
+			// combine consecutive WORDs - discuss with Mikhail whetehr to pass as an string or separate words (i.e. without space)
 			if (current_word)
 				current_word = str_append(current_word, " "); //can'use ft_strjoin_free or ft_strjoin
 			current_word = str_append(current_word, tok->data);
@@ -106,13 +106,11 @@ t_lexem	*command_formatter(t_token **tokptr)
 				free(current_word);
 				current_word = NULL;
 			}
-
-			//todo: add cmd to the cmd list & make a new cmd (lexem_new())
 		}
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
 			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)
 		{
-			t_redir_kind kind;
+			t_redir_type kind;
 			if (tok->token_kind == LESS)
 				kind = R_IN;
 			else if (tok->token_kind == GREAT)
@@ -122,41 +120,35 @@ t_lexem	*command_formatter(t_token **tokptr)
 			else
 				kind = R_HDOC;
 
-			// expect next WORD as filename/limiter
 			tok = tok->next;
 			if (!tok || tok->token_kind != WORD)
 			{
-				printf("minishell: syntax error near redirection\n");
+				printf("minishell: syntax error near redirection\n");//ft_printf()
 				break;
 			}
 			redir_add(cmd, redir_new(kind, tok->data));
 			
-			//todo: add cmd to the cmd list & make a new cmd (lexem_new())
-
 		}
 		else if (tok->token_kind == PIPE || tok->token_kind == AND_IF
 			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
 			|| tok->token_kind == R_PAREN || tok->token_kind == NL)
 		{
 			// stop here and let parser handle higher-level ops
-
-						//todo: add cmd to the cmd list & make a new cmd (lexem_new())
-
-			break; //continue
+					
+			break; //continue : depending on how the Parser is integrated.
 		}
 		tok = tok->next;
 	}
-	*tokptr = tok; // tell caller where we stopped
+	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable. 
 	return (cmd);
 }
 
-void	print_lexem(t_lexem *cmd)
+void	print_lexem(t_command *cmd) //TODO: temporary function. Remove once the Parser is integrated. 
 {
 	if (!cmd)
 		return;
 	printf("=== Command ===\n");
 
-	// args
 	if (cmd->args)
 	{
 		printf("argv:");
@@ -167,7 +159,7 @@ void	print_lexem(t_lexem *cmd)
 	else
 		printf("argv: (none)\n");
 
-	// redirections
+	// redirections of the same command are printed here.
 	t_redir *r = cmd->redirs;
 	if (!r)
 		printf("redirs: (none)\n");

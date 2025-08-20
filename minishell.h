@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/18 13:04:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/19 14:13:43 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ int		ft_check_syntax(t_lexer *lexer);
 void	ft_vars_expansion(t_shell *shell);
 void	ft_field_splitting(t_shell *shell);
 void	ft_filename_expansion(t_shell *shell);
+void	ft_quote_removal(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(char *s, size_t len, char **env);
@@ -104,6 +105,7 @@ void	ft_reset_lexer(t_lexer *lexr);
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);
 void	ft_insert_after(t_token *target, t_token *token);
+void	ft_free_tokens(t_token *head);
 
 char	**ft_clone_env(char *envp[]);
 void	ft_env(char *env[]);
@@ -140,34 +142,36 @@ void	print_ast(t_ast *node, int depth);
 
 
 
-typedef enum e_redir_kind
+typedef enum e_redir_type
 {
 	R_IN,     // <
 	R_OUT,    // >
 	R_APP,    // >>
 	R_HDOC    // <<
-}	t_redir_kind;
+}	t_redir_type;
 
 typedef struct s_redir
 {
-	t_redir_kind	kind;
+	t_redir_type	kind;
 	char			*file;     // filename or heredoc limiter
+	char			*content; //What is usually under content??? heredocs?? TODO: handle content
 	struct s_redir	*next;
 }	t_redir;
 
-typedef struct s_lexem
+typedef struct s_command
 {
-	t_lexem_kind	lexem_kind;
+	t_lexem_kind	lexem_kind; //consider renaming as command_kind??
 	char			*path;
 	char			**args;   // argv for execve()
 	char			**env;
 	t_redir			*redirs;  // linked list of redirections
-	char			*op; //may not be needed if t_redir is used
-	char			*file; //may not be needed if t_redir is used
-}	t_lexem;
+	//char			*op; //may not be needed if t_redir is used
+	//char			*file; //may not be needed if t_redir is used
+}	t_command;
 
-t_lexem	*command_formatter(t_token **tokptr);
-void	print_lexem(t_lexem *cmd);
+t_command	*command_formatter(t_token **tokptr);
+void	print_lexem(t_command *cmd);
 
+int	ft_echo(char **args);
 
 #endif

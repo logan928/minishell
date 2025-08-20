@@ -20,7 +20,10 @@ t_token	*ft_new_token(t_token_kind kind, char *data)
 		return (NULL);
 	token = malloc(sizeof(t_token));
 	if (!token)
+	{
+		free(data);
 		return (NULL);
+	}
 	token->token_kind = kind;
 	token->data = data;
 	token->next = NULL;
