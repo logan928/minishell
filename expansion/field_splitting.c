@@ -56,7 +56,7 @@ void	ft_insert_split(t_shell *shell, t_token *split, t_token *t)
 		tmp = tmp->next;
 	tmp->next = t->next;
 	t->next = split;
-	shell->lexer->split_tmp = NULL;
+	shell->lexer->tmp = NULL;
 }
 
 void	ft_field_splitting(t_shell *shell)
@@ -69,16 +69,16 @@ void	ft_field_splitting(t_shell *shell)
 	{
 		if (t->token_kind == WORD)
 		{
-			shell->lexer->split_tmp = NULL;
-			shell->lexer->split_tmp = ft_split_ifs(shell->lexer->split_tmp,
+			shell->lexer->tmp = NULL;
+			shell->lexer->tmp = ft_split_ifs(shell->lexer->tmp,
 					t->data, shell);
-			split = shell->lexer->split_tmp;
+			split = shell->lexer->tmp;
 			if (split && split->next != NULL)
 				ft_insert_split(shell, split, t);
 			else if (split)
 			{
 				ft_free_tokens(split);
-				shell->lexer->split_tmp = NULL;
+				shell->lexer->tmp = NULL;
 			}
 		}
 		t = t->next;

@@ -46,6 +46,25 @@ void	ft_add_token(t_token **head, t_token *token)
 	}
 }
 
+void	ft_add_token_sorted(t_token **head, t_token *token)
+{
+	t_token *cur;
+	t_token	*prev;
+
+	cur = *head;
+	prev = NULL;
+	while (cur && ft_strcmp(cur->data, token->data, 1) < 0)
+	{
+		prev = cur;
+		cur = cur->next;
+	}
+	token->next = cur;
+	if (!prev)
+		*head = token;
+	else
+		prev->next = token;
+}
+
 void	ft_free_tokens(t_token *head)
 {
 	t_token	*cur;
@@ -82,10 +101,10 @@ void	ft_free_lexer(t_lexer *lexer)
 		ft_free_tokens(lexer->tokens);
 		lexer->tokens = NULL;
 	}
-	if (lexer->split_tmp)
+	if (lexer->tmp)
 	{
-		ft_free_tokens(lexer->split_tmp);
-		lexer->split_tmp = NULL;
+		ft_free_tokens(lexer->tmp);
+		lexer->tmp = NULL;
 	}
 }
 

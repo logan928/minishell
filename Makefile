@@ -15,8 +15,8 @@ SRCS := minishell.c signals.c shell.c safe_wrappers.c \
 		$(EXPANSION_DIR)/variable_expansion.c $(EXPANSION_DIR)/field_splitting.c \
 		$(EXPANSION_DIR)/filename_expansion.c $(EXPANSION_DIR)/quote_removal.c \
 		$(EXPANSION_DIR)/variable_expansion_append.c \
-		$(GRAMMAR_DIR)/command_formatter.c
-
+		$(GRAMMAR_DIR)/command_formatter.c \
+		$(EXPANSION_DIR)/pattern_match.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

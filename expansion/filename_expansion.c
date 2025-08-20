@@ -12,157 +12,91 @@
 
 #include "../minishell.h"
 
-int	ft_set_quote_advance(const char *pattern, int *p, int *quote)
+static void	ft_add_match_token(t_shell *shell, int prefix_len,
+							const char *pattern, char *filename)
 {
-	if (ft_isquote(pattern[*p]) && !*quote)
+	char	*prefix;
+	char	*base;
+	t_token	*new;
+
+	if (prefix_len > 0)
 	{
-		*quote = pattern[*p];
-		(*p)++;
-		return (1);
+		prefix = ft_strndup_safe(shell, pattern, prefix_len);
+		base = ft_strdup_safe(shell, filename);
+		new = ft_new_token_safe(shell, WORD,
+				ft_strjoin_free_safe(shell, prefix, base));
 	}
-	else if (ft_isquote(pattern[*p]) && *quote == pattern[*p])
+	else
 	{
-		*quote = 0;
-		(*p)++;
-		return (1);
+		base = ft_strdup_safe(shell, filename);
+		new = ft_new_token_safe(shell, WORD, base);
 	}
-	return (0);
+	ft_add_token_sorted(&shell->lexer->tmp, new);
 }
 
-int	ft_match(const char *pattern, const char *filename, int p, int f)
-{
-	int	star;
-	int	match;
-	int	quote;
-
-	star = -1;
-	match = 0;
-	quote = 0;
-	if (filename[0] == '.' && pattern[0] != '.')
-		return (0);
-	if (pattern[0] == '.' && pattern[1] == '/')
-		p += 2;
-	while (filename[f])
-	{
-		if (ft_set_quote_advance(pattern, &p, &quote))
-			continue ;
-		/*if (ft_isquote(pattern[p]) && !quote)
-		{
-			quote = pattern[p];
-			p++;
-			continue ;
-		}
-		else if (ft_isquote(pattern[p]) && quote == pattern[p])
-		{
-			quote = 0;
-			p++;
-			continue ;
-		}*/
-		if (pattern[p] == filename[f])
-		{
-			p++;
-			f++;
-		}
-		else if (pattern[p] == '*')
-		{
-			star = p++;
-			match = f;
-		}
-		else if (star != -1)
-		{
-			p = star + 1;
-			f = ++match;
-		}
-		else
-			return (0);
-	}
-	while (pattern[p] == '*')
-		p++;
-
-	return (pattern[p] == '\0');
-}
-
-//TODO: fix ./.* and ./*
-t_token	*ft_matcher(const char *pattern)
+static void	ft_glob_dir(t_shell *shell, const char *pattern)
 {
 	DIR				*dir;
 	struct dirent	*dr;
-	t_token			*new_token;
-	t_token			*matches;
+	int				prefix_len;
 
-	matches = NULL;
+	prefix_len = 0;
+	while (pattern[prefix_len] == '.' && pattern[prefix_len + 1] == '/')
+		prefix_len += 2;
+	shell->lexer->tmp = NULL;
 	dir = opendir(".");
-	while (1)
+	if (!dir)
+		ft_critical_error(shell);
+	while (dir)
 	{
 		dr = readdir(dir);
 		if (!dr)
 			break ;
-		if (ft_match(pattern, dr->d_name, 0, 0))
-		{
-			if (pattern[0] == '.' && pattern[1] == '/')
-				new_token = ft_new_token(WORD, ft_strjoin_free(ft_strdup("./"), ft_strdup(dr->d_name)));
-			else
-				new_token = ft_new_token(WORD, ft_strdup(dr->d_name));
-			ft_add_token(&matches, new_token);
-		}
+		if (ft_pattern_match(pattern + prefix_len, dr->d_name))
+			ft_add_match_token(shell, prefix_len, pattern, dr->d_name);
 	}
 	closedir(dir);
-	return (matches);
 }
 
-int	ft_is_pattern(char *word)
+static void	ft_replace_with_matches(t_shell *shell, t_token *t)
 {
-	int	pos;
-	int	quote;
+	t_token	*tmp_token;
 
-	quote = 0;
-	pos = 0;
-	while (word[pos])
+	if (shell->lexer->tmp && shell->lexer->tmp->next)
 	{
-		if (ft_isquote(word[pos]) && !quote)
-			quote = word[pos];
-		else if (ft_isquote(word[pos]) && word[pos] == quote)
-			quote = 0;
-		else if (word[pos] == '*' && !quote)
-			return (1);
-		pos++;
+		free(t->data);
+		t->data = ft_strdup_safe(shell, shell->lexer->tmp->data);
+		tmp_token = shell->lexer->tmp;
+		shell->lexer->tmp = shell->lexer->tmp->next;
+		free(tmp_token->data);
+		free(tmp_token);
+		tmp_token = shell->lexer->tmp;
+		while (tmp_token->next)
+			tmp_token = tmp_token->next;
+		tmp_token->next = t->next;
+		t->next = shell->lexer->tmp;
+		shell->lexer->tmp = NULL;
 	}
-	return (0);
+	else if (shell->lexer->tmp)
+	{
+		free(t->data);
+		t->data = ft_strdup_safe(shell, shell->lexer->tmp->data);
+		ft_free_tokens(shell->lexer->tmp);
+		shell->lexer->tmp = NULL;
+	}
 }
 
 void	ft_filename_expansion(t_shell *shell)
 {
 	t_token	*t;
-	t_token *matches;
-	t_token	*tmp;
 
 	t = shell->lexer->tokens;
 	while (t)
 	{
 		if (t->token_kind == WORD && ft_is_pattern(t->data))
 		{
-			matches = ft_matcher(t->data);
-			if (matches && matches->next)
-			{
-				free(t->data);
-				t->data = ft_strdup(matches->data);
-				tmp = matches;
-				matches = matches->next;
-				free(tmp->data);
-				free(tmp);
-				tmp = matches;
-				while (tmp->next)
-					tmp = tmp->next;
-				tmp->next = t->next;
-				t->next = matches;
-			}
-			else if (matches)
-			{
-				free(t->data);
-				t->data = ft_strdup(matches->data);
-				free(matches->data);
-				free(matches);
-			}
+			ft_glob_dir(shell, t->data);
+			ft_replace_with_matches(shell, t);
 		}
 		t = t->next;
 	}

@@ -76,7 +76,7 @@ typedef struct s_lexer 			//map with t_ast
 	int		start;
 	char	quote;
 	t_token	*tokens;
-	t_token	*split_tmp;
+	t_token	*tmp;
 }	t_lexer;
 
 typedef struct s_shell
@@ -108,11 +108,14 @@ void	ft_quote_removal(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
 void	ft_reset_lexer(t_lexer *lexr);
 void	ft_reset_lexer_cursor(t_lexer *lexer);
+int		ft_pattern_match(const char *pattern, const char *filename);
+int		ft_is_pattern(char *word);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);
 void	ft_insert_after(t_token *target, t_token *token);
 void	ft_free_tokens(t_token *head);
+void	ft_add_token_sorted(t_token **head, t_token *token);
 
 char	**ft_clone_env(char *envp[]);
 void	ft_env(char *env[]);
@@ -186,5 +189,14 @@ t_command	*command_formatter(t_token **tokptr);
 void	print_lexem(t_command *cmd);
 
 int	ft_echo(char **args);
+
+typedef struct s_glob_state
+{
+	int	last_star_index;
+	int	star_match_index;
+	int	in_quotes;
+	int	pattern_index;
+	int	filename_index;
+}	t_glob_state;
 
 #endif
