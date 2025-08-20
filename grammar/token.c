@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:32:53 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 15:41:41 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 17:40:49 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,15 @@ void ft_reset_lexer(t_lexer *lexer)
 		return ;
 	ft_free_lexer(lexer);
     lexer->pos = 0;
-    lexer->start = -1;
+    lexer->start = 0;
+    lexer->quote = 0;
+}
+
+void ft_reset_lexer_cursor(t_lexer *lexer)
+{
+	if (!lexer)
+		return ;
+    lexer->pos = 0;
+    lexer->start = 0;
     lexer->quote = 0;
 }

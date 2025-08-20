@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 16:57:56 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/20 17:42:04 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ void	ft_filename_expansion(t_shell *shell);
 void	ft_quote_removal(t_shell *shell);
 void	ft_free_lexer(t_lexer *lexer);
 void	ft_reset_lexer(t_lexer *lexr);
+void	ft_reset_lexer_cursor(t_lexer *lexer);
 
 t_token	*ft_new_token(t_token_kind kind, char *data);
 void	ft_add_token(t_token **head, t_token *token);
