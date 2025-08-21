@@ -51,7 +51,7 @@ void	ft_free_exit(t_shell *shell)
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
-	t_token	*token;
+	//t_token	*token;
 	//int		syntax_status;
 
 	(void)argc;
@@ -82,12 +82,12 @@ int	main(int argc, char *argv[], char *envp[])
 		//ft_quote_removal(&shell);
 	//if (syntax_status == 1)
 	//{
-		token = shell.lexer->tokens;
-			while (token)
-			{
-				printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
-			token = token->next;
-			}
+	//	token = shell.lexer->tokens;
+	//		while (token)
+	//		{
+	//			printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
+	//		token = token->next;
+	//		}
 //		}
 		//t_command *cmd = command_formatter(&shell.lexer->tokens);
 		//print_lexem(cmd);

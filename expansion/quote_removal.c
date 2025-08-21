@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_append_before_open_quote(t_shell *shell, t_token *t, char **clean)
+void	ft_append_before_open_quote(t_shell *shell, char *s, char **clean)
 {
 	int		start;
 	int		pos;
@@ -20,17 +20,17 @@ void	ft_append_before_open_quote(t_shell *shell, t_token *t, char **clean)
 
 	pos = shell->lexer->pos;
 	start = shell->lexer->start;
-	shell->lexer->quote = t->data[pos];
+	shell->lexer->quote = s[pos];
 	if (pos - start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &t->data[start], pos - start);
+		tmp = ft_strndup_safe(shell, &s[start], pos - start);
 		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
 	}
 	shell->lexer->pos++;
 	shell->lexer->start = shell->lexer->pos;
 }
 
-void	ft_append_before_close_quote(t_shell *shell, t_token *t, char **clean)
+void	ft_append_before_close_quote(t_shell *shell, char *s, char **clean)
 {
 	int		start;
 	int		pos;
@@ -41,14 +41,14 @@ void	ft_append_before_close_quote(t_shell *shell, t_token *t, char **clean)
 	shell->lexer->quote = 0;
 	if (pos - start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &t->data[start], pos - start);
+		tmp = ft_strndup_safe(shell, &s[start], pos - start);
 		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
 	}
 	shell->lexer->pos++;
 	shell->lexer->start = shell->lexer->pos;
 }
 
-void	ft_append_rest(t_shell *shell, t_token *t, char **clean)
+void	ft_append_rest(t_shell *shell, char **s, char **clean)
 {
 	int		start;
 	int		pos;
@@ -58,41 +58,39 @@ void	ft_append_rest(t_shell *shell, t_token *t, char **clean)
 	start = shell->lexer->start;
 	if (pos - start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &t->data[start], pos - start);
+		tmp = ft_strndup_safe(shell, &(*s)[start], pos - start);
 		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
 	}
-	free(t->data);
+	if (*s)
+		free(*s);
 	if (!*clean)
-		t->data = ft_strdup_safe(shell, "''");
+		*s = ft_strdup_safe(shell, "''");
 	else
-		t->data = *clean;
+		*s = *clean;
 }
 
-void	ft_quote_removal(t_shell *shell)
+void	ft_quote_removal(t_shell *shell, char **args)
 {
-	t_token	*t;
 	char	*clean;
+	size_t	i;
 
-	t = shell->lexer->tokens;
-	while (t)
+	i = 1;
+	while (args[i])
 	{
-		if (t->token_kind == WORD)
+		ft_reset_lexer_cursor(shell->lexer);
+		clean = NULL;
+		while (args[i][shell->lexer->pos])
 		{
-			ft_reset_lexer_cursor(shell->lexer);
-			clean = NULL;
-			while (t->data[shell->lexer->pos])
-			{
-				if (ft_isquote(t->data[shell->lexer->pos])
-					&& !shell->lexer->quote)
-					ft_append_before_open_quote(shell, t, &clean);
-				else if (ft_isquote(t->data[shell->lexer->pos])
-					&& shell->lexer->quote == t->data[shell->lexer->pos])
-					ft_append_before_close_quote(shell, t, &clean);
-				else
-					shell->lexer->pos++;
-			}
-			ft_append_rest(shell, t, &clean);
+			if (ft_isquote(args[i][shell->lexer->pos])
+				&& !shell->lexer->quote)
+				ft_append_before_open_quote(shell, args[i], &clean);
+			else if (ft_isquote(args[i][shell->lexer->pos])
+				&& shell->lexer->quote == args[i][shell->lexer->pos])
+				ft_append_before_close_quote(shell, args[i], &clean);
+			else
+				shell->lexer->pos++;
 		}
-		t = t->next;
+		ft_append_rest(shell, &args[i], &clean);
+		i++;
 	}
 }

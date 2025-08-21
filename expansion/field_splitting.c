@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-t_token	*ft_split_ifs(t_token *split, char *s, t_shell *shell)
+void	ft_split_ifs(t_shell *shell, char *s)
 {
 	t_token	*new_token;
 	int		pos;
@@ -36,9 +36,8 @@ t_token	*ft_split_ifs(t_token *split, char *s, t_shell *shell)
 		}
 		new_token = ft_new_token(WORD, ft_strndup_safe(shell,
 					&s[start], pos - start));
-		ft_add_token(&split, new_token);
+		ft_add_token(&shell->lexer->tmp, new_token);
 	}
-	return (split);
 }
 
 void	ft_insert_split(t_shell *shell, t_token *split, t_token *t)
@@ -59,28 +58,23 @@ void	ft_insert_split(t_shell *shell, t_token *split, t_token *t)
 	shell->lexer->tmp = NULL;
 }
 
-void	ft_field_splitting(t_shell *shell)
+void	ft_field_splitting(t_shell *shell, char ***arr)
 {
-	t_token	*t;
-	t_token	*split;
+	size_t	i;
+	size_t	lst_size;
+	size_t	arr_size;
 
-	t = shell->lexer->tokens;
-	while (t)
+	i = 1;
+	shell->lexer->tmp = NULL;
+	while ((*arr)[i])
 	{
-		if (t->token_kind == WORD)
-		{
-			shell->lexer->tmp = NULL;
-			shell->lexer->tmp = ft_split_ifs(shell->lexer->tmp,
-					t->data, shell);
-			split = shell->lexer->tmp;
-			if (split && split->next != NULL)
-				ft_insert_split(shell, split, t);
-			else if (split)
-			{
-				ft_free_tokens(split);
-				shell->lexer->tmp = NULL;
-			}
-		}
-		t = t->next;
+		ft_split_ifs(shell, (*arr)[i]);
+		i++;
 	}
+	lst_size = ft_lst_size(shell->lexer->tmp);
+	arr_size = ft_arr_size(*arr);
+	if (lst_size != arr_size - 1)
+		ft_merge(shell, arr, lst_size);
+	ft_free_tokens(shell->lexer->tmp);
+	shell->lexer->tmp = NULL;
 }

@@ -99,7 +99,11 @@ static void print_command(t_shell *shell, t_command *lex) // reuse your existing
     } 
     if (lex->args)
     {
-		ft_variable_expansion_arr(shell, lex->args);
+		ft_reset_lexer(shell->lexer);
+		ft_variable_expansion(shell, lex->args);
+		ft_field_splitting(shell, &lex->args);
+		ft_filename_expansion(shell, &lex->args);
+		ft_quote_removal(shell, lex->args);
         printf(" | Args:");
         for (int i = 0; lex->args[i]; i++)
             printf(" [%s]", lex->args[i]);

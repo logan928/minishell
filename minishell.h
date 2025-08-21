@@ -94,17 +94,13 @@ void	ft_critical_error(t_shell *shell);
 
 void	lex(t_shell *shell, char *input, t_lexer *lexer);
 int		ft_check_syntax(t_lexer *lexer);
-void	ft_variable_expansion(t_shell *shell);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env);
-void	ft_append_unquoted_quote(t_shell *s, t_token *t, char **res);
-void	ft_append_quoted_quote(t_shell *s, t_token *t, char **res);
-void	ft_append_variable(t_shell *s, t_token *t, char **res);
+void	ft_append_unquoted_quote(t_shell *s, char *t, char **res);
+void	ft_append_quoted_quote(t_shell *s, char *t, char **res);
+void	ft_append_variable(t_shell *s, char *t, char **res);
 void	ft_append_exit_status(t_shell *s, char **res);
-void	ft_append_normal_chars(t_shell *s, t_token *t, char **res);
-void	ft_field_splitting(t_shell *shell);
-void	ft_filename_expansion(t_shell *shell);
-void	ft_quote_removal(t_shell *shell);
+void	ft_append_normal_chars(t_shell *s, char *t, char **res);
 void	ft_free_lexer(t_lexer *lexer);
 void	ft_reset_lexer(t_lexer *lexr);
 void	ft_reset_lexer_cursor(t_lexer *lexer);
@@ -144,7 +140,14 @@ typedef enum e_ast_type
 
 
 
-void	ft_variable_expansion_arr(t_shell *shell, char **args);
+void	ft_variable_expansion(t_shell *shell, char **args);
+void	ft_field_splitting(t_shell *shell, char ***arr);
+size_t	ft_arr_size(char **arr);
+size_t	ft_lst_size(t_token *tokens);
+void	ft_free_arr(char **arr);
+void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
+void	ft_filename_expansion(t_shell *shell, char ***arr);
+void	ft_quote_removal(t_shell *shell, char **args);
 
 
 typedef enum e_redir_type

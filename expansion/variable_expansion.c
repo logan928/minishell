@@ -36,19 +36,19 @@ char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env)
 	return (ft_strdup_safe(shell, ""));
 }
 
-void	ft_find_next_append(t_shell *s, t_lexer *l, t_token *t, char **res)
+void	ft_find_next_append(t_shell *s, t_lexer *l, char *t, char **res)
 {
-	while (t->data[l->pos])
+	while (t[l->pos])
 	{
-		if (ft_isquote(t->data[l->pos]) && l->quote == 0)
+		if (ft_isquote(t[l->pos]) && l->quote == 0)
 			ft_append_unquoted_quote(s, t, res);
-		else if (ft_isquote(t->data[l->pos]) && l->quote == t->data[l->pos])
+		else if (ft_isquote(t[l->pos]) && l->quote == t[l->pos])
 			ft_append_quoted_quote(s, t, res);
-		else if ((l->quote != '\'') && t->data[l->pos] == '$'
-			&& ft_valid_env_char(t->data[l->pos + 1]))
+		else if ((l->quote != '\'') && t[l->pos] == '$'
+			&& ft_valid_env_char(t[l->pos + 1]))
 			ft_append_variable(s, t, res);
-		else if ((l->quote != '\'') && t->data[l->pos] == '$'
-			&& t->data[l->pos + 1] == '?')
+		else if ((l->quote != '\'') && t[l->pos] == '$'
+			&& t[l->pos + 1] == '?')
 			ft_append_exit_status(s, res);
 		else
 			ft_append_normal_chars(s, t, res);
@@ -64,27 +64,20 @@ void	ft_find_next_append(t_shell *s, t_lexer *l, t_token *t, char **res)
 	* #? is expanded to the value of shell->exit_code
 	* Single quotes are preserved inside double quotes, and vice versa
 */
-void	ft_variable_expansion(t_shell *shell)
+void	ft_variable_expansion(t_shell *shell, char **args)
 {
-	t_token	*t;
-	char	*res;
-	t_lexer	*l;
+	size_t	i;
+	char	*expanded;
 
-	t = shell->lexer->tokens;
-	l = shell->lexer;
-	while (t)
+	i = 1;
+	while (args[i])
 	{
-		if (t->token_kind == WORD)
-		{
-			res = ft_strdup_safe(shell, "");
-			l->pos = 0;
-			l->quote = 0;
-			l->start = -1;
-			while (t->data[l->pos])
-				ft_find_next_append(shell, l, t, &res);
-			free(t->data);
-			t->data = res;
-		}
-		t = t->next;
+		expanded = NULL;
+		ft_reset_lexer_cursor(shell->lexer);
+		while (args[i][shell->lexer->pos])
+			ft_find_next_append(shell, shell->lexer, args[i], &expanded);
+		free(args[i]);
+		args[i] = expanded;
+		i++;
 	}
 }
