@@ -1,5 +1,6 @@
 #include "../minishell.h"
 
+/*
 static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for this. 
 {
 	size_t	len1; 
@@ -24,6 +25,7 @@ static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for 
 	free(s1);
 	return (res);
 }
+*/
 
 static char	**argv_add(char **argv, int *argc, const char *word)
 {
@@ -51,7 +53,7 @@ static t_command	*command_new(void)
 	t_command	*lx = calloc(1, sizeof(t_command)); // TODO: replace with ft_calloc;
 	if (!lx)
 		return (NULL);
-	lx->lexem_kind = CMAND; // default, refine later
+	lx->command_kind = EXTERNAL; // default, refine later
 	lx->args = NULL;
 	//lx->op = NULL;
 	//lx->file = NULL;
@@ -83,45 +85,35 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 		cur->next = redir;
 	}
 }
-/*
+
 static int is_builtin(const char *cmd)
 {
 	size_t len;
-    if (!cmd)
-        return 0;
+	if (!cmd)
+		return 0;
 	len = ft_strlen(cmd);
-    return (
-        ft_strncmp(cmd, "echo", len) == 0 ||
-        ft_strncmp(cmd, "cd", len) == 0 ||
-        ft_strncmp(cmd, "pwd", len) == 0 ||
-        ft_strncmp(cmd, "export", len) == 0 ||
-        ft_strncmp(cmd, "unset", len) == 0 ||
-        ft_strncmp(cmd, "env", len) == 0 ||
-        ft_strncmp(cmd, "exit", len) == 0
-    );
+	return (
+		ft_strncmp(cmd, "echo", len) == 0 ||
+		ft_strncmp(cmd, "cd", len) == 0 ||
+		ft_strncmp(cmd, "pwd", len) == 0 ||
+		ft_strncmp(cmd, "export", len) == 0 ||
+		ft_strncmp(cmd, "unset", len) == 0 ||
+		ft_strncmp(cmd, "env", len) == 0 ||
+		ft_strncmp(cmd, "exit", len) == 0
+	);
 }
-*/
+
 t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;
 	t_command	*cmd = command_new();
-	char	*current_word = NULL;
 	int		argc = 0;
 
 	while (tok)
 	{
 		if (tok->token_kind == WORD)
 		{
-			// combine consecutive WORDs - discuss with Mikhail whetehr to pass as an string or separate words (i.e. without space)
-			if (current_word)
-				current_word = str_append(current_word, " "); //can'use ft_strjoin_free or ft_strjoin
-			current_word = str_append(current_word, tok->data);
-			if (!tok->next || tok->next->token_kind != WORD)
-			{
-				cmd->args = argv_add(cmd->args, &argc, current_word);
-				free(current_word);
-				current_word = NULL;
-			}
+			cmd->args = argv_add(cmd->args, &argc, tok->data);
 		}
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
 			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)
@@ -149,13 +141,14 @@ t_command	*command_formatter(t_token **tokptr)
 			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
 			|| tok->token_kind == R_PAREN || tok->token_kind == NL)
 		{
-			// stop here and let parser handle higher-level ops
-					
-			break; //continue : depending on how the Parser is integrated.
+			break;
 		}
 		tok = tok->next;
 	}
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable. 
+	cmd->command_kind = EXTERNAL;
+	if(is_builtin(cmd->args[0]))
+		cmd->command_kind = BUILTIN;
 	return (cmd);
 }
 

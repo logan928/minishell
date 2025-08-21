@@ -91,8 +91,8 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		//t_command *cmd = command_formatter(&shell.lexer->tokens);
 		//print_lexem(cmd);
-		//t_ast *root = parse_tokens(&shell.lexer->tokens);
-		//print_ast(root, 0);//remove 
+		t_ast *root = parse(&shell.lexer->tokens);
+		print_ast(root, 0);//remove 
 		//free_ast(root);// Check
 
 		free(shell.input);
