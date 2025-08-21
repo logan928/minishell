@@ -24,7 +24,7 @@ t_ast *parse_logical(t_token **tokptr)
         if(op == AND_IF)
             node->type = AST_AND;
         else
-            node->type + AST_OR;
+            node->type = AST_OR;
         node->left = left;
         node->right = right;
         left = node;
@@ -90,14 +90,13 @@ static void print_command(t_command *lex) // reuse your existing printer
 {
     if (!lex) return;
     printf("Lexem kind: ");
-    /*
-    switch (lex->lexem_kind)
+    
+    switch (lex->command_kind)
     {
         case BUILTIN:     printf("BUILTIN"); break;
         case EXTERNAL:    printf("EXTERNAL"); break;
-        case REDIRECTION: printf("REDIRECTION"); break;
         default:          printf("OTHER"); break;
-    } */
+    } 
     if (lex->args)
     {
         printf(" | Args:");

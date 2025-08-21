@@ -53,7 +53,7 @@ static t_command	*command_new(void)
 	t_command	*lx = calloc(1, sizeof(t_command)); // TODO: replace with ft_calloc;
 	if (!lx)
 		return (NULL);
-	lx->lexem_kind = CMAND; // default, refine later
+	lx->command_kind = EXTERNAL; // default, refine later
 	lx->args = NULL;
 	//lx->op = NULL;
 	//lx->file = NULL;
@@ -85,24 +85,24 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 		cur->next = redir;
 	}
 }
-/*
+
 static int is_builtin(const char *cmd)
 {
 	size_t len;
-    if (!cmd)
-        return 0;
+	if (!cmd)
+		return 0;
 	len = ft_strlen(cmd);
-    return (
-        ft_strncmp(cmd, "echo", len) == 0 ||
-        ft_strncmp(cmd, "cd", len) == 0 ||
-        ft_strncmp(cmd, "pwd", len) == 0 ||
-        ft_strncmp(cmd, "export", len) == 0 ||
-        ft_strncmp(cmd, "unset", len) == 0 ||
-        ft_strncmp(cmd, "env", len) == 0 ||
-        ft_strncmp(cmd, "exit", len) == 0
-    );
+	return (
+		ft_strncmp(cmd, "echo", len) == 0 ||
+		ft_strncmp(cmd, "cd", len) == 0 ||
+		ft_strncmp(cmd, "pwd", len) == 0 ||
+		ft_strncmp(cmd, "export", len) == 0 ||
+		ft_strncmp(cmd, "unset", len) == 0 ||
+		ft_strncmp(cmd, "env", len) == 0 ||
+		ft_strncmp(cmd, "exit", len) == 0
+	);
 }
-*/
+
 t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;
@@ -146,6 +146,9 @@ t_command	*command_formatter(t_token **tokptr)
 		tok = tok->next;
 	}
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable. 
+	cmd->command_kind = EXTERNAL;
+	if(is_builtin(cmd->args[0]))
+		cmd->command_kind = BUILTIN;
 	return (cmd);
 }
 

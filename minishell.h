@@ -159,9 +159,16 @@ typedef struct s_redir
 	struct s_redir	*next;
 }	t_redir;
 
+
+typedef enum e_command_kind
+{
+	BUILTIN, 
+	EXTERNAL,
+}	t_command_kind;
+
 typedef struct s_command
 {
-	t_lexem_kind	lexem_kind; //consider renaming as command_kind??
+	t_command_kind	command_kind; //consider renaming as command_kind??
 	char			*path;
 	char			**args;   // argv for execve()
 	char			**env;
