@@ -86,7 +86,7 @@ static void print_indent(int depth)
     for (int i = 0; i < depth; i++)
         printf("  ");
 }
-static void print_command(t_command *lex) // reuse your existing printer
+static void print_command(t_shell *shell, t_command *lex) // reuse your existing printer
 {
     if (!lex) return;
     printf("Lexem kind: ");
@@ -99,16 +99,24 @@ static void print_command(t_command *lex) // reuse your existing printer
     } 
     if (lex->args)
     {
+		ft_variable_expansion_arr(shell, lex->args);
         printf(" | Args:");
         for (int i = 0; lex->args[i]; i++)
             printf(" [%s]", lex->args[i]);
-    }
+    };
+	printf("\n\t\t\tRedirs:");
+	while (lex->redirs)
+	{
+		printf(" [%d: %s]", lex->redirs->kind, lex->redirs->file);
+		lex->redirs = lex->redirs->next;
+	}
+
     //if (lex->op && lex->file)
         //printf(" | Redir: %s %s", lex->op, lex->file);
     printf("\n");
 }
 
-void print_ast(t_ast *node, int depth)
+void print_ast(t_shell *shell, t_ast *node, int depth)
 {
     if (!node) return;
 
@@ -119,26 +127,26 @@ void print_ast(t_ast *node, int depth)
         case AST_CMD:
             printf("AST_CMD:\n");
             print_indent(depth + 1);
-            print_command(node->cmd);
+            print_command(shell, node->cmd);
             break;
         case AST_PIPE:
             printf("AST_PIPE:\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
+            print_ast(shell, node->left, depth + 1);
+            print_ast(shell, node->right, depth + 1);
             break;
         case AST_AND:
             printf("AST_AND:\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
+            print_ast(shell, node->left, depth + 1);
+            print_ast(shell, node->right, depth + 1);
             break;
         case AST_OR:
             printf("AST_OR:\n");
-            print_ast(node->left, depth + 1);
-            print_ast(node->right, depth + 1);
+            print_ast(shell, node->left, depth + 1);
+            print_ast(shell, node->right, depth + 1);
             break;
         case AST_SUBSHELL:
             printf("AST_SUBSHELL:\n");
-            print_ast(node->left, depth + 1);
+            print_ast(shell, node->left, depth + 1);
             break;
         default:
             printf("AST_UNKNOWN\n");

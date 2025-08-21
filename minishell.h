@@ -144,6 +144,7 @@ typedef enum e_ast_type
 
 
 
+void	ft_variable_expansion_arr(t_shell *shell, char **args);
 
 
 typedef enum e_redir_type
@@ -211,6 +212,6 @@ typedef struct s_glob_state
 t_ast *parse(t_token **tokptr);
 t_ast	*parse_tokens(t_token **tokens);
 void	free_ast(t_ast *node);
-void	print_ast(t_ast *node, int depth);
+void	print_ast(t_shell *shell, t_ast *node, int depth);
 
 #endif

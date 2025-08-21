@@ -52,7 +52,7 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
 	t_token	*token;
-	int		syntax_status;
+	//int		syntax_status;
 
 	(void)argc;
 	(void)argv;
@@ -75,24 +75,24 @@ int	main(int argc, char *argv[], char *envp[])
 			}
 		}
 		lex(&shell, shell.input, shell.lexer);
-		syntax_status = ft_check_syntax(shell.lexer);
-		ft_variable_expansion(&shell);
-		ft_field_splitting(&shell);
-		ft_filename_expansion(&shell);
-		ft_quote_removal(&shell);
-		if (syntax_status == 1)
-		{
-			token = shell.lexer->tokens;
+		//syntax_status = ft_check_syntax(shell.lexer);
+		//ft_variable_expansion(&shell);
+		//ft_field_splitting(&shell);
+		//ft_filename_expansion(&shell);
+		//ft_quote_removal(&shell);
+	//if (syntax_status == 1)
+	//{
+		token = shell.lexer->tokens;
 			while (token)
 			{
 				printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
-				token = token->next;
+			token = token->next;
 			}
-		}
+//		}
 		//t_command *cmd = command_formatter(&shell.lexer->tokens);
 		//print_lexem(cmd);
 		t_ast *root = parse(&shell.lexer->tokens);
-		print_ast(root, 0);//remove 
+		print_ast(&shell, root, 0);//remove 
 		//free_ast(root);// Check
 
 		free(shell.input);
