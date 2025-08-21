@@ -5,13 +5,11 @@ t_ast *parse_pipeline(t_token **tokptr);
 t_ast *parse_logical(t_token **tokptr);
 t_ast *parse_command(t_token **tokptr);
 
-// Entry point
 t_ast *parse(t_token **tokptr)
 {
     return parse_logical(tokptr);
 }
 
-// logical = pipeline { (&& ||) pipeline }
 t_ast *parse_logical(t_token **tokptr)
 {
     t_ast *left = parse_pipeline(tokptr);
@@ -23,7 +21,10 @@ t_ast *parse_logical(t_token **tokptr)
         t_ast *right = parse_pipeline(tokptr);
 
         t_ast *node = calloc(1, sizeof(t_ast));//
-        node->type = (op == AND_IF ? AST_AND : AST_OR);
+        if(op == AND_IF)
+            node->type = AST_AND;
+        else
+            node->type + AST_OR;
         node->left = left;
         node->right = right;
         left = node;
@@ -31,7 +32,6 @@ t_ast *parse_logical(t_token **tokptr)
     return left;
 }
 
-// pipeline = command { | command }
 t_ast *parse_pipeline(t_token **tokptr)
 {
     t_ast *left = parse_command(tokptr);
@@ -49,23 +49,22 @@ t_ast *parse_pipeline(t_token **tokptr)
     return left;
 };
 
-// command = simple command or ( subshell )
 t_ast *parse_command(t_token **tokptr)
 {
     if (*tokptr && (*tokptr)->token_kind == L_PAREN)
     {
         *tokptr = (*tokptr)->next; // skip '('
-        t_ast *inside = parse_logical(tokptr);
+        t_ast *subtree = parse_logical(tokptr);
         if (!*tokptr || (*tokptr)->token_kind != R_PAREN)
         {
-            fprintf(stderr, "minishell: syntax error, missing ')'\n");//
+            printf( "minishell: syntax error, missing ')'\n");//
             return NULL;
         }
         *tokptr = (*tokptr)->next; // skip ')'
 
         t_ast *node = calloc(1, sizeof(t_ast));//
         node->type = AST_SUBSHELL;
-        node->left = inside;
+        node->left = subtree;
         return node;
     }
     else

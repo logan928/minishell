@@ -107,22 +107,12 @@ t_command	*command_formatter(t_token **tokptr)
 {
 	t_token	*tok = *tokptr;
 	t_command	*cmd = command_new();
-	//char	*current_word = NULL;
 	int		argc = 0;
 
 	while (tok)
 	{
 		if (tok->token_kind == WORD)
 		{
-			/*
-			current_word = str_append(current_word, tok->data);
-			if (!tok->next || tok->next->token_kind != WORD)
-			{
-				cmd->args = argv_add(cmd->args, &argc, current_word);
-				free(current_word);
-				current_word = NULL;
-			}
-			*/
 			cmd->args = argv_add(cmd->args, &argc, tok->data);
 		}
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
@@ -151,9 +141,7 @@ t_command	*command_formatter(t_token **tokptr)
 			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
 			|| tok->token_kind == R_PAREN || tok->token_kind == NL)
 		{
-			// stop here and let parser handle higher-level ops
-					
-			break; //continue : depending on how the Parser is integrated.
+			break;
 		}
 		tok = tok->next;
 	}
