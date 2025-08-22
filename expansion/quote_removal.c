@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <stdnoreturn.h>
 
 void	ft_append_before_open_quote(t_shell *shell, char *s, char **clean)
 {
@@ -64,9 +65,29 @@ void	ft_append_rest(t_shell *shell, char **s, char **clean)
 	if (*s)
 		free(*s);
 	if (!*clean)
-		*s = ft_strdup_safe(shell, "''");
+		*s = ft_strdup_safe(shell, "");
 	else
 		*s = *clean;
+}
+
+void	ft_quote_removal_str(t_shell *shell, t_token *t)
+{
+	char	*clean;
+
+	ft_reset_lexer_cursor(shell->lexer);
+	clean = NULL;
+	while (t->data[shell->lexer->pos])
+	{
+		if (ft_isquote(t->data[shell->lexer->pos])
+			&& !shell->lexer->quote)
+			ft_append_before_open_quote(shell, t->data, &clean);
+		else if (ft_isquote(t->data[shell->lexer->pos])
+			&& shell->lexer->quote == t->data[shell->lexer->pos])
+			ft_append_before_close_quote(shell, t->data, &clean);
+		else
+			shell->lexer->pos++;
+	}
+	ft_append_rest(shell, &t->data, &clean);
 }
 
 void	ft_quote_removal(t_shell *shell, char **args)

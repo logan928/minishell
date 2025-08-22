@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   split_helpers.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/22 13:43:22 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/22 13:44:01 by mkugan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 size_t	ft_arr_size(char **arr)
@@ -8,16 +20,6 @@ size_t	ft_arr_size(char **arr)
 	while (arr[size])
 		size++;
 	return (size);
-}
-
-void	ft_free_arr(char **arr)
-{
-	size_t	i;
-
-	i = 0;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
 }
 
 size_t	ft_lst_size(t_token *tokens)
@@ -54,4 +56,3 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size)
 	ft_free_arr(*arr);
 	*arr = new_arr;
 }
-
