@@ -8,7 +8,8 @@ GRAMMAR_DIR := ./grammar
 EXPANSION_DIR := ./expansion
 
 NAME := minishell
-SRCS := minishell.c signals.c shell.c safe_wrappers.c \
+SRCS := minishell.c signals.c shell.c safe_wrappers.c safe_wrappers_2.c \
+		cmd_resolve.c here.c \
 		$(BUILTINS_DIR)/env.c $(BUILTINS_DIR)/echo.c \
 		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
 		$(GRAMMAR_DIR)/validator.c \

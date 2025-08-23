@@ -12,7 +12,9 @@ NAME := libft.a
 
 SRCS := ft_isquote.c ft_isspace.c ft_strndup.c ft_strdup.c \
 		ft_strlen.c ft_memcpy.c ft_strjoin.c ft_strncmp.c \
-		ft_isdigit.c ft_itoa.c ft_strjoin_free.c ft_strcmp.c
+		ft_isdigit.c ft_itoa.c ft_strjoin_free.c ft_strcmp.c \
+		ft_strchr.c ft_split.c ft_strlcpy.c ft_free_arr.c \
+		ft_memmove.c ft_get_next_line.c
 
 OBJS := $(SRCS:.c=.o)
 

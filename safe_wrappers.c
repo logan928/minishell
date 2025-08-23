@@ -6,11 +6,10 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 12:24:41 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 13:45:41 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/22 12:37:01 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "minishell.h"
 
 char	*ft_strdup_safe(t_shell *shell, const char *s)

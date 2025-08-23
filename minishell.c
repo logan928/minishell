@@ -11,9 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft/libft.h"
-#include <stdlib.h>
-#include <string.h>
 
 volatile sig_atomic_t	g_sig = 0;
 
@@ -52,13 +49,13 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
 	//t_token	*token;
-	//int		syntax_status;
+	int		syntax_status;
 
 	(void)argc;
 	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
-	shell.lexer = &(t_lexer){NULL, 0, 0, 0, NULL, NULL};
+	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
 	while (1)
 	{
 		shell.input = readline(shell.prompt);
@@ -75,7 +72,7 @@ int	main(int argc, char *argv[], char *envp[])
 			}
 		}
 		lex(&shell, shell.input, shell.lexer);
-		//syntax_status = ft_check_syntax(shell.lexer);
+		syntax_status = ft_check_syntax(shell.lexer);
 		//ft_variable_expansion(&shell);
 		//ft_field_splitting(&shell);
 		//ft_filename_expansion(&shell);
@@ -91,8 +88,20 @@ int	main(int argc, char *argv[], char *envp[])
 //		}
 		//t_command *cmd = command_formatter(&shell.lexer->tokens);
 		//print_lexem(cmd);
-		t_ast *root = parse(&shell.lexer->tokens);
-		print_ast(&shell, root, 0);//remove 
+	t_token *tt = shell.lexer->tokens;
+		printf("Tokens:");
+	while (tt)
+		{
+			printf(" [%s]", tt->data);
+			tt = tt->next;
+		}
+		printf("\n");
+		if (syntax_status)
+		{
+			ft_here(&shell);
+			t_ast *root = parse(&shell.lexer->tokens);
+			print_ast(&shell, root, 0);//remove 
+		}
 		//free_ast(root);// Check
 
 		free(shell.input);

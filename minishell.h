@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 17:42:04 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/22 12:59:01 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include "libft/libft.h"
 # include <sys/types.h>
 # include <dirent.h>
+# include <stdbool.h>
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -75,6 +76,7 @@ typedef struct s_lexer 			//map with t_ast
 	int		pos;
 	int		start;
 	char	quote;
+	bool	io_here;
 	t_token	*tokens;
 	t_token	*tmp;
 }	t_lexer;
@@ -125,6 +127,7 @@ char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
 t_token	*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
 char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
 char	*ft_itoa_safe(t_shell *shell, long n);
+void 	*ft_malloc_safe(t_shell *shell, size_t size);
 
 typedef enum e_ast_type
 {
@@ -137,9 +140,6 @@ typedef enum e_ast_type
 }	t_ast_type;
 
 
-
-
-
 void	ft_variable_expansion(t_shell *shell, char **args);
 void	ft_field_splitting(t_shell *shell, char ***arr);
 size_t	ft_arr_size(char **arr);
@@ -149,6 +149,10 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
 void	ft_filename_expansion(t_shell *shell, char ***arr);
 void	ft_quote_removal(t_shell *shell, char **args);
 
+bool	ft_get_cmd_path(t_shell *shell, char **args);
+void	ft_here_doc(t_shell *shell, t_token *t);
+void	ft_quote_removal_str(t_shell *shell, t_token *t);
+void	ft_here(t_shell *shell);
 
 typedef enum e_redir_type
 {
