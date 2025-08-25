@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <unistd.h>
+# include <limits.h>
 
 # define BUFFER_SIZE 1024
 
@@ -40,5 +41,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 void	ft_free_arr(char **arr);
 void	*ft_memmove(void *dest, const void *src, size_t n);
 char	*ft_get_next_line(int fd);
+long long	ft_strtoll(const char *str, char **str_end, int base);
+int	ft_tolower(int c);
 
 #endif

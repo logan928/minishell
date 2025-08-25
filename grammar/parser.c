@@ -89,37 +89,45 @@ static void print_indent(int depth)
 static void print_command(t_shell *shell, t_command *lex) // reuse your existing printer
 {
     if (!lex) return;
-    printf("Lexem kind: ");
+//    printf("Lexem kind: ");
 
-    switch (lex->command_kind)
-    {
-        case BUILTIN:     printf("BUILTIN"); break;
-        case EXTERNAL:    printf("EXTERNAL"); break;
-        default:          printf("OTHER"); break;
-    } 
+  //  switch (lex->command_kind)
+    //{
+      //  case BUILTIN:     printf("BUILTIN"); break;
+        //case EXTERNAL:    printf("EXTERNAL"); break;
+        //default:          printf("OTHER"); break;
+    //} 
     if (lex->args)
     {
+		//t_cmd_access cmd_access;
 		ft_reset_lexer(shell->lexer);
 		ft_variable_expansion(shell, lex->args);
 		ft_field_splitting(shell, &lex->args);
 		ft_filename_expansion(shell, &lex->args);
 		ft_quote_removal(shell, lex->args);
-		if (lex->command_kind == EXTERNAL)
-			ft_get_cmd_path(shell, lex->args);
-        printf(" | Args:");
-        for (int i = 0; lex->args[i]; i++)
-			printf(" [%s]", lex->args[i]);
-    };
-	printf("\n\t\t\tRedirs:");
-	while (lex->redirs)
-	{
-		printf(" [%d: %s]", lex->redirs->kind, lex->redirs->file);
-		lex->redirs = lex->redirs->next;
-	}
+		//if (lex->command_kind == EXTERNAL)
+		//{
+		//	cmd_access = ft_get_cmd_path(shell, lex->args);
+	//		printf("CMD_ACCESS: %d:%d:%d\n", cmd_access.exist, cmd_access.executable, cmd_access.is_dir);
+		}
+      //  printf(" | Args:");
+        //for (int i = 0; lex->args[i]; i++)
+		//	printf(" [%s]", lex->args[i]);
+   // }
+	//printf("\n\t\t\tRedirs:");
+	//while (lex->redirs)
+	//{
+//		printf(" [%d: %s]", lex->redirs->kind, lex->redirs->file);
+//		lex->redirs = lex->redirs->next;
+//	}
 
     //if (lex->op && lex->file)
-        //printf(" | Redir: %s %s", lex->op, lex->file);
-    printf("\n");
+      //  printf(" | Redir: %s %s", lex->op, lex->file);
+    //printf("\n");
+	
+	if (ft_strncmp(lex->args[0], "exit", 5) == 0)
+		ft_exit(shell, lex->args);
+
 }
 
 void print_ast(t_shell *shell, t_ast *node, int depth)
@@ -131,31 +139,31 @@ void print_ast(t_shell *shell, t_ast *node, int depth)
     switch (node->type)
     {
         case AST_CMD:
-            printf("AST_CMD:\n");
-            print_indent(depth + 1);
+            //printf("AST_CMD:\n");
+            //print_indent(depth + 1);
             print_command(shell, node->cmd);
             break;
         case AST_PIPE:
-            printf("AST_PIPE:\n");
-            print_ast(shell, node->left, depth + 1);
-            print_ast(shell, node->right, depth + 1);
+            //printf("AST_PIPE:\n");
+            //print_ast(shell, node->left, depth + 1);
+            //print_ast(shell, node->right, depth + 1);
             break;
         case AST_AND:
-            printf("AST_AND:\n");
-            print_ast(shell, node->left, depth + 1);
-            print_ast(shell, node->right, depth + 1);
+            //printf("AST_AND:\n");
+            //print_ast(shell, node->left, depth + 1);
+            //print_ast(shell, node->right, depth + 1);
             break;
         case AST_OR:
-            printf("AST_OR:\n");
-            print_ast(shell, node->left, depth + 1);
-            print_ast(shell, node->right, depth + 1);
+            //printf("AST_OR:\n");
+            //print_ast(shell, node->left, depth + 1);
+            //print_ast(shell, node->right, depth + 1);
             break;
         case AST_SUBSHELL:
-            printf("AST_SUBSHELL:\n");
-            print_ast(shell, node->left, depth + 1);
+            //printf("AST_SUBSHELL:\n");
+            //print_ast(shell, node->left, depth + 1);
             break;
         default:
-            printf("AST_UNKNOWN\n");
+            //printf("AST_UNKNOWN\n");
             break;
     }
 }

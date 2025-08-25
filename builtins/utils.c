@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../minishell.h"
+/*()
 char	**ft_get_builtins(void)
 {
 	const char	*builtins[] = {"echo", "cd", "pwd",
@@ -29,4 +31,39 @@ int	*ft_is_builtin(const char *builtins[], char *cmd)
 			return (1);
 	}
 	return (0);
+}*/
+
+bool	ft_is_valid_number(char *s)
+{
+	bool	has_digit;
+
+	has_digit = false;
+	while (*s && ft_isspace(*s))
+		s++;
+	if (*s == '+' || *s == '-')
+		s++;
+	while (*s && ft_isdigit(*s))
+	{
+		has_digit = true;
+		s++;
+	}
+	while (*s && ft_isspace(*s))
+		s++;
+	return (*s == '\0' && has_digit);
+}
+
+void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
+{
+	char	*err;
+
+	err = ft_str_join3_cpy_safe(shell, cmd, arg, ENUMREQ);
+	ft_write_safe(shell, err, STDERR_FILENO);
+}
+
+void	ft_too_many_args(t_shell *shell, char *cmd)
+{
+	char	*err;
+
+	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ETMARGS);
+	ft_write_safe(shell, err, STDERR_FILENO);
 }
