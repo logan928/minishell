@@ -1,32 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utilc.c                                            :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:36:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/12 13:41:42 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 17:05:53 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	**ft_get_builtins(void)
-{
-	const char	*builtins[] = {"echo", "cd", "pwd",
-		"export", "unset", "env", "exit", NULL};
+#include "../minishell.h"
 
-	return (builtins);
+bool	ft_is_valid_number(char *s)
+{
+	bool	has_digit;
+
+	has_digit = false;
+	while (*s && ft_isspace(*s))
+		s++;
+	if (*s == '+' || *s == '-')
+		s++;
+	while (*s && ft_isdigit(*s))
+	{
+		has_digit = true;
+		s++;
+	}
+	while (*s && ft_isspace(*s))
+		s++;
+	return (*s == '\0' && has_digit);
 }
 
-int	*ft_is_builtin(const char *builtins[], char *cmd)
+void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
 {
-	size_t	i;
+	char	*err;
 
-	i = 0;
-	while (builtins[i])
-	{
-		if (ft_strncmp(builtins[i], cmd, ft_strlen(cmd)) == 0)
-			return (1);
-	}
-	return (0);
+	err = ft_str_join3_cpy_safe(shell, cmd, arg, ENUMREQ);
+	ft_write_safe(shell, err, STDERR_FILENO);
+}
+
+void	ft_too_many_args(t_shell *shell, char *cmd)
+{
+	char	*err;
+
+	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ETMARGS);
+	ft_write_safe(shell, err, STDERR_FILENO);
 }

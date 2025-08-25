@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 17:40:56 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 16:58:02 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,6 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
-void	ft_free_exit(t_shell *shell)
-{
-	ft_free_lexer(shell->lexer);
-	free(shell->prompt);
-	ft_free_env(shell->env);
-	rl_clear_history();
-	if (isatty(STDIN_FILENO))
-		write(2, "exit\n", 6);
-	exit(shell->exit_status);
-}
-
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
@@ -53,14 +42,14 @@ int	main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
+	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
 	while (1)
 	{
 		shell.input = readline(shell.prompt);
 		if (!shell.input)
-			ft_free_exit(&shell);
+			ft_exit(&shell, NULL);
 		if (shell.input)
 		{
 			if (*shell.input)
@@ -72,7 +61,7 @@ int	main(int argc, char *argv[], char *envp[])
 			}
 		}
 		lex(&shell, shell.input, shell.lexer);
-		syntax_status = ft_check_syntax(shell.lexer);
+		syntax_status = ft_check_syntax(&shell);
 		//ft_variable_expansion(&shell);
 		//ft_field_splitting(&shell);
 		//ft_filename_expansion(&shell);
@@ -88,6 +77,7 @@ int	main(int argc, char *argv[], char *envp[])
 //		}
 		//t_command *cmd = command_formatter(&shell.lexer->tokens);
 		//print_lexem(cmd);
+		/*
 	t_token *tt = shell.lexer->tokens;
 		printf("Tokens:");
 	while (tt)
@@ -95,7 +85,7 @@ int	main(int argc, char *argv[], char *envp[])
 			printf(" [%s]", tt->data);
 			tt = tt->next;
 		}
-		printf("\n");
+		printf("\n");*/
 		if (syntax_status)
 		{
 			ft_here(&shell);

@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:06:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 14:14:21 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 12:05:18 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,32 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <unistd.h>
+# include <limits.h>
 
 # define BUFFER_SIZE 1024
 
-int		ft_isquote(char c);
-int		ft_isspace(char c);
-int		ft_isdigit(int c);
-char	*ft_itoa(long n);
-char	*ft_strndup(const char *s, size_t n);
-char	*ft_strdup(const char *s);
-size_t	ft_strlen(const char *s);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-char	*ft_strjoin(char const *s1, char const *s2, char const *s3);
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-char	*ft_strjoin_free(char *s1, char *s2);
-int		ft_strcmp(const char *s1, const char *s2, int ignore_case);
-void	*ft_calloc(size_t nmemb, size_t size);
-void	*ft_memset(void *s, int c, size_t n);
-char	*ft_strchr(const char *s, int c);
-char	**ft_split(char const *s, char c);
-size_t	ft_strlcpy(char *dst, const char *src, size_t size);
-void	ft_free_arr(char **arr);
-void	*ft_memmove(void *dest, const void *src, size_t n);
-char	*ft_get_next_line(int fd);
+int			ft_isquote(char c);
+int			ft_isspace(char c);
+int			ft_isdigit(int c);
+char		*ft_itoa(long n);
+char		*ft_strndup(const char *s, size_t n);
+char		*ft_strdup(const char *s);
+size_t		ft_strlen(const char *s);
+void		*ft_memcpy(void *dest, const void *src, size_t n);
+char		*ft_strjoin(char const *s1, char const *s2, char const *s3);
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
+char		*ft_strjoin_free(char *s1, char *s2);
+int			ft_strcmp(const char *s1, const char *s2, int ignore_case);
+void		*ft_calloc(size_t nmemb, size_t size);
+void		*ft_memset(void *s, int c, size_t n);
+char		*ft_strchr(const char *s, int c);
+char		**ft_split(char const *s, char c);
+size_t		ft_strlcpy(char *dst, const char *src, size_t size);
+void		ft_free_arr(char **arr);
+void		*ft_memmove(void *dest, const void *src, size_t n);
+char		*ft_get_next_line(int fd);
+long long	ft_strtoll(const char *str, char **str_end, int base);
+int			ft_tolower(int c);
+int			ft_isupper(int c);
 
 #endif

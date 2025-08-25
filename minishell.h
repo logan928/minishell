@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 12:59:01 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 17:15:06 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@
 # include <sys/types.h>
 # include <dirent.h>
 # include <stdbool.h>
+# include <sys/stat.h>
+# include <errno.h>
+
+# define EUNEXPTKN "minishell: syntax error near unexpected token `"
+# define ETMARGS ": too many arguments\n"
+# define ENUMREQ ": numeric argument required\n"
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -83,11 +89,12 @@ typedef struct s_lexer 			//map with t_ast
 
 typedef struct s_shell
 {
-	char	*prompt;
-	int		exit_status;
-	t_lexer	*lexer;
-	char	**env;
-	char	*input;
+	char			*prompt;
+	unsigned char	exit_status;
+	t_lexer			*lexer;
+	char			**env;
+	char			*input;
+	char			*pwd;
 }	t_shell;
 
 char	*get_prompt(void);
@@ -95,9 +102,9 @@ void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
 
 void	lex(t_shell *shell, char *input, t_lexer *lexer);
-int		ft_check_syntax(t_lexer *lexer);
+int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
-char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env);
+char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
 void	ft_append_unquoted_quote(t_shell *s, char *t, char **res);
 void	ft_append_quoted_quote(t_shell *s, char *t, char **res);
 void	ft_append_variable(t_shell *s, char *t, char **res);
@@ -115,12 +122,17 @@ void	ft_insert_after(t_token *target, t_token *token);
 void	ft_free_tokens(t_token *head);
 void	ft_add_token_sorted(t_token **head, t_token *token);
 
-char	**ft_clone_env(char *envp[]);
-void	ft_env(char *env[]);
+void	ft_clone_env(t_shell *shell, char *envp[]);
+void	ft_env(t_shell *shell, char *env[]);
 void	ft_free_env(char *envp[]);
+void	ft_exit(t_shell *shell, char **args);
+void	ft_echo(t_shell *shell, char **args);
+char	*ft_get_cwd(t_shell *shell);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
+
+void	ft_too_many_args(t_shell *shell, char *cmd);
 
 char	*ft_strdup_safe(t_shell *shell, const char *s);
 char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
@@ -128,6 +140,8 @@ t_token	*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
 char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
 char	*ft_itoa_safe(t_shell *shell, long n);
 void 	*ft_malloc_safe(t_shell *shell, size_t size);
+bool	ft_is_valid_number(char *s);
+void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 
 typedef enum e_ast_type
 {
@@ -149,10 +163,17 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
 void	ft_filename_expansion(t_shell *shell, char ***arr);
 void	ft_quote_removal(t_shell *shell, char **args);
 
-bool	ft_get_cmd_path(t_shell *shell, char **args);
-void	ft_here_doc(t_shell *shell, t_token *t);
-void	ft_quote_removal_str(t_shell *shell, t_token *t);
-void	ft_here(t_shell *shell);
+typedef struct s_cmd_access
+{
+	bool	exist;
+	bool	executable;
+	bool	is_dir;
+}	t_cmd_access;
+
+t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
+void		ft_here_doc(t_shell *shell, t_token *t);
+void		ft_quote_removal_str(t_shell *shell, t_token *t);
+void		ft_here(t_shell *shell);
 
 typedef enum e_redir_type
 {
@@ -169,7 +190,6 @@ typedef struct s_redir
 	char			*content; //What is usually under content??? heredocs?? TODO: handle content
 	struct s_redir	*next;
 }	t_redir;
-
 
 typedef enum e_command_kind
 {
@@ -205,8 +225,6 @@ typedef struct s_ast
 t_command	*command_formatter(t_token **tokptr);
 void	print_lexem(t_command *cmd);
 
-int	ft_echo(char **args);
-
 typedef struct s_glob_state
 {
 	int	last_star_index;
@@ -220,5 +238,8 @@ t_ast *parse(t_token **tokptr);
 t_ast	*parse_tokens(t_token **tokens);
 void	free_ast(t_ast *node);
 void	print_ast(t_shell *shell, t_ast *node, int depth);
+
+char	*ft_str_join3_cpy_safe(t_shell *shell, char *s1, char *s2, char *s3);
+void	ft_write_safe(t_shell *shell, char *s, int fd);
 
 #endif

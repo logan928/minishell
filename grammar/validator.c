@@ -22,44 +22,31 @@ static int	ft_isredirection(t_token_kind kind)
 	return (kind == LESS || kind == DLESS || kind == GREAT || kind == DGREAT);
 }
 
-static int	ft_syntax_error(t_lexer *lexer, char *token)
+static int	ft_syntax_error(t_shell *shell, char *token)
 {
-	char		*error;
+	char	*err;
 
-	error = ft_strjoin("minish: syntax error near unexpected token `",
-			token, "'\n");
-	if (!error)
-	{
-		ft_free_lexer(lexer);
-		return (-1);
-	}
-	if (write(2, error, ft_strlen(error)) != (ssize_t)ft_strlen(error))
-	{
-		printf("test\n");
-		free(error);
-		ft_free_lexer(lexer);
-		return (-1);
-	}
-	free(error);
+	err = ft_str_join3_cpy_safe(shell, EUNEXPTKN, token, "'\n");
+	ft_write_safe(shell, err, STDERR_FILENO);
 	return (0);
 }
 
-int	ft_check_syntax(t_lexer *lexer)
+int	ft_check_syntax(t_shell *shell)
 {
 	t_token	*token;
 	t_token	*next;
 	int		i;
 
 	i = 0;
-	token = lexer->tokens;
+	token = shell->lexer->tokens;
 	while (token && token->token_kind != NL)
 	{
 		next = token->next;
 		if ((i == 0 && ft_isoperator(token->token_kind))
 			|| (ft_isoperator(token->token_kind) && next && ft_isoperator(next->token_kind)))
-			return (ft_syntax_error(lexer, next->data));
+			return (ft_syntax_error(shell, next->data));
 		if (ft_isredirection(token->token_kind) && next->token_kind != WORD)
-			return (ft_syntax_error(lexer, next->data));
+			return (ft_syntax_error(shell, next->data));
 		i++;
 		token = next;
 	}

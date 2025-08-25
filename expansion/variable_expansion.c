@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:38:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 15:04:51 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 17:14:17 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,19 @@ int	ft_valid_env_char(int c)
 	return (0);
 }
 
-char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env)
+char	*ft_get_env_var(t_shell *shell, char *s, size_t len)
 {
 	size_t	i;
 
 	i = 0;
-	while (env[i])
+	while (shell->env[i])
 	{
-		if (!ft_strncmp(s, env[i], len))
+		if (!ft_strncmp(s, shell->env[i], len))
 		{
-			if (env[i][len] == '=')
-				return (ft_strdup_safe(shell, env[i] + len + 1));
+			if (shell->env[i][len] == '=')
+				return (ft_strdup_safe(shell, shell->env[i] + len + 1));
 		}
-		env++;
+		shell->env++;
 	}
 	return (ft_strdup_safe(shell, ""));
 }
