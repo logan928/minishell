@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:39:44 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 13:54:06 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,6 @@ int	main(int argc, char *argv[], char *envp[])
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
-	char *args[] = {"echo", "Hello world", "test", NULL};
-	char *args2[] = {"echo", "-n", "Hello world", NULL};
-	char *args3[] = {"echo",  NULL};
-	ft_echo(&shell, args);
-	ft_echo(&shell, args2);
-	ft_echo(&shell, args3);
 	while (1)
 	{
 		shell.input = readline(shell.prompt);

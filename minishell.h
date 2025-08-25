@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:30:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 15:20:41 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ void	ft_insert_after(t_token *target, t_token *token);
 void	ft_free_tokens(t_token *head);
 void	ft_add_token_sorted(t_token **head, t_token *token);
 
-char	**ft_clone_env(char *envp[]);
-void	ft_env(char *env[]);
+void	ft_clone_env(t_shell *shell, char *envp[]);
+void	ft_env(t_shell *shell, char *env[]);
 void	ft_free_env(char *envp[]);
 void	ft_exit(t_shell *shell, char **args);
 void	ft_echo(t_shell *shell, char **args);

@@ -6,11 +6,16 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:02:54 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:41:38 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 13:53:18 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+/*
+ * Checks if an argument is a valid -n option.
+ * Any number of 'n's following the '-' is considered valid.
+*/
 
 static bool	ft_is_n_flag(const char *s, int	*newline)
 {
@@ -28,6 +33,13 @@ static bool	ft_is_n_flag(const char *s, int	*newline)
 	*newline = 0;
 	return (true);
 }
+
+/*
+ * Newline = 1: Prints a newline at the end.
+ * Newline = 0: The -n option is present; no newline is printed.
+ *
+ * Any number of valid -n options is considered valid
+*/
 
 void	ft_echo(t_shell *shell, char **args)
 {

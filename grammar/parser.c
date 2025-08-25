@@ -128,6 +128,11 @@ static void print_command(t_shell *shell, t_command *lex) // reuse your existing
 	if (ft_strncmp(lex->args[0], "exit", 5) == 0)
 		ft_exit(shell, lex->args);
 
+	if (ft_strncmp(lex->args[0], "echo", 5) == 0)
+		ft_echo(shell, lex->args);
+
+	if (ft_strncmp(lex->args[0], "env", 4) == 0)
+		ft_env(shell, lex->args);
 }
 
 void print_ast(t_shell *shell, t_ast *node, int depth)

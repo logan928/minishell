@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:59:48 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:15:39 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 15:25:01 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_free_exit(t_shell *shell)
 {
 	ft_free_lexer(shell->lexer);
 	free(shell->prompt);
-	ft_free_env(shell->env);
+	ft_free_arr(shell->env);
 	rl_clear_history();
 	exit(shell->exit_status);
 }
