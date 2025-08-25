@@ -31,7 +31,7 @@ char	*ft_get_env_var(t_shell *shell, char *s, size_t len)
 			if (shell->env[i][len] == '=')
 				return (ft_strdup_safe(shell, shell->env[i] + len + 1));
 		}
-		shell->env++;
+		i++;
 	}
 	return (ft_strdup_safe(shell, ""));
 }

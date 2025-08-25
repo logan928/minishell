@@ -32,21 +32,9 @@ char	*ft_get_cwd(t_shell *shell)
 	}
 }
 
-/*
- *
- * On shell startup:
-If: PWD is unset, set it to getcwd()
-Else If: PWD is set, but the directory described by PWD does not exist, set it to getcwd()
-Else If: PWD is set, but the directory described by PWD does not have the same inode number as the directory described by getcwd(), then set it to getcwd()
-Else: don't change it
-Set a hidden variable to the value of PWD. It cannot be set or unset manually, only cd can change it
-When calling cd:
-Set PWD to the path requested (if chdir() was successful), instead of the value of getcwd()
-On success, set the hidden variable to PWD
-When calling pwd:
-Print the hidden variable, ignore the value of PWD or getcwd().
-*/
-void	ft_pwd(void)
+void	ft_pwd(t_shell *shell, char **args)
 {
-
+	(void)args;
+	if (shell->pwd)
+		printf("%s\n", shell->pwd);
 }

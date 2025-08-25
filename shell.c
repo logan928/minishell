@@ -10,32 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "minishell.h"
+
+bool	ft_pwd_inode(char *pwd)
+{
+	struct stat sb_cwd;
+	struct stat sb_pwd;
+
+	if (stat(".", &sb_cwd) == -1 || stat(pwd, &sb_pwd) == -1)
+		return (false);
+	return (sb_cwd.st_ino == sb_pwd.st_ino && sb_cwd.st_dev == sb_pwd.st_dev);
+}
 
 void	ft_set_pwd(t_shell *shell)
 {
-	DIR		*dr;
 	char	*pwd;
 
 	pwd = ft_get_env_var(shell, "PWD", 3);
-	if (pwd[0] == '\0')
+	if (pwd[0] == '\0' || !ft_pwd_inode(pwd))
 	{
 		free(pwd);
-		pwd = ft_get_cwd(shell);
+		shell->pwd = ft_get_cwd(shell);
 	}
 	else
-	{
-		dr = opendir(pwd);
-		if (dr == NULL && errno == ENOENT)
-		{
-			free(pwd);
-			pwd = ft_get_cwd(shell);
-		}
-		else
-			free(dr);
-	}
-	shell->pwd = pwd;
+		shell->pwd = pwd;
 }
 
 void	ft_init_shell(t_shell *shell, char *envp[])

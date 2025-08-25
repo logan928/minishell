@@ -128,6 +128,7 @@ void	ft_free_env(char *envp[]);
 void	ft_exit(t_shell *shell, char **args);
 void	ft_echo(t_shell *shell, char **args);
 char	*ft_get_cwd(t_shell *shell);
+void	ft_pwd(t_shell *shell, char **args);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);

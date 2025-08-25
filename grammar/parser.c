@@ -133,6 +133,9 @@ static void print_command(t_shell *shell, t_command *lex) // reuse your existing
 
 	if (ft_strncmp(lex->args[0], "env", 4) == 0)
 		ft_env(shell, lex->args);
+	
+	if (ft_strncmp(lex->args[0], "pwd", 4) == 0)
+		ft_pwd(shell, lex->args);
 }
 
 void print_ast(t_shell *shell, t_ast *node, int depth)
