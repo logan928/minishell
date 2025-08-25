@@ -12,20 +12,6 @@
 
 #include "libft.h"
 
-static int	ft_isupper(int c)
-{
-	if (c >= 'A' && c <= 'Z')
-		return (1);
-	return (0);
-}
-
-static int	ft_tolower(int c)
-{
-	if (ft_isupper(c) != 0)
-		c += 32;
-	return (c);
-}
-
 int	ft_strcmp(const char *s1, const char *s2, int ignore_case)
 {
 	if (ignore_case)

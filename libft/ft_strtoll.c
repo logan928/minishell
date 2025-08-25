@@ -1,4 +1,5 @@
 #include "libft.h"
+#include <limits.h>
 
 static int	ft_get_digit(int c, int base)
 {
@@ -55,6 +56,20 @@ static long long	ft_return_max(char **str_end, int negative, const char *str)
 		return (LLONG_MAX);
 }
 
+static int	ft_check_bounds(int negative, int digit, int base, long long ret)
+{
+	unsigned long long	uret;
+	unsigned long long	ullmax;
+
+	uret = (unsigned long long) ret;
+	ullmax = (unsigned long long) LLONG_MAX;
+	if (!negative && ret > (LLONG_MAX - digit) / base)
+		return (0);
+	if (negative && uret > (ullmax + 1ULL - digit) / base)
+		return (0);
+	return (1);
+}
+
 long long	ft_strtoll(const char *str, char **str_end, int base)
 {
 	long long	ret;
@@ -71,7 +86,7 @@ long long	ft_strtoll(const char *str, char **str_end, int base)
 		digit = ft_get_digit(ft_tolower(*str), base);
 		if (digit == -1)
 			break ;
-		if (ret > (LLONG_MAX - digit) / base)
+		if (!ft_check_bounds(negative, digit, base, ret))
 			return (ft_return_max(str_end, negative, str));
 		ret = ret * base + digit;
 		str++;

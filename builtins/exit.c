@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:59:48 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/19 16:07:51 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 12:12:37 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 		ft_free_exit(shell);
 	}
 	n = ft_strtoll(arg, &end, 10);
-	if (*end != '\0' || n == LLONG_MIN || n == LLONG_MAX)
+	if (*end != '\0')
 	{
 		ft_num_arg_req(shell, "minishell: exit: ", arg);
 		shell->exit_status = (unsigned char) 2;
