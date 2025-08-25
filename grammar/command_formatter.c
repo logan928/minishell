@@ -132,7 +132,7 @@ t_command	*command_formatter(t_token **tokptr)
 			if (!tok || tok->token_kind != WORD)
 			{
 				printf("minishell: syntax error near redirection\n");//ft_printf()
-				break;
+				break;//TODO: fix this bug. Need to clear everything and return to prompt. 
 			}
 			redir_add(cmd, redir_new(kind, tok->data));
 			
