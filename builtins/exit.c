@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:59:48 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 12:12:37 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 13:15:39 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 	}
 	shell->exit_status = (unsigned char) n;
 }
+
 void	ft_exit(t_shell *shell, char **args)
 {
-
 	if (isatty(STDIN_FILENO))
 		write(2, "exit\n", 6);
 	if (args && args[1] != NULL)

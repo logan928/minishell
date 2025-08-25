@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 12:59:01 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 13:30:25 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,11 @@ typedef struct s_lexer 			//map with t_ast
 
 typedef struct s_shell
 {
-	char	*prompt;
-	int		exit_status;
-	t_lexer	*lexer;
-	char	**env;
-	char	*input;
+	char			*prompt;
+	unsigned char	exit_status;
+	t_lexer			*lexer;
+	char			**env;
+	char			*input;
 }	t_shell;
 
 char	*get_prompt(void);
@@ -124,6 +124,7 @@ char	**ft_clone_env(char *envp[]);
 void	ft_env(char *env[]);
 void	ft_free_env(char *envp[]);
 void	ft_exit(t_shell *shell, char **args);
+void	ft_echo(t_shell *shell, char **args);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
@@ -220,8 +221,6 @@ typedef struct s_ast
 
 t_command	*command_formatter(t_token **tokptr);
 void	print_lexem(t_command *cmd);
-
-int	ft_echo(char **args);
 
 typedef struct s_glob_state
 {

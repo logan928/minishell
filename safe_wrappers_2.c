@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:37:37 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 12:39:03 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 13:11:26 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ void	*ft_malloc_safe(t_shell *shell, size_t size)
 
 	ptr = malloc(size);
 	if (!ptr)
+	{
+		perror("malloc");
 		ft_critical_error(shell);
+	}
 	return (ptr);
 }
 
@@ -45,6 +48,7 @@ void	ft_write_safe(t_shell *shell, char *s, int fd)
 	
 	if (write(fd, s, ft_strlen(s)) != (ssize_t)ft_strlen(s))
 	{
+		perror("write");
 		free(s);
 		ft_critical_error(shell);
 	}
