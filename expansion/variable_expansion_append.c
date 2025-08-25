@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 15:02:40 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 15:04:39 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 17:17:24 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	ft_append_variable(t_shell *s, char *t, char **res)
 		s->lexer->pos++;
 	start = s->lexer->start;
 	len = s->lexer->pos - start;
-	var = ft_get_env_var(s, &t[start], len, s->env);
+	var = ft_get_env_var(s, &t[start], len);
 	*res = ft_strjoin_free_safe(s, *res, var);
 }
 

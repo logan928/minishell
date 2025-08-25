@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 15:20:41 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/25 17:15:06 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <dirent.h>
 # include <stdbool.h>
 # include <sys/stat.h>
+# include <errno.h>
 
 # define EUNEXPTKN "minishell: syntax error near unexpected token `"
 # define ETMARGS ": too many arguments\n"
@@ -93,6 +94,7 @@ typedef struct s_shell
 	t_lexer			*lexer;
 	char			**env;
 	char			*input;
+	char			*pwd;
 }	t_shell;
 
 char	*get_prompt(void);
@@ -102,7 +104,7 @@ void	ft_critical_error(t_shell *shell);
 void	lex(t_shell *shell, char *input, t_lexer *lexer);
 int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
-char	*ft_get_env_var(t_shell *shell, char *s, size_t len, char **env);
+char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
 void	ft_append_unquoted_quote(t_shell *s, char *t, char **res);
 void	ft_append_quoted_quote(t_shell *s, char *t, char **res);
 void	ft_append_variable(t_shell *s, char *t, char **res);
@@ -125,6 +127,7 @@ void	ft_env(t_shell *shell, char *env[]);
 void	ft_free_env(char *envp[]);
 void	ft_exit(t_shell *shell, char **args);
 void	ft_echo(t_shell *shell, char **args);
+char	*ft_get_cwd(t_shell *shell);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
