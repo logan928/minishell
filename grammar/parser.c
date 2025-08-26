@@ -5,9 +5,9 @@ t_ast *parse_pipeline(t_token **tokptr);
 t_ast *parse_logical(t_token **tokptr);
 t_ast *parse_command(t_token **tokptr);
 
-t_ast *parse(t_token **tokptr)
+t_ast *parse(t_shell *shell)
 {
-    return parse_logical(tokptr);
+    return parse_logical(&shell->lexer->tokens);
 }
 
 t_ast *parse_logical(t_token **tokptr)
@@ -86,59 +86,46 @@ static void print_indent(int depth)
     for (int i = 0; i < depth; i++)
         printf("  ");
 }
-static void print_command(t_shell *shell, t_command *lex) // reuse your existing printer
+static void print_command(t_shell *shell, t_command *cmd) // reuse your existing printer
 {
-    if (!lex) return;
+    if (!cmd) return;
 //    printf("Lexem kind: ");
 
-  //  switch (lex->command_kind)
+  //  switch (cmd->command_kind)
     //{
       //  case BUILTIN:     printf("BUILTIN"); break;
         //case EXTERNAL:    printf("EXTERNAL"); break;
         //default:          printf("OTHER"); break;
     //} 
-    if (lex->args)
+    if (cmd->args)
     {
 		//t_cmd_access cmd_access;
 		ft_reset_lexer(shell->lexer);
-		ft_variable_expansion(shell, lex->args);
-		ft_field_splitting(shell, &lex->args);
-		ft_filename_expansion(shell, &lex->args);
-		ft_quote_removal(shell, lex->args);
-		//if (lex->command_kind == EXTERNAL)
+		ft_variable_expansion(shell, cmd->args);
+		ft_field_splitting(shell, &cmd->args);
+		ft_filename_expansion(shell, &cmd->args);
+		ft_quote_removal(shell, cmd->args);
+		//if (cmd->command_kind == EXTERNAL)
 		//{
-		//	cmd_access = ft_get_cmd_path(shell, lex->args);
+		//	cmd_access = ft_get_cmd_path(shell, cmd->args);
 	//		printf("CMD_ACCESS: %d:%d:%d\n", cmd_access.exist, cmd_access.executable, cmd_access.is_dir);
 		}
       //  printf(" | Args:");
-        //for (int i = 0; lex->args[i]; i++)
-		//	printf(" [%s]", lex->args[i]);
+        //for (int i = 0; cmd->args[i]; i++)
+		//	printf(" [%s]", cmd->args[i]);
    // }
 	//printf("\n\t\t\tRedirs:");
-	//while (lex->redirs)
+	//while (cmd->redirs)
 	//{
-//		printf(" [%d: %s]", lex->redirs->kind, lex->redirs->file);
-//		lex->redirs = lex->redirs->next;
+//		printf(" [%d: %s]", cmd->redirs->kind, cmd->redirs->file);
+//		cmd->redirs = cmd->redirs->next;
 //	}
 
-    //if (lex->op && lex->file)
-      //  printf(" | Redir: %s %s", lex->op, lex->file);
+    //if (cmd->op && cmd->file)
+      //  printf(" | Redir: %s %s", cmd->op, cmd->file);
     //printf("\n");
 	
-	if (ft_strncmp(lex->args[0], "exit", 5) == 0)
-		ft_exit(shell, lex->args);
-
-	if (ft_strncmp(lex->args[0], "echo", 5) == 0)
-		ft_echo(shell, lex->args);
-
-	if (ft_strncmp(lex->args[0], "env", 4) == 0)
-		ft_env(shell, lex->args);
 	
-	if (ft_strncmp(lex->args[0], "pwd", 4) == 0)
-		ft_pwd(shell, lex->args);
-	
-	if (ft_strncmp(lex->args[0], "cd", 3) == 0)
-		ft_cd(shell, lex->args);
 }
 
 void print_ast(t_shell *shell, t_ast *node, int depth)

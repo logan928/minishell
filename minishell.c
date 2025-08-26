@@ -41,7 +41,7 @@ int	main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL};
+	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
 	while (1)
@@ -64,9 +64,9 @@ int	main(int argc, char *argv[], char *envp[])
 			if (syntax_status)
 		{
 			ft_here(&shell);
-			t_ast *root = parse(&shell.lexer->tokens);
+			t_ast *root = parse(&shell);
 			print_ast(&shell, root, 0);//remove 
-			exec_ast(root);
+			exec_ast(&shell, root);
 
 		}
 
