@@ -20,8 +20,12 @@ SRCS := minishell.c signals.c shell.c safe_wrappers.c safe_wrappers_2.c \
 		$(EXPANSION_DIR)/pattern_match.c \
 		$(GRAMMAR_DIR)/command_formatter.c $(GRAMMAR_DIR)/parser.c \
 		$(EXPANSION_DIR)/split_helpers.c $(BUILTINS_DIR)/exit.c \
+<<<<<<< HEAD
 		$(BUILTINS_DIR)/utils.c $(BUILTINS_DIR)/pwd.c \
 		$(EXECUTOR_DIR)/exec.c
+=======
+		$(BUILTINS_DIR)/utils.c $(BUILTINS_DIR)/pwd.c $(BUILTINS_DIR)/cd.c
+>>>>>>> 4d16a78d4a01d75d33fc41b0aa1b7ce2ab2d4a94
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

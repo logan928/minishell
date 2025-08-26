@@ -10,33 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "minishell.h"
-
-void	ft_set_pwd(t_shell *shell)
-{
-	DIR		*dr;
-	char	*pwd;
-
-	pwd = ft_get_env_var(shell, "PWD", 3);
-	if (pwd[0] == '\0')
-	{
-		free(pwd);
-		pwd = ft_get_cwd(shell);
-	}
-	else
-	{
-		dr = opendir(pwd);
-		if (dr == NULL && errno == ENOENT)
-		{
-			free(pwd);
-			pwd = ft_get_cwd(shell);
-		}
-		else
-			free(dr);
-	}
-	shell->pwd = pwd;
-}
 
 void	ft_init_shell(t_shell *shell, char *envp[])
 {

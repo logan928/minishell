@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 16:58:02 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/26 16:05:15 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ char	*get_prompt(void)
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
-	//t_token	*token;
 	int		syntax_status;
 
 	(void)argc;
@@ -62,31 +61,7 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		lex(&shell, shell.input, shell.lexer);
 		syntax_status = ft_check_syntax(&shell);
-		//ft_variable_expansion(&shell);
-		//ft_field_splitting(&shell);
-		//ft_filename_expansion(&shell);
-		//ft_quote_removal(&shell);
-	//if (syntax_status == 1)
-	//{
-	//	token = shell.lexer->tokens;
-	//		while (token)
-	//		{
-	//			printf("Kind: %d, data: [%s]\n", token->token_kind, token->data);
-	//		token = token->next;
-	//		}
-//		}
-		//t_command *cmd = command_formatter(&shell.lexer->tokens);
-		//print_lexem(cmd);
-		/*
-	t_token *tt = shell.lexer->tokens;
-		printf("Tokens:");
-	while (tt)
-		{
-			printf(" [%s]", tt->data);
-			tt = tt->next;
-		}
-		printf("\n");*/
-		if (syntax_status)
+			if (syntax_status)
 		{
 			ft_here(&shell);
 			t_ast *root = parse(&shell.lexer->tokens);
