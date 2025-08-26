@@ -204,18 +204,12 @@ typedef struct s_command
 	char			**args;   // argv for execve()
 	char			**env;
 	t_redir			*redirs;  // linked list of redirections
-	//char			*op; //may not be needed if t_redir is used
-	//char			*file; //may not be needed if t_redir is used
 }	t_command;
 
 typedef struct s_ast
 {
 	t_ast_type		type;
-	//char			**argv;       // for commands : can include path
-	//char			**env;		 // can also be inside argv
-	//char			*file;        // for redirections
 	t_command		*cmd;
-	//t_token_kind	redir_type;   // <, >, <<, >>  :-- same as op in above
 	struct s_ast	*left;        // for binary ops
 	struct s_ast	*right;       // for binary ops
 	int				ast_depth;	//tol: will this be useful for traversing?
@@ -241,5 +235,8 @@ void	print_ast(t_shell *shell, t_ast *node, int depth);
 
 char	*ft_str_join3_cpy_safe(t_shell *shell, char *s1, char *s2, char *s3);
 void	ft_write_safe(t_shell *shell, char *s, int fd);
+
+
+int exec_ast(t_ast *ast);
 
 #endif

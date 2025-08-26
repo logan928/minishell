@@ -6,6 +6,7 @@ LIBFT_LIB := $(LIBFT_DIR)/libft.a
 BUILTINS_DIR := ./builtins
 GRAMMAR_DIR := ./grammar
 EXPANSION_DIR := ./expansion
+EXECUTOR_DIR := ./executor
 
 NAME := minishell
 SRCS := minishell.c signals.c shell.c safe_wrappers.c safe_wrappers_2.c \
@@ -19,7 +20,8 @@ SRCS := minishell.c signals.c shell.c safe_wrappers.c safe_wrappers_2.c \
 		$(EXPANSION_DIR)/pattern_match.c \
 		$(GRAMMAR_DIR)/command_formatter.c $(GRAMMAR_DIR)/parser.c \
 		$(EXPANSION_DIR)/split_helpers.c $(BUILTINS_DIR)/exit.c \
-		$(BUILTINS_DIR)/utils.c $(BUILTINS_DIR)/pwd.c
+		$(BUILTINS_DIR)/utils.c $(BUILTINS_DIR)/pwd.c \
+		$(EXECUTOR_DIR)/exec.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

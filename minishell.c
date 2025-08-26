@@ -91,7 +91,11 @@ int	main(int argc, char *argv[], char *envp[])
 			ft_here(&shell);
 			t_ast *root = parse(&shell.lexer->tokens);
 			print_ast(&shell, root, 0);//remove 
+			exec_ast(root);
+
 		}
+
+		
 		//free_ast(root);// Check
 
 		free(shell.input);
