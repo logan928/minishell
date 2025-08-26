@@ -46,3 +46,11 @@ void	ft_too_many_args(t_shell *shell, char *cmd)
 	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ETMARGS);
 	ft_write_safe(shell, err, STDERR_FILENO);
 }
+
+void	ft_home_not_set(t_shell *shell, char *cmd)
+{
+	char	*err;
+
+	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ENOHOME);
+	ft_write_safe(shell, err, STDERR_FILENO);
+}

@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:06:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 12:05:18 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/26 15:10:43 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,20 @@
 # include <limits.h>
 
 # define BUFFER_SIZE 1024
+
+typedef struct s_char_node	t_char_node;
+
+typedef struct	s_char_node
+{
+	char			*value;
+	t_char_node		*prev;
+}	t_char_node;
+
+typedef struct	s_stack
+{
+	t_char_node	*head;
+	size_t		size;
+}	t_stack;
 
 int			ft_isquote(char c);
 int			ft_isspace(char c);
@@ -44,5 +58,12 @@ char		*ft_get_next_line(int fd);
 long long	ft_strtoll(const char *str, char **str_end, int base);
 int			ft_tolower(int c);
 int			ft_isupper(int c);
+size_t		ft_strlcat(char *dst, const char *src, size_t size);
+
+t_stack		*ft_stack_init(void);
+t_stack		*ft_stack_push(t_stack *st, char *value);
+char		*ft_stack_pop(t_stack *st);
+void		ft_stack_free(t_stack *st);
+char		*ft_stack_peek(t_stack *st);
 
 #endif

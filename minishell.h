@@ -30,6 +30,7 @@
 # define EUNEXPTKN "minishell: syntax error near unexpected token `"
 # define ETMARGS ": too many arguments\n"
 # define ENUMREQ ": numeric argument required\n"
+# define ENOHOME ": HOME not set\n"
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -129,6 +130,8 @@ void	ft_exit(t_shell *shell, char **args);
 void	ft_echo(t_shell *shell, char **args);
 char	*ft_get_cwd(t_shell *shell);
 void	ft_pwd(t_shell *shell, char **args);
+void	ft_cd(t_shell *shell, char **args);
+void	ft_set_pwd(t_shell *shell);
 
 void	ft_sigint_handler(int sig);
 void	ft_sigquit_trap(int sig);
@@ -143,6 +146,8 @@ char	*ft_itoa_safe(t_shell *shell, long n);
 void 	*ft_malloc_safe(t_shell *shell, size_t size);
 bool	ft_is_valid_number(char *s);
 void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
+void	ft_home_not_set(t_shell *shell, char *cmd);
+char	*ft_get_pwd(t_shell *shell);
 
 typedef enum e_ast_type
 {

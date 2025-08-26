@@ -32,6 +32,35 @@ char	*ft_get_cwd(t_shell *shell)
 	}
 }
 
+bool	ft_pwd_inode(char *pwd)
+{
+	struct stat sb_cwd;
+	struct stat sb_pwd;
+
+	if (stat(".", &sb_cwd) == -1 || stat(pwd, &sb_pwd) == -1)
+		return (false);
+	return (sb_cwd.st_ino == sb_pwd.st_ino && sb_cwd.st_dev == sb_pwd.st_dev);
+}
+
+void	ft_set_pwd(t_shell *shell)
+{
+	char	*pwd;
+
+	pwd = ft_get_env_var(shell, "PWD", 3);
+	if (pwd[0] == '\0' || !ft_pwd_inode(pwd))
+	{
+		free(pwd);
+		shell->pwd = ft_get_cwd(shell);
+	}
+	else
+		shell->pwd = pwd;
+}
+
+char	*ft_get_pwd(t_shell *shell)
+{
+	return (ft_strdup_safe(shell, shell->pwd));
+}
+
 void	ft_pwd(t_shell *shell, char **args)
 {
 	(void)args;
