@@ -39,7 +39,7 @@ void	ft_env(t_shell *shell, char **args)
 	char	*res;
 	char	**e;
 	char	*var;
-	
+
 	(void)args;
 	e = shell->env;
 	res = ft_strdup_safe(shell, "");

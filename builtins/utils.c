@@ -31,26 +31,21 @@ bool	ft_is_valid_number(char *s)
 	return (*s == '\0' && has_digit);
 }
 
-void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
+void	ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit)
 {
 	char	*err;
 
-	err = ft_str_join3_cpy_safe(shell, cmd, arg, ENUMREQ);
-	ft_write_safe(shell, err, STDERR_FILENO);
-}
-
-void	ft_too_many_args(t_shell *shell, char *cmd)
-{
-	char	*err;
-
+	shell->exit_status = exit;
 	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ETMARGS);
 	ft_write_safe(shell, err, STDERR_FILENO);
 }
 
-void	ft_home_not_set(t_shell *shell, char *cmd)
+void	ft_home_not_set(t_shell *shell, char *cmd, char *tmp)
 {
 	char	*err;
 
+	free(tmp);
+	shell->exit_status = (unsigned char) 1;
 	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ENOHOME);
 	ft_write_safe(shell, err, STDERR_FILENO);
 }
