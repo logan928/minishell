@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 13:59:10 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/26 15:26:36 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 13:13:11 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ char	*ft_stack_pop(t_stack *st)
 {
 	char		*ret;
 	t_char_node	*tmp;
+
 	if (st == NULL || st->size == 0)
 		return (NULL);
 	ret = st->head->value;
