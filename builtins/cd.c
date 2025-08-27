@@ -19,11 +19,28 @@
 
 #include "../minishell.h"
 
+void	ft_add_env_var(t_shell *shell, char *var, char *val)
+{
+	char	**new_env;
+	size_t	size;
+
+	new_env = ft_realloc_arr(shell->env);
+	if (new_env == NULL)
+		return ;
+	shell->env = new_env;
+	size = 0;
+	while (shell->env[size])
+		size++;
+	shell->env[size] = ft_str_join3_cpy_safe(shell, var, "=", val);
+}
+
 void	ft_set_env_var(t_shell *shell, char *var, char *val)
 {
 	size_t	i;
 	size_t	len_var;
+	bool	found;
 
+	found = false;
 	i = 0;
 	len_var = ft_strlen(var);
 	while (shell->env[i])
@@ -32,6 +49,7 @@ void	ft_set_env_var(t_shell *shell, char *var, char *val)
 		{
 			if (shell->env[i][len_var] == '=')
 			{
+				found = true;
 				free(shell->env[i]);
 				shell->env[i] = ft_str_join3_cpy_safe(shell, var, "=", val);
 				return ;
@@ -39,18 +57,24 @@ void	ft_set_env_var(t_shell *shell, char *var, char *val)
 		}
 		i++;
 	}
+	if (!found)
+		ft_add_env_var(shell, var, val);
 }
 
-void	ft_chdir(t_shell *shell, char *path)
+void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	if (chdir(path) == 0)
 	{
 		ft_set_env_var(shell, "PWD", path);
+		ft_set_env_var(shell, "OLDPWD", shell->pwd);
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD", 3);
 	}
 	else
-		perror("minishell: cd");
+	{
+		perror(ft_str_join3_cpy_safe(shell, "minishell: cd: ", dir, ""));
+		shell->exit_status = (unsigned char) 1;
+	}
 }
 
 void	ft_cd(t_shell *shell, char **args)
@@ -78,5 +102,5 @@ void	ft_cd(t_shell *shell, char **args)
 			curpath = ft_strdup_safe(shell, args[1]);
 	}
 	curpath = ft_canonicalize(shell, curpath);
-	ft_chdir(shell, curpath);
+	ft_chdir(shell, curpath, args[1]);
 }

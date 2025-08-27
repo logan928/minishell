@@ -214,6 +214,7 @@ int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
 char			*ft_canonicalize(t_shell *shell, char *curpath);
 char			*ft_reconstruct_path(t_stack *st);
+void			ft_unset(t_shell *shell, char **args);
 
 
 typedef enum e_lexem_kind

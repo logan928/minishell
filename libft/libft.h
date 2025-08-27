@@ -65,5 +65,7 @@ t_stack		*ft_stack_push(t_stack *st, char *value);
 char		*ft_stack_pop(t_stack *st);
 void		ft_stack_free(t_stack *st);
 char		*ft_stack_peek(t_stack *st);
+char		**ft_realloc_arr(char **old);
+void		ft_remove_at(char **arr, size_t idx);
 
 #endif

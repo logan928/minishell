@@ -146,7 +146,7 @@ t_command	*command_formatter(t_token **tokptr)
 		tok = tok->next;
 	}
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable. 
-	cmd->command_kind = EXTERNAL;
+	cmd->command_kind = EXTERNAL; // TODO: this is probably the best place to expand args (we need to remove quotes from args[0])
 	if(cmd->args[0] && is_builtin(cmd->args[0]))
 		cmd->command_kind = BUILTIN;
 	return (cmd);

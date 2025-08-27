@@ -5,18 +5,16 @@ int run_builtin(t_shell *shell, t_command *cmd)
 {
 	if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		ft_exit(shell, cmd->args);
-
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		ft_echo(shell, cmd->args);
-
 	if (ft_strncmp(cmd->args[0], "env", 4) == 0)
 		ft_env(shell, cmd->args);
-	
 	if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
 		ft_pwd(shell, cmd->args);
-	
 	if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
 		ft_cd(shell, cmd->args);
+	if (ft_strncmp(cmd->args[0], "unset", 5) == 0)
+		ft_unset(shell, cmd->args);
 	return 0;
 }
 

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <stdnoreturn.h>
 
 void	ft_append_before_open_quote(t_shell *shell, char *s, char **clean)
 {
@@ -95,7 +94,7 @@ void	ft_quote_removal(t_shell *shell, char **args)
 	char	*clean;
 	size_t	i;
 
-	i = 1;
+	i = 0;
 	while (args[i])
 	{
 		ft_reset_lexer_cursor(shell->lexer);
