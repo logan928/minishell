@@ -111,6 +111,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	{
 		perror("pipe");
 		return 1;
+	}
 
 
 
