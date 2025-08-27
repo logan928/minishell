@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:56:56 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/26 16:50:02 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 15:27:09 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,16 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 	}
 }
 
+char	*ft_parse_cd_arg(t_shell *shell, char *arg)
+{
+	if (arg[0] != '/')
+		return (ft_str_join3_cpy_safe(shell, ft_get_pwd(shell),
+				"/", arg));
+	else
+		return (ft_strdup_safe(shell, arg));
+
+}
+
 void	ft_cd(t_shell *shell, char **args)
 {
 	char	*curpath;
@@ -85,7 +95,7 @@ void	ft_cd(t_shell *shell, char **args)
 	curpath = NULL;
 	if (args[1] != NULL && args[2] != NULL)
 		return (ft_too_many_args(shell, "cd", 1));
-	if (args[1] == NULL)
+	if (args[1] == NULL || (args[1][0] == '~' && args[1][1] == '\0'))
 	{
 		tmp = ft_get_env_var(shell, "HOME", 4);
 		if (tmp[0] == '\0')
@@ -94,13 +104,7 @@ void	ft_cd(t_shell *shell, char **args)
 		tmp = NULL;
 	}
 	else
-	{
-		if (args[1][0] != '/')
-			curpath = ft_str_join3_cpy_safe(shell, ft_get_pwd(shell),
-					"/", args[1]);
-		else
-			curpath = ft_strdup_safe(shell, args[1]);
-	}
+		curpath = ft_parse_cd_arg(shell, args[1]);
 	curpath = ft_canonicalize(shell, curpath);
 	ft_chdir(shell, curpath, args[1]);
 }
