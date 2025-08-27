@@ -1,5 +1,6 @@
 #include "../minishell.h"
 #include <sys/wait.h>
+#include <fcntl.h>
 
 int run_builtin(t_shell *shell, t_command *cmd)
 {
@@ -19,10 +20,53 @@ int run_builtin(t_shell *shell, t_command *cmd)
 }
 
 
-static void apply_redirs(t_redir *r)
+static void apply_redirs(t_redir *redir)
 {
-	(void) r;
 	printf("inside applying redirections");
+	while (redir)
+	{
+		int fd;
+
+		fd = -1;
+		if (redir->kind == R_IN)
+		{
+			fd = open(redir->file, O_RDONLY);
+			if (fd < 0) 
+			{ 
+				perror("open"); 
+				exit(1); 
+			}
+			dup2(fd, STDIN_FILENO);
+			close(fd);
+		}
+		else if (redir->kind == R_OUT)
+		{
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd < 0) 
+			{ 
+				perror("open"); 
+				exit(1); 
+			}
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+		else if (redir->kind == R_APP)
+		{
+			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd < 0) 
+			{ 
+				perror("open"); 
+				exit(1);
+			 }
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+		else if (redir->kind == R_HDOC)
+		{
+			printf("heredoc processing...\n");//																															
+		}
+		redir = redir->next;
+	}
 }
 
 
@@ -36,8 +80,6 @@ static int exec_command(t_shell *shell, t_command *cmd)
 		if (pid == 0)
 		{
 			apply_redirs(cmd->redirs);
-			//printf("..path...%s...arg %s...env %s \n", (cmd->args)[0], (cmd->args)[1], *(cmd->env));
-			printf("..path...%s...arg %s...env \n", (cmd->args)[0], (cmd->args)[1]);
 			t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
 			
 			if (access.executable)
@@ -70,6 +112,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 
 
+
 	pid_t left_pid = fork();
 	if (left_pid == 0)
 	{
@@ -81,7 +124,6 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		exit(exec_ast(shell, ast->left));
 	}
 
-
 	pid_t right_pid = fork();
 	if (right_pid == 0)
 	{
@@ -92,7 +134,6 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 			apply_redirs(ast->right->cmd->redirs);
 		exit(exec_ast(shell, ast->right));
 	}
-
 
 	close(pipefd[0]);
 	close(pipefd[1]);
