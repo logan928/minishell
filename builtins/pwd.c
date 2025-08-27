@@ -34,8 +34,8 @@ char	*ft_get_cwd(t_shell *shell)
 
 bool	ft_pwd_inode(char *pwd)
 {
-	struct stat sb_cwd;
-	struct stat sb_pwd;
+	struct stat	sb_cwd;
+	struct stat	sb_pwd;
 
 	if (stat(".", &sb_cwd) == -1 || stat(pwd, &sb_pwd) == -1)
 		return (false);

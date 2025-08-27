@@ -22,24 +22,26 @@ void	ft_free_exit(t_shell *shell)
 	exit(shell->exit_status);
 }
 
+void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
+{
+	char	*err;
+
+	shell->exit_status = (unsigned char) 2;
+	err = ft_str_join3_cpy_safe(shell, cmd, arg, ENUMREQ);
+	ft_write_safe(shell, err, STDERR_FILENO);
+	ft_free_exit(shell);
+}
+
 static void	ft_check_arg(t_shell *shell, char *arg)
 {
 	char		*end;
 	long long	n;
 
 	if (!ft_is_valid_number(arg))
-	{
-		ft_num_arg_req(shell, "minishell: exit: ", arg);
-		shell->exit_status = (unsigned char) 2;
-		ft_free_exit(shell);
-	}
+		return (ft_num_arg_req(shell, "minishell: exit: ", arg));
 	n = ft_strtoll(arg, &end, 10);
 	if (*end != '\0')
-	{
-		ft_num_arg_req(shell, "minishell: exit: ", arg);
-		shell->exit_status = (unsigned char) 2;
-		ft_free_exit(shell);
-	}
+		return (ft_num_arg_req(shell, "minishell: exit: ", arg));
 	shell->exit_status = (unsigned char) n;
 }
 
@@ -50,10 +52,6 @@ void	ft_exit(t_shell *shell, char **args)
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);
 	if (args && args[1] != NULL && args[2] != NULL)
-	{
-		ft_too_many_args(shell, "exit");
-		shell->exit_status = (unsigned char) 1;
-		return ;
-	}
+		return (ft_too_many_args(shell, "exit", 2));
 	ft_free_exit(shell);
 }
