@@ -6,33 +6,13 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/26 16:05:15 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 16:27:01 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t	g_sig = 0;
-
-char	*get_prompt(void)
-{
-	char	*prompt;
-	char	*username;
-	size_t	username_len;
-
-	username = getenv("USER");
-	if (!username)
-		username = "minishell";
-	username_len = ft_strlen(username);
-	prompt = malloc(sizeof(char) * (username_len + 3));
-	if (!prompt)
-		return (NULL);
-	ft_memcpy(prompt, username, username_len);
-	prompt[username_len] = '$';
-	prompt[username_len + 1] = ' ';
-	prompt[username_len + 2] = '\0';
-	return (prompt);
-}
 
 int	main(int argc, char *argv[], char *envp[])
 {
@@ -46,7 +26,7 @@ int	main(int argc, char *argv[], char *envp[])
 	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
 	while (1)
 	{
-		shell.input = readline(shell.prompt);
+		shell.input = readline(ft_set_prompt(&shell));
 		if (!shell.input)
 			ft_exit(&shell, NULL);
 		if (shell.input)
@@ -54,25 +34,32 @@ int	main(int argc, char *argv[], char *envp[])
 			if (*shell.input)
 				add_history(shell.input);
 			else
-			{	
+			{
 				free(shell.input);
-				continue;
+				continue ;
 			}
 		}
 		lex(&shell, shell.input, shell.lexer);
 		syntax_status = ft_check_syntax(&shell);
-			if (syntax_status)
+			if (syntax_status) // && shell.lexer->tokens->token_kind != NL)
 		{
 			ft_here(&shell);
-			t_ast *root = parse(&shell);
-			print_ast(&shell, root, 0);//remove 
+			t_token	*tokptr_copy;
+			t_token	*tmp;
+			tmp = shell.lexer->tokens;
+			tokptr_copy = NULL;
+			while(tmp)
+			{
+				ft_add_token(&tokptr_copy, ft_new_token(tmp->token_kind, ft_strdup_safe(&shell, tmp->data)));
+				tmp = tmp->next;
+			}
+			t_ast *root = parse(&shell, &tokptr_copy);
+			//print_ast(&shell, root, 0);//remove 
+			ft_free_tokens(tokptr_copy);
 			exec_ast(&shell, root);
 
-		}
-
-		
+		}	
 		//free_ast(root);// Check
-
 		free(shell.input);
 		ft_reset_lexer(shell.lexer);
 		if (g_sig)

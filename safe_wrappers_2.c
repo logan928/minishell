@@ -45,7 +45,6 @@ char	*ft_str_join3_cpy_safe(t_shell *shell, char *s1, char *s2, char *s3)
 
 void	ft_write_safe(t_shell *shell, char *s, int fd)
 {
-	
 	if (write(fd, s, ft_strlen(s)) != (ssize_t)ft_strlen(s))
 	{
 		perror("write");

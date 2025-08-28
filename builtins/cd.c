@@ -6,16 +6,9 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:56:56 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/26 16:50:02 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 15:27:09 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*
-	1. If args[1] == NULL and no $HOME - implementation defined
-	2. If args[1] == NULL and $HOME is set, try to use $HOME as dir
-	3. curpath = args[1]
-	4. if curpath isn't absolute, set it to pwd + '/' + args[1]
-*/
 
 #include "../minishell.h"
 
@@ -65,16 +58,37 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	if (chdir(path) == 0)
 	{
-		ft_set_env_var(shell, "PWD", path);
 		ft_set_env_var(shell, "OLDPWD", shell->pwd);
+		ft_set_env_var(shell, "PWD", path);
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD", 3);
+		if (dir && dir[0] == '-' && dir[1] == '\0')
+			ft_write_safe(shell,
+				 ft_str_join3_cpy_safe(shell, shell->pwd, "\n", ""), STDOUT_FILENO);
 	}
 	else
 	{
 		perror(ft_str_join3_cpy_safe(shell, "minishell: cd: ", dir, ""));
 		shell->exit_status = (unsigned char) 1;
 	}
+}
+
+void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
+{
+	char	*oldpwd;
+
+	if (arg[0] == '-' && arg[1] == '\0')
+	{
+		oldpwd = ft_get_env_var(shell, "OLDPWD", 6);
+		if (oldpwd[0] != '\0')
+			*cur = oldpwd;
+		else
+			free(oldpwd);
+	}
+	else if (arg[0] != '/')
+		*cur = ft_str_join3_cpy_safe(shell, ft_get_pwd(shell), "/", arg);
+	else
+		*cur = ft_strdup_safe(shell, arg);
 }
 
 void	ft_cd(t_shell *shell, char **args)
@@ -85,7 +99,7 @@ void	ft_cd(t_shell *shell, char **args)
 	curpath = NULL;
 	if (args[1] != NULL && args[2] != NULL)
 		return (ft_too_many_args(shell, "cd", 1));
-	if (args[1] == NULL)
+	if (args[1] == NULL || (args[1][0] == '~' && args[1][1] == '\0'))
 	{
 		tmp = ft_get_env_var(shell, "HOME", 4);
 		if (tmp[0] == '\0')
@@ -94,13 +108,7 @@ void	ft_cd(t_shell *shell, char **args)
 		tmp = NULL;
 	}
 	else
-	{
-		if (args[1][0] != '/')
-			curpath = ft_str_join3_cpy_safe(shell, ft_get_pwd(shell),
-					"/", args[1]);
-		else
-			curpath = ft_strdup_safe(shell, args[1]);
-	}
+		ft_parse_cd_arg(shell, args[1], &curpath);
 	curpath = ft_canonicalize(shell, curpath);
 	ft_chdir(shell, curpath, args[1]);
 }

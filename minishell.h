@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 17:15:06 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 16:24:14 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ typedef struct s_glob_state
 	int	filename_index;
 }	t_glob_state;
 
-char	*get_prompt(void);
+char	*ft_set_prompt(t_shell *shell);
 void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
 void	lex(t_shell *shell, char *input, t_lexer *lexer);
@@ -202,9 +202,9 @@ t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
 void			ft_here(t_shell *shell);
-t_command		*command_formatter(t_token **tokptr);
+t_command		*command_formatter(t_shell *shell, t_token **tokptr);
 void			print_lexem(t_command *cmd);
-t_ast			*parse(t_shell *shell);
+t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 void			print_ast(t_shell *shell, t_ast *node, int depth);

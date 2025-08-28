@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:06:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/26 15:10:43 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 13:14:36 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@
 
 typedef struct s_char_node	t_char_node;
 
-typedef struct	s_char_node
+typedef struct s_char_node
 {
 	char			*value;
 	t_char_node		*prev;
 }	t_char_node;
 
-typedef struct	s_stack
+typedef struct s_stack
 {
 	t_char_node	*head;
 	size_t		size;

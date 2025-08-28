@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 13:43:19 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 14:10:57 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/27 13:14:53 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ static char	*ft_append_return(char **tmp, char **ret, char *b)
 	leftover_len = ft_strlen(*tmp + 1);
 	ft_memmove(b, *tmp + 1, leftover_len + 1);
 	return (*ret);
-
 }
 
 static char	*ft_free_ret(char **ret, ssize_t read_ret)
@@ -56,7 +55,8 @@ static char	*ft_free_ret(char **ret, ssize_t read_ret)
 		free(*ret);
 		return (NULL);
 	}
-	else {
+	else
+	{
 		if (*ret && **ret)
 			return (*ret);
 		else

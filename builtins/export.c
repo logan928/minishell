@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free_arr.c                                      :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/22 12:42:39 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/27 10:40:29 by mkugan           ###   ########.fr       */
+/*   Created: 2025/08/27 10:38:49 by mkugan            #+#    #+#             */
+/*   Updated: 2025/08/27 14:01:05 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-void	ft_free_arr(char **arr)
+static void	ft_print_env_sorted(void)
 {
-	size_t	i;
+	return ;
+}
 
-	i = 0;
-	while (arr[i])
-		free(arr[i++]);
-	free(arr);
+void	ft_export(t_shell *shell, char **args)
+{
+	if (args && args[0] && !args[1])
+		ft_print_env_sorted(); // TODO: export without arguments prints env sorted
 }

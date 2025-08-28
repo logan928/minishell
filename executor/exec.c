@@ -22,7 +22,7 @@ int run_builtin(t_shell *shell, t_command *cmd)
 
 static void apply_redirs(t_redir *redir)
 {
-	printf("inside applying redirections");
+	//printf("inside applying redirections\n");
 	while (redir)
 	{
 		int fd;
@@ -73,7 +73,10 @@ static void apply_redirs(t_redir *redir)
 static int exec_command(t_shell *shell, t_command *cmd)
 {
 	if(cmd->command_kind == BUILTIN)
+	{
+		apply_redirs(cmd->redirs);
 		return(run_builtin(shell, cmd));
+	}
 	else
 	{
 		pid_t pid = fork();
