@@ -41,11 +41,21 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		lex(&shell, shell.input, shell.lexer);
 		syntax_status = ft_check_syntax(&shell);
-			if (syntax_status && shell.lexer->tokens->token_kind != NL)
+			if (syntax_status) // && shell.lexer->tokens->token_kind != NL)
 		{
 			ft_here(&shell);
-			t_ast *root = parse(&shell);
+			t_token	*tokptr_copy;
+			t_token	*tmp;
+			tmp = shell.lexer->tokens;
+			tokptr_copy = NULL;
+			while(tmp)
+			{
+				ft_add_token(&tokptr_copy, ft_new_token(tmp->token_kind, ft_strdup_safe(&shell, tmp->data)));
+				tmp = tmp->next;
+			}
+			t_ast *root = parse(&shell, &tokptr_copy);
 			//print_ast(&shell, root, 0);//remove 
+			ft_free_tokens(tokptr_copy);
 			exec_ast(&shell, root);
 
 		}	

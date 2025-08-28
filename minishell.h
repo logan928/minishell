@@ -204,7 +204,7 @@ void			ft_quote_removal_str(t_shell *shell, t_token *t);
 void			ft_here(t_shell *shell);
 t_command		*command_formatter(t_shell *shell, t_token **tokptr);
 void			print_lexem(t_command *cmd);
-t_ast			*parse(t_shell *shell);
+t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 void			print_ast(t_shell *shell, t_ast *node, int depth);
