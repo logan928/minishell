@@ -154,7 +154,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	return 1;
 	
 } */
-static int exec_command_child(t_shell *shell, t_command *cmd) // new helper
+static int exec_command_child(t_shell *shell, t_command *cmd) 
 {
 	apply_redirs(cmd->redirs); // preserve redirections
 
@@ -181,18 +181,25 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	while (node && node->type == AST_PIPE)
 	{
 		count++;
-		node = node->right;
+		node = node->left;
 	}
 	count++; 
+
+	printf("count: %d\n", count);
 
 	t_ast *commands[count];
 	node = ast;
 
+	i = count-1;
 	while (node && node->type == AST_PIPE)
 	{
-		commands[i++] = node->left;
-		node = node->right;
+		//commands[i++] = node->left;
+		//node = node->right;
+		commands[i] = node->right;
+		node = node->left;
+		i--;
 	}
+	printf("i: %d\n", i);
 	commands[i] = node; 
 
 	int pipefd[count - 1][2];
@@ -205,7 +212,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		j++;
 	}
-	j = 0; //counter reset
+	j = 0; //counter reset to save lines
 
 	pid_t pids[count];
 	while (j < count)
@@ -308,7 +315,7 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		return (exec_subshell(ast));
 	else
 	{
-		printf("Non-defined AST type \n");
+		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
 		return 1;
 	}
 
