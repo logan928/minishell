@@ -23,7 +23,7 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL};
 	ft_init_shell(&shell, envp);
-	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL};
+	shell.lexer = &(t_lexer){NULL, 0, 0, 0, 0, NULL, NULL, NULL};
 	while (1)
 	{
 		shell.input = readline(ft_set_prompt(&shell));
@@ -41,7 +41,7 @@ int	main(int argc, char *argv[], char *envp[])
 		}
 		lex(&shell, shell.input, shell.lexer);
 		syntax_status = ft_check_syntax(&shell);
-			if (syntax_status) // && shell.lexer->tokens->token_kind != NL)
+			if (syntax_status && shell.lexer->tokens->token_kind != NL)
 		{
 			ft_here(&shell);
 			t_token	*tokptr_copy;
@@ -53,7 +53,8 @@ int	main(int argc, char *argv[], char *envp[])
 				ft_add_token(&tokptr_copy, ft_new_token(tmp->token_kind, ft_strdup_safe(&shell, tmp->data)));
 				tmp = tmp->next;
 			}
-			t_ast *root = parse(&shell, &tokptr_copy);
+//			t_ast *root = parse(&shell, &tokptr_copy);
+			t_ast *root = parse(&shell, &shell.lexer->tokens);
 			//print_ast(&shell, root, 0);//remove 
 			ft_free_tokens(tokptr_copy);
 			exec_ast(&shell, root);

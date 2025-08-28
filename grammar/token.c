@@ -102,8 +102,11 @@ void	ft_free_lexer(t_lexer *lexer)
 		ft_free_tokens(lexer->tokens);
 	else if (lexer->tmp)
 		ft_free_tokens(lexer->tmp);
+	else if (lexer->tmp2)
+		ft_free_tokens(lexer->tmp2);
 	lexer->tokens = NULL;
 	lexer->tmp = NULL;
+	lexer->tmp2 = NULL;
 }
 
 void ft_reset_lexer(t_lexer *lexer)

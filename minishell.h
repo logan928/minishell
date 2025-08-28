@@ -13,6 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
@@ -51,6 +52,13 @@ typedef enum e_token_kind
 	NL,
 }	t_token_kind;
 
+typedef struct s_cursor
+{
+	size_t	cur;
+	size_t	start;
+	char	quote;
+}	t_cursor;
+
 typedef struct s_token
 {
 	t_token_kind	token_kind;
@@ -67,6 +75,7 @@ typedef struct s_lexer 			//map with t_ast
 	bool	io_here;
 	t_token	*tokens;
 	t_token	*tmp;
+	t_token	*tmp2;
 }	t_lexer;
 
 typedef struct s_shell
@@ -150,17 +159,16 @@ char	*ft_set_prompt(t_shell *shell);
 void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
 void	lex(t_shell *shell, char *input, t_lexer *lexer);
+void	ft_reset_lexer(t_lexer *lexr);
 int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
-void	ft_append_unquoted_quote(t_shell *s, char *t, char **res);
-void	ft_append_quoted_quote(t_shell *s, char *t, char **res);
-void	ft_append_variable(t_shell *s, char *t, char **res);
-void	ft_append_exit_status(t_shell *s, char **res);
-void	ft_append_normal_chars(t_shell *s, char *t, char **res);
+void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_exit_status(t_shell *s, t_cursor *c, char **res);
+void	ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res);
 void	ft_free_lexer(t_lexer *lexer);
-void	ft_reset_lexer(t_lexer *lexr);
-void	ft_reset_lexer_cursor(t_lexer *lexer);
 int		ft_pattern_match(const char *pattern, const char *filename);
 int		ft_is_pattern(char *word);
 t_token	*ft_new_token(t_token_kind kind, char *data);
@@ -190,14 +198,14 @@ bool	ft_is_valid_number(char *s);
 void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void	ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
 char	*ft_get_pwd(t_shell *shell);
-void	ft_variable_expansion(t_shell *shell, char **args);
-void	ft_field_splitting(t_shell *shell, char ***arr);
+void	ft_variable_expansion(t_shell *shell, char **args, size_t idx);
+void	ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
 size_t	ft_arr_size(char **arr);
 size_t	ft_lst_size(t_token *tokens);
 void	ft_free_arr(char **arr);
 void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
-void	ft_filename_expansion(t_shell *shell, char ***arr);
-void	ft_quote_removal(t_shell *shell, char **args);
+void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx);
+void	ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);

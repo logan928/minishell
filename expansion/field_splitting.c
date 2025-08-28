@@ -14,62 +14,40 @@
 
 void	ft_split_ifs(t_shell *shell, char *s)
 {
-	t_token	*new_token;
-	int		pos;
-	int		quote;
-	int		start;
-
-	pos = 0;
-	quote = 0;
-	while (s[pos])
+	t_token		*new_token;
+	t_cursor	c;
+	
+	c = (t_cursor){0, 0, 0};
+	while (s[c.cur])
 	{
-		while (ft_isspace(s[pos]) && quote == 0)
-			pos++;
-		start = pos;
-		while (s[pos] && ((ft_isspace(s[pos]) && quote) || !ft_isspace(s[pos])))
+		while (ft_isspace(s[c.cur]) && c.quote == 0)
+			c.cur++;
+		c.start = c.cur;
+		while (s[c.cur] && ((ft_isspace(s[c.cur]) && c.quote)
+			|| !ft_isspace(s[c.cur])))
 		{
-			if (ft_isquote(s[pos]) && !quote)
-				quote = s[pos];
-			else if (ft_isquote(s[pos]) && quote == s[pos])
-				quote = 0;
-			pos++;
+			if (ft_isquote(s[c.cur]) && !c.quote)
+				c.quote = s[c.cur];
+			else if (ft_isquote(s[c.cur]) && c.quote == s[c.cur])
+				c.quote = 0;
+			c.cur++;
 		}
 		new_token = ft_new_token(WORD, ft_strndup_safe(shell,
-					&s[start], pos - start));
+					&s[c.start], c.cur - c.start));
 		ft_add_token(&shell->lexer->tmp, new_token);
 	}
 }
 
-void	ft_insert_split(t_shell *shell, t_token *split, t_token *t)
+void	ft_field_splitting(t_shell *shell, char ***arr, size_t idx)
 {
-	t_token	*tmp;
-
-	free(t->data);
-	t->data = ft_strdup_safe(shell, split->data);
-	tmp = split;
-	split = split->next;
-	free(tmp->data);
-	free(tmp);
-	tmp = split;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = t->next;
-	t->next = split;
-	shell->lexer->tmp = NULL;
-}
-
-void	ft_field_splitting(t_shell *shell, char ***arr)
-{
-	size_t	i;
 	size_t	lst_size;
 	size_t	arr_size;
 
-	i = 1;
 	shell->lexer->tmp = NULL;
-	while ((*arr)[i])
+	while ((*arr)[idx])
 	{
-		ft_split_ifs(shell, (*arr)[i]);
-		i++;
+		ft_split_ifs(shell, (*arr)[idx]);
+		idx++;
 	}
 	lst_size = ft_lst_size(shell->lexer->tmp);
 	arr_size = ft_arr_size(*arr);

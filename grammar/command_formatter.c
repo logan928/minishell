@@ -146,11 +146,10 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 		tok = tok->next;
 	}
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable.
-	ft_reset_lexer(shell->lexer);
-	ft_variable_expansion(shell, cmd->args);
-	ft_field_splitting(shell, &cmd->args);
-	ft_filename_expansion(shell, &cmd->args);
-	ft_quote_removal(shell, cmd->args);
+	ft_variable_expansion(shell, cmd->args, 1);
+	ft_field_splitting(shell, &cmd->args, 1);
+	ft_filename_expansion(shell, &cmd->args, 1);
+	ft_quote_removal(shell, cmd->args, 0);
 	cmd->command_kind = EXTERNAL; // TODO: this is probably the best place to expand args (we need to remove quotes from args[0])
 	if(cmd->args[0] && is_builtin(cmd->args[0]))
 		cmd->command_kind = BUILTIN;
