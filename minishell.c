@@ -28,7 +28,7 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		shell.input = readline(ft_set_prompt(&shell));
 		if (!shell.input)
-			ft_exit(&shell, NULL);
+			ft_exit(&shell, NULL, MAIN_SHELL);
 		if (shell.input)
 		{
 			if (*shell.input)

@@ -33,6 +33,9 @@
 # define ENUMREQ ": numeric argument required\n"
 # define ENOHOME ": HOME not set\n"
 
+# define MAIN_SHELL 1
+# define CHILD_SHELL 0
+
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
 typedef struct s_ast	t_ast;
@@ -175,7 +178,7 @@ void	ft_add_token_sorted(t_token **head, t_token *token);
 void	ft_clone_env(t_shell *shell, char *envp[]);
 void	ft_env(t_shell *shell, char *env[]);
 void	ft_free_env(char *envp[]);
-void	ft_exit(t_shell *shell, char **args);
+void	ft_exit(t_shell *shell, char **args, int shell_type);
 void	ft_echo(t_shell *shell, char **args);
 char	*ft_get_cwd(t_shell *shell);
 void	ft_pwd(t_shell *shell, char **args);

@@ -2,10 +2,10 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-int run_builtin(t_shell *shell, t_command *cmd)
+int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 {
 	if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
-		ft_exit(shell, cmd->args);
+		ft_exit(shell, cmd->args, shell_type);
 	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
 		ft_echo(shell, cmd->args);
 	if (ft_strncmp(cmd->args[0], "env", 4) == 0)
@@ -75,7 +75,7 @@ static int exec_command(t_shell *shell, t_command *cmd)
 	if(cmd->command_kind == BUILTIN)
 	{
 		apply_redirs(cmd->redirs);
-		return(run_builtin(shell, cmd));
+		return(run_builtin(shell, cmd, MAIN_SHELL));
 	}
 	else
 	{
@@ -160,7 +160,7 @@ static int exec_command_child(t_shell *shell, t_command *cmd)
 
 	if (cmd->command_kind == BUILTIN) // builtins in a pipeline must run in forked child
 	{
-		exit(run_builtin(shell, cmd)); // changed: run in child, not parent
+		exit(run_builtin(shell, cmd, CHILD_SHELL)); // changed: run in child, not parent
 	}
 
 	t_cmd_access access = ft_get_cmd_path(shell, cmd->args);

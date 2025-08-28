@@ -68,7 +68,7 @@ char	*ft_set_prompt(t_shell *shell)
 	}
 	username = getenv("USER");
 	if (!username)
-		username = "minishell";
+		username = "anonymous";
 	username_len = ft_strlen(username);
 	pwd_len = ft_strlen(shell->pwd);
 	ft_build_prompt(shell, username, username_len, pwd_len);

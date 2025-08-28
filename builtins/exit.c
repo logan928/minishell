@@ -45,9 +45,9 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 	shell->exit_status = (unsigned char) n;
 }
 
-void	ft_exit(t_shell *shell, char **args)
+void	ft_exit(t_shell *shell, char **args, int shell_type)
 {
-	if (isatty(STDIN_FILENO))
+	if (isatty(STDIN_FILENO) && shell_type == MAIN_SHELL)
 		write(2, "exit\n", 6);
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);
