@@ -114,6 +114,8 @@ typedef enum e_redir_type
 	R_HDOC    // <<
 }	t_redir_type;
 
+
+// TODO: the idea is to store filename/heredoc content as a string array, so we can pass it to expansion functions
 typedef struct s_redir
 {
 	t_redir_type	kind;
