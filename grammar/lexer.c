@@ -60,73 +60,7 @@ static int	ft_get_operator_length(t_token_kind kind)
 		return (2);
 	return (1);
 }
-void	ft_tokenize_op(t_shell *shell)
-{
-	t_token			*next;
-	t_token_kind	kind;
-	size_t			len;
-	char			*data;
 
-	kind = ft_get_token_kind(&(shell->input[shell->lexer->pos]));
-	len = ft_get_operator_length(kind);
-	data = ft_strndup_safe(shell, &shell->input[shell->lexer->pos], len);
-	next = ft_new_token_safe(shell, kind, data);
-	ft_add_token(&(shell->lexer->tokens), next);
-	shell->lexer->pos += len;
-}
-
-void	ft_tokenize_nl(t_shell *shell)
-{
-	t_token	*next;
-	char	*data;
-
-	data = ft_strdup_safe(shell, "newline");
-	next = ft_new_token_safe(shell, NL, data);
-	ft_add_token(&shell->lexer->tokens, next);
-}
-
-void	ft_tokenize_word(t_shell *shell)
-{
-	t_token	*next;
-	char	*input;
-	char	*data;
-	int		start;
-	int		end;
-
-	start = shell->lexer->start;
-	end = shell->lexer->pos;
-	input = shell->input;
-	data = ft_strndup_safe(shell, &input[start], end - start);
-	next = ft_new_token_safe(shell, WORD, data);
-	ft_add_token(&shell->lexer->tokens, next);
-}
-
-void	lex(t_shell *s, char *in, t_lexer *l)
-{
-	while (in[l->pos])
-	{
-		while (ft_isspace(in[l->pos]) && l->quote == 0)
-			l->pos++;
-		if (ft_is_operator_char(in[l->pos]) && l->quote == 0)
-			ft_tokenize_op(s);
-		else if (in[l->pos])
-		{
-			l->start = l->pos;
-			while (in[l->pos] && (l->quote || ft_is_normal_char(in[l->pos])))
-			{
-				if (ft_isquote(in[l->pos]) && !l->quote)
-					l->quote = in[l->pos];
-				else if (ft_isquote(in[l->pos]) && l->quote)
-					l->quote = 0;
-				l->pos++;
-			}
-			ft_tokenize_word(s);
-		}
-	}
-	ft_tokenize_nl(s);
-}
-
-/*
 void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 {
 	t_token			*next;
@@ -159,7 +93,7 @@ void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 	char	*data;
 
 	input = shell->input;
-	data = ft_strndup_safe(shell, &input[c->cur], c->cur - c->start);
+	data = ft_strndup_safe(shell, &input[c->start], c->cur - c->start);
 	next = ft_new_token_safe(shell, WORD, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }
@@ -167,7 +101,7 @@ void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 void	lex(t_shell *s, char *in)
 {
 	t_cursor	c;
-
+	
 	c = (t_cursor){0, 0, 0};
 	while (in[c.cur])
 	{
@@ -191,5 +125,3 @@ void	lex(t_shell *s, char *in)
 	}
 	ft_tokenize_nl(s);
 }
-
-*/

@@ -69,9 +69,6 @@ typedef struct s_token
 typedef struct s_lexer 			//map with t_ast
 {
 	char	*word;
-	int		pos;
-	int		start;
-	char	quote;
 	bool	io_here;
 	t_token	*tokens;
 	t_token	*tmp;
@@ -158,8 +155,7 @@ typedef struct s_glob_state
 char	*ft_set_prompt(t_shell *shell);
 void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
-void	lex(t_shell *shell, char *input, t_lexer *lexer);
-void	ft_reset_lexer(t_lexer *lexr);
+void	lex(t_shell *shell, char *input);
 int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
