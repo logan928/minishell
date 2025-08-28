@@ -22,7 +22,7 @@ int run_builtin(t_shell *shell, t_command *cmd)
 
 static void apply_redirs(t_redir *redir)
 {
-	printf("inside applying redirections");
+	//printf("inside applying redirections\n");
 	while (redir)
 	{
 		int fd;
