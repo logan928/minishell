@@ -103,10 +103,12 @@ static int exec_command(t_shell *shell, t_command *cmd)
 	
 }
 
+/*
 static int exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	//(void) ast;
 	printf("creating pipelines\n");
+	
 	int pipefd[2];
 	if (pipe(pipefd) == -1)
 	{
@@ -150,6 +152,129 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	if (WIFEXITED(status))
 		return WEXITSTATUS(status);
 	return 1;
+	
+} */
+static int exec_command_child(t_shell *shell, t_command *cmd) 
+{
+	apply_redirs(cmd->redirs); // preserve redirections
+
+	if (cmd->command_kind == BUILTIN) // builtins in a pipeline must run in forked child
+	{
+		exit(run_builtin(shell, cmd)); // changed: run in child, not parent
+	}
+
+	t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
+	if (access.executable)
+	{
+		execve((cmd->args)[0], cmd->args, cmd->env); // changed: use resolved path
+		perror("execve");
+	}
+	exit(127);
+}
+static int exec_pipeline(t_shell *shell, t_ast *ast)
+{
+	int count = 0;
+	t_ast *node = ast;
+	int i = 0;
+	int j = 0;
+
+	while (node && node->type == AST_PIPE)
+	{
+		count++;
+		node = node->left;
+	}
+	count++; 
+
+	printf("count: %d\n", count);
+
+	t_ast *commands[count];
+	node = ast;
+
+	i = count-1;
+	while (node && node->type == AST_PIPE)
+	{
+		//commands[i++] = node->left;
+		//node = node->right;
+		commands[i] = node->right;
+		node = node->left;
+		i--;
+	}
+	printf("i: %d\n", i);
+	commands[i] = node; 
+
+	int pipefd[count - 1][2];
+	while ( j < count - 1)
+	{
+		if (pipe(pipefd[j]) == -1)
+		{
+			perror("pipe");
+			return 1;
+		}
+		j++;
+	}
+	j = 0; //counter reset to save lines
+
+	pid_t pids[count];
+	while (j < count)
+	{
+		int k = 0;
+		pids[j] = fork();
+		if (pids[j] == -1)
+		{
+			perror("fork");
+			return 1;
+		}
+		if (pids[j] == 0) // this is the child process. 
+		{
+
+			if (j > 0)
+			{
+				dup2(pipefd[j-1][0], STDIN_FILENO);
+			}
+
+			if (j < count - 1)
+			{
+				dup2(pipefd[j][1], STDOUT_FILENO);
+			}
+
+			// close all pipe fds in child
+			while ( k < count - 1)
+			{
+				close(pipefd[k][0]);
+				close(pipefd[k][1]);
+				k++;
+			}
+
+			if (commands[j]->type == AST_CMD && commands[j]->cmd)
+				exec_command_child(shell, commands[j]->cmd); // builtins inside pipe needs to be executed inside child
+
+			exit(exec_ast(shell, commands[j])); // simple command
+		}
+		j++;
+	}
+
+	j = 0;
+	while ( j < count - 1)
+	{
+		close(pipefd[j][0]);
+		close(pipefd[j][1]);
+		j++;
+	}
+
+	// wait for all children
+	int status = 0;
+	int  last_status = 0;
+	j =0;
+	while  (j < count)
+	{
+		if (waitpid(pids[j], &status, 0) > 0)
+		{
+			if (WIFEXITED(status))
+				last_status = WEXITSTATUS(status);
+		}
+		j++;
+	}
+	return last_status;
 }
 
 static int exec_subshell(t_ast *ast)
@@ -190,7 +315,7 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		return (exec_subshell(ast));
 	else
 	{
-		printf("Non-defined AST type \n");
+		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
 		return 1;
 	}
 
