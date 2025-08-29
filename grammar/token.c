@@ -96,31 +96,18 @@ void	ft_free_lexer(t_lexer *lexer)
 		free(lexer->word);
 		lexer->word = NULL;
 	}
-	if (lexer->tokens == lexer->tmp && lexer->tokens)
+	if (lexer->tokens)
 		ft_free_tokens(lexer->tokens);
-	else if (lexer->tokens)
-		ft_free_tokens(lexer->tokens);
-	else if (lexer->tmp)
+	if (lexer->tmp == lexer->tmp2 && lexer->tmp)
 		ft_free_tokens(lexer->tmp);
+	else
+	{
+		if (lexer->tmp)
+			ft_free_tokens(lexer->tmp);
+		if (lexer->tmp2)
+			ft_free_tokens(lexer->tmp2);
+	}
 	lexer->tokens = NULL;
 	lexer->tmp = NULL;
-}
-
-void ft_reset_lexer(t_lexer *lexer)
-{
-	if (!lexer)
-		return ;
-	ft_free_lexer(lexer);
-    lexer->pos = 0;
-    lexer->start = 0;
-    lexer->quote = 0;
-}
-
-void ft_reset_lexer_cursor(t_lexer *lexer)
-{
-	if (!lexer)
-		return ;
-    lexer->pos = 0;
-    lexer->start = 0;
-    lexer->quote = 0;
+	lexer->tmp2 = NULL;
 }

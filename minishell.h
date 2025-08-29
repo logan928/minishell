@@ -13,6 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
@@ -31,6 +32,9 @@
 # define ETMARGS ": too many arguments\n"
 # define ENUMREQ ": numeric argument required\n"
 # define ENOHOME ": HOME not set\n"
+
+# define MAIN_SHELL 1
+# define CHILD_SHELL 0
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -51,6 +55,13 @@ typedef enum e_token_kind
 	NL,
 }	t_token_kind;
 
+typedef struct s_cursor
+{
+	size_t	cur;
+	size_t	start;
+	char	quote;
+}	t_cursor;
+
 typedef struct s_token
 {
 	t_token_kind	token_kind;
@@ -61,12 +72,10 @@ typedef struct s_token
 typedef struct s_lexer 			//map with t_ast
 {
 	char	*word;
-	int		pos;
-	int		start;
-	char	quote;
 	bool	io_here;
 	t_token	*tokens;
 	t_token	*tmp;
+	t_token	*tmp2;
 }	t_lexer;
 
 typedef struct s_shell
@@ -105,6 +114,8 @@ typedef enum e_redir_type
 	R_HDOC    // <<
 }	t_redir_type;
 
+
+// TODO: the idea is to store filename/heredoc content as a string array, so we can pass it to expansion functions
 typedef struct s_redir
 {
 	t_redir_type	kind;
@@ -146,20 +157,19 @@ typedef struct s_glob_state
 	int	filename_index;
 }	t_glob_state;
 
+char	*ft_set_prompt(t_shell *shell);
 void	ft_init_shell(t_shell *shell, char *envp[]);
 void	ft_critical_error(t_shell *shell);
-void	lex(t_shell *shell, char *input, t_lexer *lexer);
+void	lex(t_shell *shell, char *input);
 int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
 char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
-void	ft_append_unquoted_quote(t_shell *s, char *t, char **res);
-void	ft_append_quoted_quote(t_shell *s, char *t, char **res);
-void	ft_append_variable(t_shell *s, char *t, char **res);
-void	ft_append_exit_status(t_shell *s, char **res);
-void	ft_append_normal_chars(t_shell *s, char *t, char **res);
+void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
+void	ft_append_exit_status(t_shell *s, t_cursor *c, char **res);
+void	ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res);
 void	ft_free_lexer(t_lexer *lexer);
-void	ft_reset_lexer(t_lexer *lexr);
-void	ft_reset_lexer_cursor(t_lexer *lexer);
 int		ft_pattern_match(const char *pattern, const char *filename);
 int		ft_is_pattern(char *word);
 t_token	*ft_new_token(t_token_kind kind, char *data);
@@ -170,7 +180,7 @@ void	ft_add_token_sorted(t_token **head, t_token *token);
 void	ft_clone_env(t_shell *shell, char *envp[]);
 void	ft_env(t_shell *shell, char *env[]);
 void	ft_free_env(char *envp[]);
-void	ft_exit(t_shell *shell, char **args);
+void	ft_exit(t_shell *shell, char **args, int shell_type);
 void	ft_echo(t_shell *shell, char **args);
 char	*ft_get_cwd(t_shell *shell);
 void	ft_pwd(t_shell *shell, char **args);
@@ -189,21 +199,21 @@ bool	ft_is_valid_number(char *s);
 void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void	ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
 char	*ft_get_pwd(t_shell *shell);
-void	ft_variable_expansion(t_shell *shell, char **args);
-void	ft_field_splitting(t_shell *shell, char ***arr);
+void	ft_variable_expansion(t_shell *shell, char **args, size_t idx);
+void	ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
 size_t	ft_arr_size(char **arr);
 size_t	ft_lst_size(t_token *tokens);
 void	ft_free_arr(char **arr);
 void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
-void	ft_filename_expansion(t_shell *shell, char ***arr);
-void	ft_quote_removal(t_shell *shell, char **args);
+void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx);
+void	ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
 void			ft_here(t_shell *shell);
 t_command		*command_formatter(t_shell *shell, t_token **tokptr);
 void			print_lexem(t_command *cmd);
-t_ast			*parse(t_shell *shell);
+t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 void			print_ast(t_shell *shell, t_ast *node, int depth);

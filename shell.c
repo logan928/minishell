@@ -18,12 +18,6 @@ void	ft_init_shell(t_shell *shell, char *envp[])
 	if (!shell->env)
 		exit(EXIT_FAILURE);
 	ft_set_pwd(shell);
-	//ft_set_prompt(shell);
-	//if (!shell->prompt)
-	//{
-	//	ft_free_arr(shell->env);
-	//	exit(EXIT_FAILURE);
-	//}
 	rl_catch_signals = 0;
 	signal(SIGINT, ft_sigint_handler);
 	signal(SIGQUIT, ft_sigquit_trap);

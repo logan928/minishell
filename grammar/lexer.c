@@ -61,19 +61,19 @@ static int	ft_get_operator_length(t_token_kind kind)
 	return (1);
 }
 
-void	ft_tokenize_op(t_shell *shell)
+void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 {
 	t_token			*next;
 	t_token_kind	kind;
 	size_t			len;
 	char			*data;
 
-	kind = ft_get_token_kind(&(shell->input[shell->lexer->pos]));
+	kind = ft_get_token_kind(&(shell->input[c->cur]));
 	len = ft_get_operator_length(kind);
-	data = ft_strndup_safe(shell, &shell->input[shell->lexer->pos], len);
+	data = ft_strndup_safe(shell, &shell->input[c->cur], len);
 	next = ft_new_token_safe(shell, kind, data);
 	ft_add_token(&(shell->lexer->tokens), next);
-	shell->lexer->pos += len;
+	c->cur += len;
 }
 
 void	ft_tokenize_nl(t_shell *shell)
@@ -86,42 +86,41 @@ void	ft_tokenize_nl(t_shell *shell)
 	ft_add_token(&shell->lexer->tokens, next);
 }
 
-void	ft_tokenize_word(t_shell *shell)
+void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 {
 	t_token	*next;
 	char	*input;
 	char	*data;
-	int		start;
-	int		end;
 
-	start = shell->lexer->start;
-	end = shell->lexer->pos;
 	input = shell->input;
-	data = ft_strndup_safe(shell, &input[start], end - start);
+	data = ft_strndup_safe(shell, &input[c->start], c->cur - c->start);
 	next = ft_new_token_safe(shell, WORD, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }
 
-void	lex(t_shell *s, char *in, t_lexer *l)
+void	lex(t_shell *s, char *in)
 {
-	while (in[l->pos])
+	t_cursor	c;
+	
+	c = (t_cursor){0, 0, 0};
+	while (in[c.cur])
 	{
-		while (ft_isspace(in[l->pos]) && l->quote == 0)
-			l->pos++;
-		if (ft_is_operator_char(in[l->pos]) && l->quote == 0)
-			ft_tokenize_op(s);
-		else if (in[l->pos])
+		while (ft_isspace(in[c.cur]) && c.quote == 0)
+			c.cur++;
+		if (ft_is_operator_char(in[c.cur]) && c.quote == 0)
+			ft_tokenize_op(s, &c);
+		else if (in[c.cur])
 		{
-			l->start = l->pos;
-			while (in[l->pos] && (l->quote || ft_is_normal_char(in[l->pos])))
+			c.start = c.cur;
+			while (in[c.cur] && (c.quote || ft_is_normal_char(in[c.cur])))
 			{
-				if (ft_isquote(in[l->pos]) && !l->quote)
-					l->quote = in[l->pos];
-				else if (ft_isquote(in[l->pos]) && l->quote)
-					l->quote = 0;
-				l->pos++;
+				if (ft_isquote(in[c.cur]) && !c.quote)
+					c.quote = in[c.cur];
+				else if (ft_isquote(in[c.cur]) && c.quote)
+					c.quote = 0;
+				c.cur++;
 			}
-			ft_tokenize_word(s);
+			ft_tokenize_word(s, &c);
 		}
 	}
 	ft_tokenize_nl(s);

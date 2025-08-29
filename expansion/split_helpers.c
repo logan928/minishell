@@ -42,7 +42,7 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size)
 	t_token	*tmp;
 
 	tmp = shell->lexer->tmp;
-	new_arr = malloc(sizeof(char *) * (lst_size + 2));
+	new_arr = ft_malloc_safe(shell, sizeof(char *) * (lst_size + 2));
 	if (!new_arr)
 		ft_critical_error(shell);
 	i = 0;

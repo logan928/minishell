@@ -57,30 +57,29 @@ static void	ft_glob_dir(t_shell *shell, const char *pattern)
 	closedir(dir);
 }
 
-void	ft_filename_expansion(t_shell *shell, char ***arr)
+void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
 {
-	size_t	i;
 	size_t	lst_size;
 	t_token	*t;
 	char	*copy;
 
-	i = 1;
-	while ((*arr)[i])
+	shell->lexer->tmp2 = NULL;
+	while ((*arr)[idx])
 	{
 		shell->lexer->tmp = NULL;
-		if (ft_is_pattern((*arr)[i]))
-			ft_glob_dir(shell, (*arr)[i]);
+		if (ft_is_pattern((*arr)[idx]))
+			ft_glob_dir(shell, (*arr)[idx]);
 		else
 		{
-			copy = ft_strdup_safe(shell, (*arr)[i]);
+			copy = ft_strdup_safe(shell, (*arr)[idx]);
 			t = ft_new_token_safe(shell, WORD, copy);
 			ft_add_token(&shell->lexer->tmp, t);
 		}
-		ft_add_token(&shell->lexer->tokens, shell->lexer->tmp);
-		i++;
+		ft_add_token(&shell->lexer->tmp2, shell->lexer->tmp);
+		idx++;
 	}
-	lst_size = ft_lst_size(shell->lexer->tokens);
-	shell->lexer->tmp = shell->lexer->tokens;
+	lst_size = ft_lst_size(shell->lexer->tmp2);
+	shell->lexer->tmp = shell->lexer->tmp2;
 	ft_merge(shell, arr, lst_size);
-	ft_reset_lexer(shell->lexer);
+	shell->lexer->tmp2 = NULL;
 }

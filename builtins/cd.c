@@ -10,13 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	1. If args[1] == NULL and no $HOME - implementation defined
-	2. If args[1] == NULL and $HOME is set, try to use $HOME as dir
-	3. curpath = args[1]
-	4. if curpath isn't absolute, set it to pwd + '/' + args[1]
-*/
-
 #include "../minishell.h"
 
 void	ft_add_env_var(t_shell *shell, char *var, char *val)
@@ -65,10 +58,13 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	if (chdir(path) == 0)
 	{
-		ft_set_env_var(shell, "PWD", path);
 		ft_set_env_var(shell, "OLDPWD", shell->pwd);
+		ft_set_env_var(shell, "PWD", path);
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD", 3);
+		if (dir && dir[0] == '-' && dir[1] == '\0')
+			ft_write_safe(shell,
+				 ft_str_join3_cpy_safe(shell, shell->pwd, "\n", ""), STDOUT_FILENO);
 	}
 	else
 	{
@@ -77,14 +73,22 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 	}
 }
 
-char	*ft_parse_cd_arg(t_shell *shell, char *arg)
+void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 {
-	if (arg[0] != '/')
-		return (ft_str_join3_cpy_safe(shell, ft_get_pwd(shell),
-				"/", arg));
-	else
-		return (ft_strdup_safe(shell, arg));
+	char	*oldpwd;
 
+	if (arg[0] == '-' && arg[1] == '\0')
+	{
+		oldpwd = ft_get_env_var(shell, "OLDPWD", 6);
+		if (oldpwd[0] != '\0')
+			*cur = oldpwd;
+		else
+			free(oldpwd);
+	}
+	else if (arg[0] != '/')
+		*cur = ft_str_join3_cpy_safe(shell, ft_get_pwd(shell), "/", arg);
+	else
+		*cur = ft_strdup_safe(shell, arg);
 }
 
 void	ft_cd(t_shell *shell, char **args)
@@ -104,7 +108,7 @@ void	ft_cd(t_shell *shell, char **args)
 		tmp = NULL;
 	}
 	else
-		curpath = ft_parse_cd_arg(shell, args[1]);
+		ft_parse_cd_arg(shell, args[1], &curpath);
 	curpath = ft_canonicalize(shell, curpath);
 	ft_chdir(shell, curpath, args[1]);
 }
