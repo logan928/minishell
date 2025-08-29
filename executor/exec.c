@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
+/*   Updated: 2025/08/29 17:50:38 by uwettasi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 #include <sys/wait.h>
 #include <fcntl.h>
 
-int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
+int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 {
 	if (ft_strncmp(cmd->args[0], "exit", 5) == 0)
 		ft_exit(shell, cmd->args, shell_type);
@@ -16,25 +28,25 @@ int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 		ft_cd(shell, cmd->args);
 	if (ft_strncmp(cmd->args[0], "unset", 5) == 0)
 		ft_unset(shell, cmd->args);
-	return 0;
+	return (0);
 }
 
-
-static void apply_redirs(t_shell *shell,t_redir *redir)
+static	void	apply_redirs(t_shell *shell, t_redir *redir)
 {
-	//printf("inside applying redirections\n");
+	int	fd;
+	int	pipefd[2];
+
 	(void)shell;
+	fd = -1;
 	while (redir)
 	{
-		int fd;
 		ft_variable_expansion(shell, redir->file, 0);
-
 		fd = -1;
 		if (redir->kind == R_IN)
 		{
 			fd = open(redir->file[0], O_RDONLY);
-			if (fd < 0) 
-			{ 
+			if (fd < 0)
+			{
 				perror("open"); 
 				exit(1); 
 			}
@@ -45,7 +57,7 @@ static void apply_redirs(t_shell *shell,t_redir *redir)
 		{
 			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0) 
-			{ 
+			{
 				perror("open"); 
 				exit(1); 
 			}
@@ -56,19 +68,17 @@ static void apply_redirs(t_shell *shell,t_redir *redir)
 		{
 			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0) 
-			{ 
+			{
 				perror("open"); 
 				exit(1);
-			 }
+			}
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
 		}
 		else if (redir->kind == R_HDOC)
 		{
-			printf("heredoc processing...\n");//
-			int pipefd[2];
 			if (pipe(pipefd) == -1) 
-			{ 
+			{
 				perror("pipe");
 				exit(1);
 			}
@@ -81,103 +91,106 @@ static void apply_redirs(t_shell *shell,t_redir *redir)
 	}
 }
 
-
-static int exec_command(t_shell *shell, t_command *cmd)
+static	int	exec_command(t_shell *shell, t_command *cmd)
 {
-	if(cmd->command_kind == BUILTIN)
+	t_cmd_access	access;
+	pid_t			pid;
+	int				status;
+
+	access = (t_cmd_access){false, false, false};
+	pid = -1;
+	status = -1;
+	if (cmd->command_kind == BUILTIN)
 	{
 		apply_redirs(shell, cmd->redirs);
-		return(run_builtin(shell, cmd, MAIN_SHELL));
+		return (run_builtin(shell, cmd, MAIN_SHELL));
 	}
 	else
 	{
 		if (cmd->args)
 		{
-			t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
+			access = ft_get_cmd_path(shell, cmd->args);
 			if (access.is_dir)
 			{
-				ft_write_safe(shell, ft_strdup_safe(shell,"Is a directory\n"), STDERR_FILENO);
+				ft_write_safe(shell, ft_strdup_safe(shell, \
+					"Is a directory\n"), STDERR_FILENO);
 				return (CMD_NOT_EXEC);
 			}
 			else if (!access.exist)
 			{
-				ft_write_safe(shell, ft_strdup_safe(shell,"command not found\n"), STDERR_FILENO);
+				ft_write_safe(shell, ft_strdup_safe(shell, \
+					"command not found\n"), STDERR_FILENO);
 				return (CMD_NOT_FOUND);
 			}
 			else if (!access.executable)
 			{
-				ft_write_safe(shell, ft_strdup_safe(shell,"permission denied\n"), STDERR_FILENO);
+				ft_write_safe(shell, ft_strdup_safe(shell, \
+					"permission denied\n"), STDERR_FILENO);
 				return (CMD_NOT_EXEC);
 			}
 		}
-		pid_t pid = fork();
+		pid = fork();
 		if (pid == 0)
 		{
 			apply_redirs(shell, cmd->redirs);
 			if (!cmd->args)
 				exit(0);
-			//if (access.executable)
-			//{
-			execve((cmd->args)[0], cmd->args,shell->env);
+			execve((cmd->args)[0], cmd->args, shell->env);
 			perror("execve");
 			exit(127);
-			//}
 		}
-		int status;
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
-			return WEXITSTATUS(status);
-		return 1;
+			return (WEXITSTATUS(status));
+		return (1);
 	}
-	
 }
 
-static int exec_command_child(t_shell *shell, t_command *cmd) 
+static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
-	apply_redirs(shell, cmd->redirs); // preserve redirections
+	t_cmd_access	access;
 
-	if (cmd->command_kind == BUILTIN) // builtins in a pipeline must run in forked child
+	access = (t_cmd_access){false, false, false};
+	apply_redirs(shell, cmd->redirs); 
+	if (cmd->command_kind == BUILTIN) // builtins in child
 	{
-		exit(run_builtin(shell, cmd, CHILD_SHELL)); // changed: run in child, not parent
+		exit(run_builtin(shell, cmd, CHILD_SHELL)); // run in child, not parent
 	}
-
-	t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
+	access = ft_get_cmd_path(shell, cmd->args);
 	if (access.executable)
 	{
-		execve((cmd->args)[0], cmd->args, shell->env); // changed: use resolved path
+		execve((cmd->args)[0], cmd->args, shell->env); //use resolved path
 		perror("execve");
 	}
 	exit(127);
 }
-static int exec_pipeline(t_shell *shell, t_ast *ast)
-{
-	int count = 0;
-	t_ast *node = ast;
-	int i = 0;
-	int j = 0;
 
+static int	exec_pipeline(t_shell *shell, t_ast *ast)
+{
+	int		count;
+	t_ast	*node;
+	int		i;
+	int		j;
+	t_ast	*commands[count];
+
+	count = 0;
+	node = ast;
+	i = 0;
+	j = 0;
 	while (node && node->type == AST_PIPE)
 	{
 		count++;
 		node = node->left;
 	}
 	count++; 
-
-	//printf("count: %d\n", count);
-
-	t_ast *commands[count];
 	node = ast;
-
-	i = count-1;
+	i = count-1;//get rid
 	while (node && node->type == AST_PIPE)
 	{
-		//commands[i++] = node->left;
-		//node = node->right;
 		commands[i] = node->right;
 		node = node->left;
 		i--;
 	}
-	//printf("i: %d\n", i);
 	commands[i] = node; 
 
 	int pipefd[count - 1][2];
@@ -186,7 +199,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		if (pipe(pipefd[j]) == -1)
 		{
 			perror("pipe");
-			return 1;
+			return (1);
 		}
 		j++;
 	}
@@ -200,7 +213,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		if (pids[j] == -1)
 		{
 			perror("fork");
-			return 1;
+			return (1);
 		}
 		if (pids[j] == 0) // this is the child process. 
 		{
@@ -252,48 +265,48 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		j++;
 	}
-	return last_status;
+	return (last_status);
 }
 
 
 
-static int exec_subshell(t_shell *shell, t_ast *ast)
+static int	exec_subshell(t_shell *shell, t_ast *ast)
 {
 	//(void) ast;
 	//printf("inside sub-shell\n");
-    if (!ast || !ast->left) 
-    { 
+	if (!ast || !ast->left) 
+	{ 
 		printf("no left\n");
-		return 0;
+		return (0);
 	}
 
-    pid_t pid = fork();
-    if (pid < 0)
-    {
-        perror("fork");
-        return 1;
-    }
-    if (pid == 0)
-    {
-        // child executes the subshell AST
-        // (redirections on the subshell node itself should apply here)
-        if (ast->cmd && ast->cmd->redirs)
-            apply_redirs(shell, ast->cmd->redirs);
+	pid_t pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		return (1);
+	}
+	if (pid == 0)
+	{
+		// child executes the subshell AST
+		// (redirections on the subshell node itself should apply here)
+		if (ast->cmd && ast->cmd->redirs)
+			apply_redirs(shell, ast->cmd->redirs);
 
-        exit(exec_ast(shell, ast->left));
-    }
-    int status;
-    waitpid(pid, &status, 0);
-    if (WIFEXITED(status))
-        return WEXITSTATUS(status);
-    return 1;
+		exit(exec_ast(shell, ast->left));
+	}
+	int status;
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return WEXITSTATUS(status);
+	return (1);
 
 }
 
-int exec_ast(t_shell *shell, t_ast *ast)
+int	exec_ast(t_shell *shell, t_ast *ast)
 {
 	if (!ast)
-		return 0;
+		return (0);
 
 	if (ast -> type == AST_CMD)
 		return (exec_command(shell, ast->cmd));
@@ -306,7 +319,7 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		left = exec_ast(shell, ast->left);
 		if(left == 0)
 			return(exec_ast(shell, ast->right));
-		return left;
+		return (left);
 	}
 	else if (ast->type == AST_OR)
 	{
@@ -315,14 +328,14 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		left = exec_ast(shell, ast->left);
 		if (left != 0)
 			return(exec_ast(shell, ast->right));
-		return left;
+		return (left);
 	}
 	else if (ast->type == AST_SUBSHELL)
 		return (exec_subshell(shell, ast));
 	else
 	{
 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
-		return 1;
+		return (1);
 	}
 
 }
