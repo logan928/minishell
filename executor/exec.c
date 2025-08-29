@@ -23,6 +23,7 @@ int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 static void apply_redirs(t_shell *shell, t_redir *redir)
 {
 	//printf("inside applying redirections\n");
+	(void)shell;
 	while (redir)
 	{
 		int fd;
