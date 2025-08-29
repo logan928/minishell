@@ -17,11 +17,10 @@ volatile sig_atomic_t	g_sig = 0;
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
-	int		syntax_status;
 
 	(void)argc;
 	(void)argv;
-	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL};
+	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, 0};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, NULL, NULL, NULL};
 	while (1)
@@ -40,14 +39,18 @@ int	main(int argc, char *argv[], char *envp[])
 			}
 		}
 		lex(&shell, shell.input);
-		syntax_status = ft_check_syntax(&shell);
-			if (syntax_status && shell.lexer->tokens->token_kind != NL)
+		if (ft_check_syntax(&shell))
 		{
 			ft_here(&shell);
 			t_ast *root = parse(&shell, &shell.lexer->tokens);
-			//print_ast(&shell, root, 0);//remove 
-			exec_ast(&shell, root);
-
+			//print_ast(&shell, root, 0);//remove
+			if (shell.parse_err != 0)
+			{
+				printf("Parse error: %d\n", shell.parse_err);
+				shell.parse_err = 0;
+			}
+			else
+				exec_ast(&shell, root);
 		}	
 		//free_ast(root);// Check
 		free(shell.input);

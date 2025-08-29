@@ -9,15 +9,17 @@ static int	ft_alloc_propmt(t_shell *shell, size_t u_len, size_t p_len)
 
 	ret = 0;
 	home = getenv("HOME");
-	if (home == NULL)
-		home_len = 0;
-	else
-		home_len = ft_strlen(home);
-	if (!ft_strncmp(home, shell->pwd, home_len)
-		&& (shell->pwd[home_len] == '\0' || shell->pwd[home_len] == '/'))
+	if (home != NULL)
 	{
-		ret = home_len;
-		prompt_len = p_len - home_len + 1;
+		home_len = ft_strlen(home);
+		if (!ft_strncmp(home, shell->pwd, home_len)
+			&& (shell->pwd[home_len] == '\0' || shell->pwd[home_len] == '/'))
+		{
+			ret = home_len;
+			prompt_len = p_len - home_len + 1;
+		}
+		else
+			prompt_len = p_len;
 	}
 	else
 		prompt_len = p_len;

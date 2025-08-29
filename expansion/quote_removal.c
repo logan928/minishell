@@ -59,7 +59,7 @@ void	ft_append_rest(t_shell *shell, t_cursor *c, char **s, char **clean)
 
 void	ft_quote_removal_str(t_shell *shell, t_token *t)
 {
-	char	*clean;
+	char		*clean;
 	t_cursor	c;
 
 	c = (t_cursor){0, 0, 0};

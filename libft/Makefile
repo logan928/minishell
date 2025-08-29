@@ -16,7 +16,7 @@ SRCS := ft_isquote.c ft_isspace.c ft_strndup.c ft_strdup.c \
 		ft_strchr.c ft_split.c ft_strlcpy.c ft_free_arr.c \
 		ft_memmove.c ft_get_next_line.c ft_strtoll.c ft_tolower.c \
 		ft_isupper.c ft_stack.c ft_strlcat.c ft_realloc_arr.c \
-		ft_remove_at.c
+		ft_remove_at.c ft_calloc.c ft_memset.c
 
 OBJS := $(SRCS:.c=.o)
 

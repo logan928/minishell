@@ -50,7 +50,7 @@ static char	**argv_add(char **argv, int *argc, const char *word)
 
 static t_command	*command_new(void)
 {
-	t_command	*lx = calloc(1, sizeof(t_command)); // TODO: replace with ft_calloc;
+	t_command	*lx = ft_calloc(1, sizeof(t_command));
 	if (!lx)
 		return (NULL);
 	lx->command_kind = EXTERNAL; // default, refine later
@@ -62,11 +62,14 @@ static t_command	*command_new(void)
 
 static t_redir	*redir_new(t_redir_type kind, const char *file)
 {
-	t_redir	*r = calloc(1, sizeof(t_redir)); // TODO: replace with ft_calloc;
+	int	i;
+
+	i = 0;
+	t_redir	*r = ft_calloc(1, sizeof(t_redir));
 	if (!r)
 		return (NULL);
 	r->kind = kind;
-	r->file = strdup(file);
+	r->file = argv_add(r->file, &i, file); //strdup(file);
 	r->next = NULL;
 	return (r);
 }
@@ -132,6 +135,7 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 			if (!tok || tok->token_kind != WORD)
 			{
 				printf("minishell: syntax error near redirection\n");//ft_printf()
+				shell->parse_err = 1;
 				break;//TODO: fix this bug. Need to clear everything and return to prompt. 
 			}
 			redir_add(cmd, redir_new(kind, tok->data));
@@ -146,16 +150,19 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 		tok = tok->next;
 	}
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable.
-	ft_variable_expansion(shell, cmd->args, 1);
-	ft_field_splitting(shell, &cmd->args, 1);
-	ft_filename_expansion(shell, &cmd->args, 1);
-	ft_quote_removal(shell, cmd->args, 0);
+	if (cmd->args)
+	{
+		ft_variable_expansion(shell, cmd->args, 1);
+		ft_field_splitting(shell, &cmd->args, 1);
+		ft_filename_expansion(shell, &cmd->args, 1);
+		ft_quote_removal(shell, cmd->args, 0);
+	}
 	cmd->command_kind = EXTERNAL; // TODO: this is probably the best place to expand args (we need to remove quotes from args[0])
-	if(cmd->args[0] && is_builtin(cmd->args[0]))
+	if(cmd->args && cmd->args[0] && is_builtin(cmd->args[0]))
 		cmd->command_kind = BUILTIN;
 	return (cmd);
 }
-
+/*
 void	print_lexem(t_command *cmd) //TODO: temporary function. Remove once the Parser is integrated. 
 {
 	if (!cmd)
@@ -181,7 +188,8 @@ void	print_lexem(t_command *cmd) //TODO: temporary function. Remove once the Par
 		const char *k = (r->kind == R_IN ? "<" :
 						r->kind == R_OUT ? ">" :
 						r->kind == R_APP ? ">>" : "<<");
-		printf("redir: %s %s\n", k, r->file);
+		//printf("redir: %s %s\n", k, r->file);
 		r = r->next;
 	}
 }
+*/

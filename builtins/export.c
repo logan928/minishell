@@ -20,5 +20,5 @@ static void	ft_print_env_sorted(void)
 void	ft_export(t_shell *shell, char **args)
 {
 	if (args && args[0] && !args[1])
-		ft_print_env_sorted(); // TODO: export without arguments prints env sorted
+		ft_print_env_sorted();
 }
