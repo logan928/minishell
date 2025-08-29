@@ -58,6 +58,7 @@ t_ast *parse_command(t_shell *shell, t_token **tokptr)
         if (!*tokptr || (*tokptr)->token_kind != R_PAREN)
         {
             printf( "minishell: syntax error, missing ')'\n");//
+			shell->parse_err = 2;
             return NULL;
         }
         *tokptr = (*tokptr)->next; // skip ')'
@@ -82,7 +83,7 @@ t_ast *parse_command(t_shell *shell, t_token **tokptr)
 
 // helper to indent tree levels
 //If you need to keep or modify the value safely, make a copy:
-static void print_indent(int depth)
+/*static void print_indent(int depth)
 {
     for (int i = 0; i < depth; i++)
         printf("  ");
@@ -162,4 +163,4 @@ void print_ast(t_shell *shell, t_ast *node, int depth)
             break;
     }
 }
-
+*/

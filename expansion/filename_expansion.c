@@ -62,7 +62,12 @@ void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
 	size_t	lst_size;
 	t_token	*t;
 	char	*copy;
-
+	int		red;
+	
+	if (idx == 0)
+		red = 1;
+	else
+		red = 0;
 	shell->lexer->tmp2 = NULL;
 	while ((*arr)[idx])
 	{
@@ -82,4 +87,6 @@ void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
 	shell->lexer->tmp = shell->lexer->tmp2;
 	ft_merge(shell, arr, lst_size);
 	shell->lexer->tmp2 = NULL;
+	if (ft_arr_size(*arr) > 0 && red)
+		printf("ambiguous redirect\n");
 }

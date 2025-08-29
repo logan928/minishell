@@ -16,7 +16,7 @@ void	ft_split_ifs(t_shell *shell, char *s)
 {
 	t_token		*new_token;
 	t_cursor	c;
-	
+
 	c = (t_cursor){0, 0, 0};
 	while (s[c.cur])
 	{
@@ -24,7 +24,7 @@ void	ft_split_ifs(t_shell *shell, char *s)
 			c.cur++;
 		c.start = c.cur;
 		while (s[c.cur] && ((ft_isspace(s[c.cur]) && c.quote)
-			|| !ft_isspace(s[c.cur])))
+				|| !ft_isspace(s[c.cur])))
 		{
 			if (ft_isquote(s[c.cur]) && !c.quote)
 				c.quote = s[c.cur];

@@ -115,7 +115,7 @@ t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args)
 	t_cmd_access	cmd_access;
 
 	cmd_access = (t_cmd_access){false, false, false};
-	if (!args[0] || args[0][0] == '\0')
+	if (!args || !args[0] || args[0][0] == '\0')
 		return (cmd_access);
 	else if (ft_strchr(args[0], '/'))
 	{

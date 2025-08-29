@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:56:56 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/27 15:27:09 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/29 16:36:54 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ void	ft_set_env_var(t_shell *shell, char *var, char *val)
 
 void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
+	char	*pwd;
+
 	if (chdir(path) == 0)
 	{
 		ft_set_env_var(shell, "OLDPWD", shell->pwd);
@@ -63,8 +65,10 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD", 3);
 		if (dir && dir[0] == '-' && dir[1] == '\0')
-			ft_write_safe(shell,
-				 ft_str_join3_cpy_safe(shell, shell->pwd, "\n", ""), STDOUT_FILENO);
+		{
+			pwd = ft_str_join3_cpy_safe(shell, shell->pwd, "\n", "");
+			ft_write_safe(shell, pwd, STDOUT_FILENO);
+		}
 	}
 	else
 	{

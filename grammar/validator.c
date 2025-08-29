@@ -39,11 +39,14 @@ int	ft_check_syntax(t_shell *shell)
 
 	i = 0;
 	token = shell->lexer->tokens;
+	if (token->token_kind == NL)
+		return (0);
 	while (token && token->token_kind != NL)
 	{
 		next = token->next;
 		if ((i == 0 && ft_isoperator(token->token_kind))
-			|| (ft_isoperator(token->token_kind) && next && ft_isoperator(next->token_kind)))
+			|| (ft_isoperator(token->token_kind) && next
+			&& ft_isoperator(next->token_kind)))
 			return (ft_syntax_error(shell, next->data));
 		if (ft_isredirection(token->token_kind) && next->token_kind != WORD)
 			return (ft_syntax_error(shell, next->data));

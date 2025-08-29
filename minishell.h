@@ -36,6 +36,9 @@
 # define MAIN_SHELL 1
 # define CHILD_SHELL 0
 
+# define CMD_NOT_FOUND	126
+# define CMD_NOT_EXEC	127
+
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
 typedef struct s_ast	t_ast;
@@ -87,6 +90,7 @@ typedef struct s_shell
 	char			*input;
 	char			*pwd;
 	t_ast			*ast;
+	int				parse_err;
 }	t_shell;
 
 typedef enum e_ast_type
@@ -119,7 +123,7 @@ typedef enum e_redir_type
 typedef struct s_redir
 {
 	t_redir_type	kind;
-	char			*file;     // filename or heredoc limiter
+	char			**file;     // filename or heredoc limiter
 	char			*content; //What is usually under content??? heredocs?? TODO: handle content
 	struct s_redir	*next;
 }	t_redir;
@@ -224,6 +228,7 @@ void			ft_cd_too_many_args(t_shell *shell);
 char			*ft_canonicalize(t_shell *shell, char *curpath);
 char			*ft_reconstruct_path(t_stack *st);
 void			ft_unset(t_shell *shell, char **args);
+char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 
 
 typedef enum e_lexem_kind

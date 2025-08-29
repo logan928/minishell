@@ -20,18 +20,19 @@ int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 }
 
 
-static void apply_redirs(t_shell *shell, t_redir *redir)
+static void apply_redirs(t_shell *shell,t_redir *redir)
 {
 	//printf("inside applying redirections\n");
 	(void)shell;
 	while (redir)
 	{
 		int fd;
+		ft_variable_expansion(shell, redir->file, 0);
 
 		fd = -1;
 		if (redir->kind == R_IN)
 		{
-			fd = open(redir->file, O_RDONLY);
+			fd = open(redir->file[0], O_RDONLY);
 			if (fd < 0) 
 			{ 
 				perror("open"); 
@@ -42,7 +43,7 @@ static void apply_redirs(t_shell *shell, t_redir *redir)
 		}
 		else if (redir->kind == R_OUT)
 		{
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0) 
 			{ 
 				perror("open"); 
@@ -53,7 +54,7 @@ static void apply_redirs(t_shell *shell, t_redir *redir)
 		}
 		else if (redir->kind == R_APP)
 		{
-			fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0) 
 			{ 
 				perror("open"); 
@@ -64,7 +65,17 @@ static void apply_redirs(t_shell *shell, t_redir *redir)
 		}
 		else if (redir->kind == R_HDOC)
 		{
-			printf("heredoc processing...\n");//																															
+			printf("heredoc processing...\n");//
+			int pipefd[2];
+			if (pipe(pipefd) == -1) 
+			{ 
+				perror("pipe");
+				exit(1);
+			}
+			write(pipefd[1], redir->file[0], strlen(redir->file[0]));
+			close(pipefd[1]);
+			dup2(pipefd[0], STDIN_FILENO);
+			close(pipefd[0]);
 		}
 		redir = redir->next;
 	}
@@ -80,20 +91,37 @@ static int exec_command(t_shell *shell, t_command *cmd)
 	}
 	else
 	{
+		if (cmd->args)
+		{
+			t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
+			if (access.is_dir)
+			{
+				ft_write_safe(shell, ft_strdup_safe(shell,"Is a directory\n"), STDERR_FILENO);
+				return (CMD_NOT_EXEC);
+			}
+			else if (!access.exist)
+			{
+				ft_write_safe(shell, ft_strdup_safe(shell,"command not found\n"), STDERR_FILENO);
+				return (CMD_NOT_FOUND);
+			}
+			else if (!access.executable)
+			{
+				ft_write_safe(shell, ft_strdup_safe(shell,"permission denied\n"), STDERR_FILENO);
+				return (CMD_NOT_EXEC);
+			}
+		}
 		pid_t pid = fork();
 		if (pid == 0)
 		{
 			apply_redirs(shell, cmd->redirs);
-			t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
-			
-			if (access.executable)
-			{
-				execve((cmd->args)[0], cmd->args, cmd->env);
-				perror("execve");
-				exit(127);
-			}
-			
-			
+			if (!cmd->args)
+				exit(0);
+			//if (access.executable)
+			//{
+			execve((cmd->args)[0], cmd->args,shell->env);
+			perror("execve");
+			exit(127);
+			//}
 		}
 		int status;
 		waitpid(pid, &status, 0);
@@ -104,57 +132,6 @@ static int exec_command(t_shell *shell, t_command *cmd)
 	
 }
 
-/*
-static int exec_pipeline(t_shell *shell, t_ast *ast)
-{
-	//(void) ast;
-	printf("creating pipelines\n");
-	
-	int pipefd[2];
-	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		return 1;
-	}
-
-
-
-	pid_t left_pid = fork();
-	if (left_pid == 0)
-	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		if (ast->left->type == AST_CMD && ast->left->cmd)
-			apply_redirs(ast->left->cmd->redirs);
-		exit(exec_ast(shell, ast->left));
-	}
-
-	pid_t right_pid = fork();
-	if (right_pid == 0)
-	{
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		if (ast->right->type == AST_CMD && ast->right->cmd)
-			apply_redirs(ast->right->cmd->redirs);
-		exit(exec_ast(shell, ast->right));
-	}
-
-	close(pipefd[0]);
-	close(pipefd[1]);
-
-
-	int status;
-	waitpid(left_pid, &status, 0);
-	waitpid(right_pid, &status, 0);
-
-
-	if (WIFEXITED(status))
-		return WEXITSTATUS(status);
-	return 1;
-	
-} */
 static int exec_command_child(t_shell *shell, t_command *cmd) 
 {
 	apply_redirs(shell, cmd->redirs); // preserve redirections
@@ -167,7 +144,7 @@ static int exec_command_child(t_shell *shell, t_command *cmd)
 	t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
 	if (access.executable)
 	{
-		execve((cmd->args)[0], cmd->args, cmd->env); // changed: use resolved path
+		execve((cmd->args)[0], cmd->args, shell->env); // changed: use resolved path
 		perror("execve");
 	}
 	exit(127);
@@ -278,11 +255,39 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	return last_status;
 }
 
-static int exec_subshell(t_ast *ast)
+
+
+static int exec_subshell(t_shell *shell, t_ast *ast)
 {
-	(void) ast;
-	printf("inside sub-shell");
-	return 0;
+	//(void) ast;
+	//printf("inside sub-shell\n");
+    if (!ast || !ast->left) 
+    { 
+		printf("no left\n");
+		return 0;
+	}
+
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+    if (pid == 0)
+    {
+        // child executes the subshell AST
+        // (redirections on the subshell node itself should apply here)
+        if (ast->cmd && ast->cmd->redirs)
+            apply_redirs(shell, ast->cmd->redirs);
+
+        exit(exec_ast(shell, ast->left));
+    }
+    int status;
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+        return WEXITSTATUS(status);
+    return 1;
+
 }
 
 int exec_ast(t_shell *shell, t_ast *ast)
@@ -313,7 +318,7 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		return left;
 	}
 	else if (ast->type == AST_SUBSHELL)
-		return (exec_subshell(ast));
+		return (exec_subshell(shell, ast));
 	else
 	{
 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
@@ -321,3 +326,56 @@ int exec_ast(t_shell *shell, t_ast *ast)
 	}
 
 }
+
+/*
+static int exec_pipeline(t_shell *shell, t_ast *ast)
+{
+	//(void) ast;
+	printf("creating pipelines\n");
+	
+	int pipefd[2];
+	if (pipe(pipefd) == -1)
+	{
+		perror("pipe");
+		return 1;
+	}
+
+
+
+	pid_t left_pid = fork();
+	if (left_pid == 0)
+	{
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		if (ast->left->type == AST_CMD && ast->left->cmd)
+			apply_redirs(ast->left->cmd->redirs);
+		exit(exec_ast(shell, ast->left));
+	}
+
+	pid_t right_pid = fork();
+	if (right_pid == 0)
+	{
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		if (ast->right->type == AST_CMD && ast->right->cmd)
+			apply_redirs(ast->right->cmd->redirs);
+		exit(exec_ast(shell, ast->right));
+	}
+
+	close(pipefd[0]);
+	close(pipefd[1]);
+
+
+	int status;
+	waitpid(left_pid, &status, 0);
+	waitpid(right_pid, &status, 0);
+
+
+	if (WIFEXITED(status))
+		return WEXITSTATUS(status);
+	return 1;
+	
+} */
+
