@@ -20,7 +20,7 @@ int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 }
 
 
-static void apply_redirs(t_shell *shell, t_redir *redir)
+static void apply_redirs(t_redir *redir)
 {
 	//printf("inside applying redirections\n");
 	while (redir)
@@ -74,7 +74,7 @@ static int exec_command(t_shell *shell, t_command *cmd)
 {
 	if(cmd->command_kind == BUILTIN)
 	{
-		apply_redirs(shell, cmd->redirs);
+		apply_redirs(cmd->redirs);
 		return(run_builtin(shell, cmd, MAIN_SHELL));
 	}
 	else
@@ -82,7 +82,7 @@ static int exec_command(t_shell *shell, t_command *cmd)
 		pid_t pid = fork();
 		if (pid == 0)
 		{
-			apply_redirs(shell, cmd->redirs);
+			apply_redirs(cmd->redirs);
 			t_cmd_access access = ft_get_cmd_path(shell, cmd->args);
 			
 			if (access.executable)
@@ -156,7 +156,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 } */
 static int exec_command_child(t_shell *shell, t_command *cmd) 
 {
-	apply_redirs(shell, cmd->redirs); // preserve redirections
+	apply_redirs(cmd->redirs); // preserve redirections
 
 	if (cmd->command_kind == BUILTIN) // builtins in a pipeline must run in forked child
 	{
@@ -185,7 +185,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 	count++; 
 
-	//printf("count: %d\n", count);
+	printf("count: %d\n", count);
 
 	t_ast *commands[count];
 	node = ast;
@@ -199,7 +199,7 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 		node = node->left;
 		i--;
 	}
-	//printf("i: %d\n", i);
+	printf("i: %d\n", i);
 	commands[i] = node; 
 
 	int pipefd[count - 1][2];
