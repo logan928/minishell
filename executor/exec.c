@@ -23,6 +23,7 @@ int run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 static void apply_redirs(t_redir *redir)
 {
 	//printf("inside applying redirections\n");
+	(void)shell;
 	while (redir)
 	{
 		int fd;
@@ -63,7 +64,17 @@ static void apply_redirs(t_redir *redir)
 		}
 		else if (redir->kind == R_HDOC)
 		{
-			printf("heredoc processing...\n");//																															
+			printf("heredoc processing...\n");//
+			int pipefd[2];
+			if (pipe(pipefd) == -1) 
+			{ 
+				perror("pipe"); 
+				exit(1); 
+			}
+			write(pipefd[1], redir->file, strlen(redir->file));
+			close(pipefd[1]);
+			dup2(pipefd[0], STDIN_FILENO);
+			close(pipefd[0]);																															
 		}
 		redir = redir->next;
 	}
@@ -102,7 +113,6 @@ static int exec_command(t_shell *shell, t_command *cmd)
 	}
 	
 }
-
 /*
 static int exec_pipeline(t_shell *shell, t_ast *ast)
 {
@@ -277,11 +287,39 @@ static int exec_pipeline(t_shell *shell, t_ast *ast)
 	return last_status;
 }
 
-static int exec_subshell(t_ast *ast)
+
+
+static int exec_subshell(t_shell *shell, t_ast *ast)
 {
-	(void) ast;
-	printf("inside sub-shell");
-	return 0;
+	//(void) ast;
+	printf("inside sub-shell\n");
+    if (!ast || !ast->left) 
+    { 
+		printf("no left\n");
+		return 0;
+	}
+
+    pid_t pid = fork();
+    if (pid < 0)
+    {
+        perror("fork");
+        return 1;
+    }
+    if (pid == 0)
+    {
+        // child executes the subshell AST
+        // (redirections on the subshell node itself should apply here)
+        if (ast->cmd && ast->cmd->redirs)
+            apply_redirs(shell, ast->cmd->redirs);
+
+        exit(exec_ast(shell, ast->left));
+    }
+    int status;
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
+        return WEXITSTATUS(status);
+    return 1;
+
 }
 
 int exec_ast(t_shell *shell, t_ast *ast)
@@ -312,7 +350,7 @@ int exec_ast(t_shell *shell, t_ast *ast)
 		return left;
 	}
 	else if (ast->type == AST_SUBSHELL)
-		return (exec_subshell(ast));
+		return (exec_subshell(shell, ast));
 	else
 	{
 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
