@@ -83,9 +83,9 @@ void	ft_quote_removal(t_shell *shell, char **args, size_t idx)
 	char		*clean;
 	t_cursor	c;
 
-	c = (t_cursor){0, 0, 0};
 	while (args[idx])
 	{
+		c = (t_cursor){0, 0, 0};
 		clean = NULL;
 		while (args[idx][c.cur])
 		{
