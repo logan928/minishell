@@ -28,6 +28,7 @@ static int	ft_syntax_error(t_shell *shell, char *token)
 
 	err = ft_str_join3_cpy_safe(shell, EUNEXPTKN, token, "'\n");
 	ft_write_safe(shell, err, STDERR_FILENO);
+	shell->exit_status = 2;
 	return (0);
 }
 
@@ -44,9 +45,10 @@ int	ft_check_syntax(t_shell *shell)
 	while (token && token->token_kind != NL)
 	{
 		next = token->next;
-		if ((i == 0 && ft_isoperator(token->token_kind))
-			|| (ft_isoperator(token->token_kind) && next
-			&& ft_isoperator(next->token_kind)))
+		if (i == 0 && ft_isoperator(token->token_kind))
+			return (ft_syntax_error(shell, token->data));
+		else if (ft_isoperator(token->token_kind) && next
+			&& ft_isoperator(next->token_kind))
 			return (ft_syntax_error(shell, next->data));
 		if (ft_isredirection(token->token_kind) && next->token_kind != WORD)
 			return (ft_syntax_error(shell, next->data));

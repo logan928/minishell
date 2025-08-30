@@ -107,7 +107,7 @@ void	ft_export(t_shell *shell, char **args)
 				shell->exp = ft_strvec_update(shell->exp, args[i], ft_strdup_safe(shell, args[i]));
 //			else
 //		 		shell->exp = ft_strvec_update(shell->exp, char *s, char *val)
-			i++;
 		}
+		i++;
 	}
 }
