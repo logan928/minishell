@@ -11,29 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-/*
-void	ft_clone_env(t_shell *shell, char *envp[])
-{
-	size_t	len;
 
-	if (!envp)
-	{
-		shell->env = ft_malloc_safe(shell, sizeof(char *));
-		shell->env[0] = NULL;
-		return ;
-	}
-	len = 0;
-	while (envp[len])
-		len++;
-	shell->env = ft_malloc_safe(shell, sizeof(char *) * (len + 1));
-	shell->env[len] = NULL;
-	while (len > 0)
-	{
-		shell->env[len - 1] = ft_strdup_safe(shell, envp[len - 1]);
-		len--;
-	}
-}
-*/
 void	ft_clone_env(t_shell *shell, char *envp[])
 {
 	size_t	len;

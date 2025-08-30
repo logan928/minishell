@@ -35,8 +35,18 @@ bool ft_is_valid_var_name(char *s)
 {
 	size_t	i;
 
-	if (s = NULL || s[0] == '\0')
+	if (s == NULL || s[0] == '\0')
 		return (false);
+	if (!ft_valid_env_first_char(s[0]))
+		return (false);
+	i = 1;
+	while (s[i])
+	{
+		if (!ft_valid_env_char(s[i]))
+			return (false);
+		i++;
+	}
+	return (true);
 }
 
 void	ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit)

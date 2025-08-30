@@ -11,60 +11,21 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-/*
-void	ft_add_env_var(t_shell *shell, char *var, char *val)
-{
-	char	**new_env;
-	size_t	size;
 
-	new_env = ft_realloc_arr(shell->env);
-	if (new_env == NULL)
-		return ;
-	shell->env = new_env;
-	size = 0;
-	while (shell->env[size])
-		size++;
-	shell->env[size] = ft_str_join3_cpy_safe(shell, var, "=", val);
-}*/
-/*
-void	ft_set_env_var(t_shell *shell, char *var, char *val)
-{
-	size_t	i;
-	size_t	len_var;
-	bool	found;
-
-	found = false;
-	i = 0;
-
-	len_var = ft_strlen(var);
-	while (shell->env->data[i])
-	{
-		if (!ft_strncmp(var, shell->env->data[i], len_var))
-		{
-			if (shell->env->data[i][len_var] == '=')
-			{
-				found = true;
-				free(shell->env->data[i]);
-				shell->env->data[i] = ft_str_join3_cpy_safe(shell, var, "=", val);
-				return ;
-			}
-		}
-		i++;
-	}
-	if (!found)
-		ft_add_env_var(shell, var, val);
-}
-*/
 void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	char	*pwd;
 
 	if (chdir(path) == 0)
 	{
-		shell->env = ft_strvec_update(shell->env, "OLDPWD", ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
-		shell->env = ft_strvec_update(shell->env, "PWD", ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
-		//ft_set_env_var(shell, "OLDPWD", shell->pwd);
-		//ft_set_env_var(shell, "PWD", path);
+		shell->env = ft_strvec_update(shell->env, "OLDPWD", 
+				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
+		shell->env = ft_strvec_update(shell->env, "PWD",
+				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
+		shell->exp = ft_strvec_update(shell->exp, "OLDPWD", 
+				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
+		shell->exp = ft_strvec_update(shell->exp, "PWD",
+				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD");
 		if (dir && dir[0] == '-' && dir[1] == '\0')

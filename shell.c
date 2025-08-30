@@ -11,23 +11,67 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
+
 void	ft_shlvl(t_shell *shell)
 {
 	char	*shlvl;
+	int		lvl;
+	char	*end;
 
-	shlvl = ft_get_env_var(shell, "SHLVL", 5);
-	if (ft_strlen(shell) == 0)
-
-
+	shlvl = ft_strvec_getval(shell->env, "SHLVL");
+	if (shlvl == NULL || ft_strlen(shlvl) == 0)
+	{
+		if (!ft_strvec_push(&shell->env, ft_strdup_safe(shell, "SHLVL=1")))
+			ft_critical_error(shell);
+	}
+	else if (!ft_is_valid_number(shlvl))
+		ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
+	else
+	{
+		lvl = (int) ft_strtoll(shlvl, &end, 10);
+		if (*end != '\0')
+			ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
+		else
+		{
+			char	*tmp = ft_itoa_safe(shell, (long) ++lvl);
+			ft_strvec_update(shell->env, "SHLVL", ft_str_join3_cpy_safe(shell, "SHLVL=", tmp, ""));
+			free(tmp);
+		}
+	}
 }
-*/
+
+void	ft_clone_exp(t_shell *shell)
+{
+	t_strvec	*new;
+	size_t		i;
+
+	new = ft_strvec_init(shell->env->cap);
+	if (new == NULL)
+		ft_critical_error(shell);
+	i = 0;
+	while (i < shell->env->len)
+	{
+		if (shell->env->data[i][0] == '_' && shell->env->data[i][1] == '=')
+		{
+			i++;
+			continue ;
+		}
+		new = ft_strvec_push(&new, ft_strdup_safe(shell, shell->env->data[i]));
+		if (new == NULL)
+			ft_critical_error(shell);
+		i++;
+	}
+	shell->exp = new;
+}
+
 void	ft_init_shell(t_shell *shell, char *envp[])
 {
 	ft_clone_env(shell, envp);
 	if (!shell->env)
 		exit(EXIT_FAILURE);
+	ft_shlvl(shell);
 	ft_set_pwd(shell);
+	ft_clone_exp(shell);
 	rl_catch_signals = 0;
 	signal(SIGINT, ft_sigint_handler);
 	signal(SIGQUIT, ft_sigquit_trap);
@@ -40,7 +84,8 @@ void	ft_critical_error(t_shell *shell)
 		free(shell->input);
 	if (shell->env)
 		ft_strvec_free(shell->env);
-		//ft_free_arr(shell->env);
+	if (shell->exp)
+		ft_strvec_free(shell->exp);
 	ft_free_lexer(shell->lexer);
 	if (shell->pwd)
 		free(shell->pwd);

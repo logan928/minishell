@@ -76,7 +76,7 @@ char	*ft_strvec_getval(const t_strvec *sv, const char *s)
 
 	idx = ft_strvec_find(sv, s);
 	if (idx == -1)
-		return (NULL);
+		return "";
 	p = sv->data[idx];
 	while (*p)
 	{

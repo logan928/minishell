@@ -237,11 +237,14 @@ char			*ft_canonicalize(t_shell *shell, char *curpath);
 char			*ft_reconstruct_path(t_stack *st);
 void			ft_unset(t_shell *shell, char **args);
 char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
+int				ft_valid_env_first_char(int c);
+void			ft_export(t_shell *shell, char **args);
+bool 			ft_is_valid_var_name(char *s);
 
 t_strvec	*ft_strvec_init(size_t cap);
 void	ft_strvec_free(t_strvec *sv);
 t_strvec	*ft_strvec_push(t_strvec **sv, char *s);
-t_strvec	*ft_strvec_update(t_strvec *sv, char *s, char *new);
+t_strvec	*ft_strvec_update(t_strvec *sv, char *s, char *val);
 size_t	ft_strvec_remove(t_strvec *sv, const char *s);
 char	*ft_strvec_getval(const t_strvec *sv, const char *s);
 
