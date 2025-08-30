@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
+/*
 void	ft_add_env_var(t_shell *shell, char *var, char *val)
 {
 	char	**new_env;
@@ -25,8 +25,8 @@ void	ft_add_env_var(t_shell *shell, char *var, char *val)
 	while (shell->env[size])
 		size++;
 	shell->env[size] = ft_str_join3_cpy_safe(shell, var, "=", val);
-}
-
+}*/
+/*
 void	ft_set_env_var(t_shell *shell, char *var, char *val)
 {
 	size_t	i;
@@ -35,16 +35,17 @@ void	ft_set_env_var(t_shell *shell, char *var, char *val)
 
 	found = false;
 	i = 0;
+
 	len_var = ft_strlen(var);
-	while (shell->env[i])
+	while (shell->env->data[i])
 	{
-		if (!ft_strncmp(var, shell->env[i], len_var))
+		if (!ft_strncmp(var, shell->env->data[i], len_var))
 		{
-			if (shell->env[i][len_var] == '=')
+			if (shell->env->data[i][len_var] == '=')
 			{
 				found = true;
-				free(shell->env[i]);
-				shell->env[i] = ft_str_join3_cpy_safe(shell, var, "=", val);
+				free(shell->env->data[i]);
+				shell->env->data[i] = ft_str_join3_cpy_safe(shell, var, "=", val);
 				return ;
 			}
 		}
@@ -53,17 +54,19 @@ void	ft_set_env_var(t_shell *shell, char *var, char *val)
 	if (!found)
 		ft_add_env_var(shell, var, val);
 }
-
+*/
 void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	char	*pwd;
 
 	if (chdir(path) == 0)
 	{
-		ft_set_env_var(shell, "OLDPWD", shell->pwd);
-		ft_set_env_var(shell, "PWD", path);
+		shell->env = ft_strvec_update(shell->env, "OLDPWD", ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
+		shell->env = ft_strvec_update(shell->env, "PWD", ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
+		//ft_set_env_var(shell, "OLDPWD", shell->pwd);
+		//ft_set_env_var(shell, "PWD", path);
 		free(shell->pwd);
-		shell->pwd = ft_get_env_var(shell, "PWD", 3);
+		shell->pwd = ft_get_env_var(shell, "PWD");
 		if (dir && dir[0] == '-' && dir[1] == '\0')
 		{
 			pwd = ft_str_join3_cpy_safe(shell, shell->pwd, "\n", "");
@@ -83,7 +86,7 @@ void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 
 	if (arg[0] == '-' && arg[1] == '\0')
 	{
-		oldpwd = ft_get_env_var(shell, "OLDPWD", 6);
+		oldpwd = ft_get_env_var(shell, "OLDPWD");
 		if (oldpwd[0] != '\0')
 			*cur = oldpwd;
 		else
@@ -105,7 +108,7 @@ void	ft_cd(t_shell *shell, char **args)
 		return (ft_too_many_args(shell, "cd", 1));
 	if (args[1] == NULL || (args[1][0] == '~' && args[1][1] == '\0'))
 	{
-		tmp = ft_get_env_var(shell, "HOME", 4);
+		tmp = ft_get_env_var(shell, "HOME");
 		if (tmp[0] == '\0')
 			return (ft_home_not_set(shell, "cd", tmp));
 		curpath = tmp;

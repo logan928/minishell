@@ -12,30 +12,46 @@
 
 #include "../minishell.h"
 
-int	ft_valid_env_char(int c)
+int	ft_valid_env_first_char(int c)
 {
-	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c == 95))
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c == 95)
 		return (1);
 	return (0);
 }
 
+int	ft_valid_env_char(int c)
+{
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c == 95
+		|| (c >= 48 && c <= 57))
+		return (1);
+	return (0);
+}
+
+char	*ft_get_env_var(t_shell *shell, char *s)
+{
+	char	*var;
+
+	var = ft_strvec_getval(shell->env, s);
+	return (ft_strdup_safe(shell, var));
+}
+/*
 char	*ft_get_env_var(t_shell *shell, char *s, size_t len)
 {
 	size_t	i;
 
 	i = 0;
-	while (shell->env[i])
+	while (shell->env->data[i])
 	{
-		if (!ft_strncmp(s, shell->env[i], len))
+		if (!ft_strncmp(s, shell->env->data[i], len))
 		{
-			if (shell->env[i][len] == '=')
-				return (ft_strdup_safe(shell, shell->env[i] + len + 1));
+			if (shell->env->data[i][len] == '=')
+				return (ft_strdup_safe(shell, shell->env->data[i] + len + 1));
 		}
 		i++;
 	}
 	return (ft_strdup_safe(shell, ""));
 }
-
+*/
 void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	while (t[c->cur])
@@ -45,7 +61,7 @@ void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 		else if (ft_isquote(t[c->cur]) && c->quote == t[c->cur])
 			ft_append_quoted_quote(s, c, t, res);
 		else if ((c->quote != '\'') && t[c->cur] == '$'
-			&& ft_valid_env_char(t[c->cur + 1]))
+			&& ft_valid_env_first_char(t[c->cur + 1]))
 			ft_append_variable(s, c, t, res);
 		else if ((c->quote != '\'') && t[c->cur] == '$'
 			&& t[c->cur + 1] == '?')

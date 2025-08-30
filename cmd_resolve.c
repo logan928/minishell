@@ -75,11 +75,11 @@ void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
 	char	**paths;
 	
 	i = 0;
-	while (shell->env[i])
+	while (shell->env->data[i])
 	{
-		if (ft_strncmp(shell->env[i], "PATH=", 5) == 0)
+		if (ft_strncmp(shell->env->data[i], "PATH=", 5) == 0)
 		{
-			paths = ft_split(shell->env[i] + 5, ':');
+			paths = ft_split(shell->env->data[i] + 5, ':');
 			if (paths)
 			{
 				if (ft_try_paths(shell, paths, args, cmd_access))

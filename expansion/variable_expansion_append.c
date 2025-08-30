@@ -36,14 +36,14 @@ void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*var;
 	int		start;
-	int		len;
+	//int		len;
 
 	c->start = ++c->cur;
 	while (t[c->cur] && ft_valid_env_char(t[c->cur]))
 		c->cur++;
 	start = c->start;
-	len = c->cur - start;
-	var = ft_get_env_var(s, &t[start], len);
+	//len = c->cur - start;
+	var = ft_get_env_var(s, &t[start]);
 	*res = ft_strjoin_free_safe(s, *res, var);
 }
 

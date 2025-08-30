@@ -135,7 +135,7 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 			apply_redirs(shell, cmd->redirs);
 			if (!cmd->args)
 				exit(0);
-			execve((cmd->args)[0], cmd->args, shell->env);
+			execve((cmd->args)[0], cmd->args, shell->env->data);
 			perror("execve");
 			exit(127);
 		}
@@ -159,7 +159,7 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	access = ft_get_cmd_path(shell, cmd->args);
 	if (access.executable)
 	{
-		execve((cmd->args)[0], cmd->args, shell->env); //use resolved path
+		execve((cmd->args)[0], cmd->args, shell->env->data); //use resolved path
 		perror("execve");
 	}
 	exit(127);
@@ -171,7 +171,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	t_ast	*node;
 	int		i;
 	int		j;
-	t_ast	*commands[count];
 
 	count = 0;
 	node = ast;
@@ -184,6 +183,7 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 	count++; 
 	node = ast;
+	t_ast	*commands[count];
 	i = count-1;//get rid
 	while (node && node->type == AST_PIPE)
 	{

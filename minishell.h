@@ -58,6 +58,12 @@ typedef enum e_token_kind
 	NL,
 }	t_token_kind;
 
+typedef struct s_strvec {
+	char	**data;
+	size_t	len;
+	size_t	cap;
+}	t_strvec;
+
 typedef struct s_cursor
 {
 	size_t	cur;
@@ -86,7 +92,9 @@ typedef struct s_shell
 	char			*prompt;
 	unsigned char	exit_status;
 	t_lexer			*lexer;
-	char			**env;
+	t_strvec		*env;
+	t_strvec		*exp;
+	//char			**env;
 	char			*input;
 	char			*pwd;
 	t_ast			*ast;
@@ -167,7 +175,7 @@ void	ft_critical_error(t_shell *shell);
 void	lex(t_shell *shell, char *input);
 int		ft_check_syntax(t_shell *shell);
 int		ft_valid_env_char(int c);
-char	*ft_get_env_var(t_shell *shell, char *s, size_t len);
+char	*ft_get_env_var(t_shell *shell, char *s);
 void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
 void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
 void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
@@ -201,16 +209,16 @@ char	*ft_itoa_safe(t_shell *shell, long n);
 void 	*ft_malloc_safe(t_shell *shell, size_t size);
 bool	ft_is_valid_number(char *s);
 void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
-void	ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
-char	*ft_get_pwd(t_shell *shell);
-void	ft_variable_expansion(t_shell *shell, char **args, size_t idx);
-void	ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
-size_t	ft_arr_size(char **arr);
-size_t	ft_lst_size(t_token *tokens);
-void	ft_free_arr(char **arr);
-void	ft_merge(t_shell *shell, char ***arr, size_t lst_size);
-void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx);
-void	ft_quote_removal(t_shell *shell, char **args, size_t idx);
+void			ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
+char			*ft_get_pwd(t_shell *shell);
+void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
+void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
+size_t			ft_arr_size(char **arr);
+size_t			ft_lst_size(t_token *tokens);
+void			ft_free_arr(char **arr);
+void			ft_merge(t_shell *shell, char ***arr, size_t lst_size);
+void			ft_filename_expansion(t_shell *shell, char ***arr, size_t idx);
+void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
@@ -230,6 +238,12 @@ char			*ft_reconstruct_path(t_stack *st);
 void			ft_unset(t_shell *shell, char **args);
 char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 
+t_strvec	*ft_strvec_init(size_t cap);
+void	ft_strvec_free(t_strvec *sv);
+t_strvec	*ft_strvec_push(t_strvec **sv, char *s);
+t_strvec	*ft_strvec_update(t_strvec *sv, char *s, char *new);
+size_t	ft_strvec_remove(t_strvec *sv, const char *s);
+char	*ft_strvec_getval(const t_strvec *sv, const char *s);
 
 typedef enum e_lexem_kind
 {

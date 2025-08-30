@@ -14,16 +14,18 @@
 
 void	ft_unset(t_shell *shell, char **args)
 {
-	size_t	i;
+	//size_t	i;
 	size_t	j;
-	size_t	len_var;
+	//size_t	len_var;
 
 	if (!args || !args[0] || !args[1])
 		return ;
 	j = 1;
 	while (args[j] != NULL)
 	{
-		i = 0;
+		if (!ft_strvec_remove(shell->env, args[j]))
+			shell->exit_status = 1;
+		/*i = 0;
 		while (shell->env[i])
 		{
 			len_var = ft_strlen(args[j]);
@@ -33,7 +35,7 @@ void	ft_unset(t_shell *shell, char **args)
 				ft_remove_at(shell->env, i);
 			else
 				i++;
-		}
+		}*/
 		j++;
 	}
 }

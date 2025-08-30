@@ -31,6 +31,14 @@ bool	ft_is_valid_number(char *s)
 	return (*s == '\0' && has_digit);
 }
 
+bool ft_is_valid_var_name(char *s)
+{
+	size_t	i;
+
+	if (s = NULL || s[0] == '\0')
+		return (false);
+}
+
 void	ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit)
 {
 	char	*err;

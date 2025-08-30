@@ -19,6 +19,16 @@ static void	ft_print_env_sorted(void)
 
 void	ft_export(t_shell *shell, char **args)
 {
+	size_t	i;
+	char	*equals;
+
 	if (args && args[0] && !args[1])
 		ft_print_env_sorted();
+	i = 1;
+	while (args && args[i])
+	{
+		equals = ft_strchr(args[i], '=');
+		if (equals)
+			ft_
+	}
 }

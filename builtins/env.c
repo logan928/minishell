@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
+/*
 void	ft_clone_env(t_shell *shell, char *envp[])
 {
 	size_t	len;
@@ -33,29 +33,30 @@ void	ft_clone_env(t_shell *shell, char *envp[])
 		len--;
 	}
 }
-
-char	**ft_clone_env_and_return(t_shell *shell, char *envp[])
+*/
+void	ft_clone_env(t_shell *shell, char *envp[])
 {
 	size_t	len;
-	char	**env_copy;
+	size_t	i;
 
-	if (!envp)
+	if (envp == NULL || envp[0] == NULL)
 	{
-		env_copy = ft_malloc_safe(shell, sizeof(char *));
-		env_copy[0] = NULL;
-		return (env_copy);
+		shell->env = ft_strvec_init(10);
+		return ;
 	}
 	len = 0;
 	while (envp[len])
 		len++;
-	env_copy = ft_malloc_safe(shell, sizeof(char *) * (len + 1));
-	env_copy[len] = NULL;
-	while (len > 0)
+	shell->env = ft_strvec_init(len * 2);
+	if (!shell->env)
+		ft_critical_error(shell);
+	i = 0;
+	while (i < len)
 	{
-		env_copy[len - 1] = ft_strdup_safe(shell, envp[len - 1]);
-		len--;
+		if (!ft_strvec_push(&shell->env, ft_strdup_safe(shell, envp[i])))
+			ft_critical_error(shell);
+		i++;
 	}
-	return (env_copy);
 }
 
 void	ft_env(t_shell *shell, char **args)
@@ -65,7 +66,7 @@ void	ft_env(t_shell *shell, char **args)
 	char	*var;
 
 	(void)args;
-	e = shell->env;
+	e = shell->env->data;
 	res = ft_strdup_safe(shell, "");
 	while (*e != NULL)
 	{

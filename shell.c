@@ -11,7 +11,17 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+/*
+void	ft_shlvl(t_shell *shell)
+{
+	char	*shlvl;
 
+	shlvl = ft_get_env_var(shell, "SHLVL", 5);
+	if (ft_strlen(shell) == 0)
+
+
+}
+*/
 void	ft_init_shell(t_shell *shell, char *envp[])
 {
 	ft_clone_env(shell, envp);
@@ -29,7 +39,8 @@ void	ft_critical_error(t_shell *shell)
 	if (shell->input)
 		free(shell->input);
 	if (shell->env)
-		ft_free_arr(shell->env);
+		ft_strvec_free(shell->env);
+		//ft_free_arr(shell->env);
 	ft_free_lexer(shell->lexer);
 	if (shell->pwd)
 		free(shell->pwd);

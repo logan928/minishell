@@ -20,7 +20,7 @@ int	main(int argc, char *argv[], char *envp[])
 
 	(void)argc;
 	(void)argv;
-	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, 0};
+	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, NULL, NULL, NULL};
 	while (1)

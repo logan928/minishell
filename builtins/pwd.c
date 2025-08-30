@@ -46,7 +46,7 @@ void	ft_set_pwd(t_shell *shell)
 {
 	char	*pwd;
 
-	pwd = ft_get_env_var(shell, "PWD", 3);
+	pwd = ft_get_env_var(shell, "PWD");
 	if (pwd[0] == '\0' || !ft_pwd_inode(pwd))
 	{
 		free(pwd);

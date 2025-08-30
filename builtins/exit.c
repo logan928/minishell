@@ -16,7 +16,8 @@ void	ft_free_exit(t_shell *shell)
 {
 	ft_free_lexer(shell->lexer);
 	free(shell->prompt);
-	ft_free_arr(shell->env);
+	//ft_free_arr(shell->env);
+	ft_strvec_free(shell->env);
 	free(shell->pwd);
 	rl_clear_history();
 	exit(shell->exit_status);
