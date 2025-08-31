@@ -68,7 +68,15 @@ void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx, int is_cmd)
 	{
 		shell->lexer->tmp = NULL;
 		if (ft_is_pattern((*arr)[idx]))
+		{
 			ft_glob_dir(shell, (*arr)[idx]);
+			if (shell->lexer->tmp == NULL)
+			{
+				 copy = ft_strdup_safe(shell, (*arr)[idx]);
+				 t = ft_new_token_safe(shell, WORD, copy);
+				ft_add_token(&shell->lexer->tmp, t);
+			}
+		}
 		else
 		{
 			copy = ft_strdup_safe(shell, (*arr)[idx]);
