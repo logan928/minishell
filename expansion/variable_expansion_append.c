@@ -36,12 +36,15 @@ void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*var;
 	int		start;
+	char	*search;
 
 	c->start = ++c->cur;
 	while (t[c->cur] && ft_valid_env_char(t[c->cur]))
 		c->cur++;
 	start = c->start;
-	var = ft_get_env_var(s, &t[start]);
+	search = ft_strndup_safe(s, &t[start], c->cur - start);
+	var = ft_get_env_var(s, search);
+	free(search);
 	*res = ft_strjoin_free_safe(s, *res, var);
 }
 

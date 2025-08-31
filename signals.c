@@ -18,6 +18,7 @@ void	ft_sigint_handler(int sig)
 {
 	(void)sig;
 	g_sig = 1;
+	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();

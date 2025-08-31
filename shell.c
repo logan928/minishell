@@ -34,9 +34,9 @@ void	ft_shlvl(t_shell *shell)
 		else
 		{
 			char	*tmp = ft_itoa_safe(shell, (long) ++lvl);
-			if (lvl >= 100)
+			if (lvl >= 1000)
 			{
-				ft_write_safe(shell, ft_str_join3_cpy_safe(shell, "minishell: warning: shell level (", tmp,") too high, resetting to 1\n"), STDERR_FILENO);
+				ft_write_safe(shell, ft_str_join3_cpy_safe(shell, "minishell: warning: shell level (", tmp,") too high, resetting to 1"), STDERR_FILENO);
 				lvl = 1;
 				ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
 				free(tmp);

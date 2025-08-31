@@ -275,6 +275,8 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		if (pids[j] == 0) // this is the child process. 
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 
 			if (j > 0)
 			{
