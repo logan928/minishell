@@ -87,6 +87,6 @@ void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
 	shell->lexer->tmp = shell->lexer->tmp2;
 	ft_merge(shell, arr, lst_size);
 	shell->lexer->tmp2 = NULL;
-	if (ft_arr_size(*arr) > 0 && red)
-		printf("ambiguous redirect\n");
+	if (ft_arr_size(*arr) != 1 && red)
+		shell->parse_err = 5;
 }

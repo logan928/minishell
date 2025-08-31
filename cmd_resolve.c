@@ -113,6 +113,7 @@ void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args)
 {
 	t_cmd_access	cmd_access;
+	struct stat		st;
 
 	cmd_access = (t_cmd_access){false, false, false};
 	if (!args || !args[0] || args[0][0] == '\0')
@@ -122,6 +123,8 @@ t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args)
 		ft_check_cmd(args[0], &cmd_access);
 		return (cmd_access);
 	}
+	else if (stat(args[0], &st) == 0 && S_ISDIR(st.st_mode))
+		return (cmd_access);
 	ft_build_paths(shell, args, &cmd_access);
 	return (cmd_access);
 }

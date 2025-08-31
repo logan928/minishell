@@ -91,18 +91,18 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 
 static int is_builtin(const char *cmd)
 {
-	size_t len;
+//	size_t len;
 	if (!cmd)
 		return 0;
-	len = ft_strlen(cmd);
+	//len = ft_strlen(cmd);
 	return (
-		ft_strncmp(cmd, "echo", len) == 0 ||
-		ft_strncmp(cmd, "cd", len) == 0 ||
-		ft_strncmp(cmd, "pwd", len) == 0 ||
-		ft_strncmp(cmd, "export", len) == 0 ||
-		ft_strncmp(cmd, "unset", len) == 0 ||
-		ft_strncmp(cmd, "env", len) == 0 ||
-		ft_strncmp(cmd, "exit", len) == 0
+		ft_strncmp(cmd, "echo", 4) == 0 ||
+		ft_strncmp(cmd, "cd", 2) == 0 ||
+		ft_strncmp(cmd, "pwd", 3) == 0 ||
+		ft_strncmp(cmd, "export", 5) == 0 ||
+		ft_strncmp(cmd, "unset", 5) == 0 ||
+		ft_strncmp(cmd, "env", 3) == 0 ||
+		ft_strncmp(cmd, "exit", 4) == 0
 	);
 }
 

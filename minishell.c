@@ -41,6 +41,7 @@ int	main(int argc, char *argv[], char *envp[])
 		lex(&shell, shell.input);
 		if (ft_check_syntax(&shell))
 		{
+			shell.parse_err = 0;
 			ft_here(&shell);
 			t_ast *root = parse(&shell, &shell.lexer->tokens);
 			//print_ast(&shell, root, 0);//remove
@@ -50,7 +51,7 @@ int	main(int argc, char *argv[], char *envp[])
 				shell.parse_err = 0;
 			}
 			else
-				exec_ast(&shell, root);
+				shell.exit_status = (unsigned char) exec_ast(&shell, root);
 		}	
 		//free_ast(root);// Check
 		free(shell.input);

@@ -33,7 +33,7 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-static	void	apply_redirs(t_shell *shell, t_redir *redir)
+static	int	apply_redirs(t_shell *shell, t_redir *redir)
 {
 	int	fd;
 	int	pipefd[2];
@@ -42,7 +42,18 @@ static	void	apply_redirs(t_shell *shell, t_redir *redir)
 	fd = -1;
 	while (redir)
 	{
+		char *tmp = ft_strdup_safe(shell, redir->file[0]);
 		ft_variable_expansion(shell, redir->file, 0);
+		ft_filename_expansion(shell, &redir->file, 0);
+		ft_quote_removal(shell, redir->file, 0);
+		if (!redir->file || !redir->file[0] || redir->file[1] != NULL)
+        {
+			char	*err = ft_str_join3_cpy_safe(shell, "minishell: ", tmp, ": ambiguous redirect\n");
+            ft_write_safe(shell, err, STDERR_FILENO);
+            shell->exit_status = 1;
+            shell->parse_err = 1;
+            return (1);
+        }
 		fd = -1;
 		if (redir->kind == R_IN)
 		{
@@ -91,50 +102,94 @@ static	void	apply_redirs(t_shell *shell, t_redir *redir)
 		}
 		redir = redir->next;
 	}
+	return (0);
+}
+
+static int	ft_check_access(t_shell *shell, t_command *cmd)
+{
+	char			*cmd_name;
+	t_cmd_access	access;
+
+	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
+	access = ft_get_cmd_path(shell, cmd->args);
+	if (!access.exist)
+	{
+		ft_write_safe(shell,
+				ft_str_join3_cpy_safe(shell, cmd->args[0], ": command not found\n", ""),
+				STDERR_FILENO);
+		free(cmd_name);
+		return (CMD_NOT_FOUND);
+	}
+	else if (access.is_dir)
+	{
+		ft_write_safe(shell,
+				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": Is a directory\n"),
+				STDERR_FILENO);
+		free(cmd_name);
+		return (CMD_NOT_EXEC);
+	}
+	else if (!access.executable)
+	{
+		ft_write_safe(shell,
+				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": Permission denied\n"),
+				STDERR_FILENO);
+		free(cmd_name);
+		return (CMD_NOT_EXEC);
+	}
+	free(cmd_name);
+	return (0);
 }
 
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
-	t_cmd_access	access;
+	//t_cmd_access	access;
 	pid_t			pid;
 	int				status;
+	int				access_err;
 
-	access = (t_cmd_access){false, false, false};
+	//access = (t_cmd_access){false, false, false};
 	pid = -1;
 	status = -1;
 	if (cmd->command_kind == BUILTIN)
 	{
-		apply_redirs(shell, cmd->redirs);
+		if (apply_redirs(shell, cmd->redirs))
+			return (1);
 		return (run_builtin(shell, cmd, MAIN_SHELL));
 	}
 	else
 	{
+		if (apply_redirs(shell, cmd->redirs))
+			return (1);
 		if (cmd->args)
 		{
-			access = ft_get_cmd_path(shell, cmd->args);
-			if (access.is_dir)
-			{
-				ft_write_safe(shell, ft_strdup_safe(shell, \
-					"Is a directory\n"), STDERR_FILENO);
-				return (CMD_NOT_EXEC);
-			}
-			else if (!access.exist)
+			access_err = ft_check_access(shell, cmd);
+			if (access_err)
+				return (access_err);
+		/*	access = ft_get_cmd_path(shell, cmd->args);
+			if (!access.exist)
 			{
 				ft_write_safe(shell, ft_strdup_safe(shell, \
 					"command not found\n"), STDERR_FILENO);
 				return (CMD_NOT_FOUND);
+			}
+			else if (access.is_dir && ft_strchr(cmd->args[0], '/'))
+			{
+				ft_write_safe(shell, ft_strdup_safe(shell, \
+					"Is a directory\n"), STDERR_FILENO);
+				return (CMD_NOT_EXEC);
 			}
 			else if (!access.executable)
 			{
 				ft_write_safe(shell, ft_strdup_safe(shell, \
 					"permission denied\n"), STDERR_FILENO);
 				return (CMD_NOT_EXEC);
-			}
+			}*/
 		}
 		pid = fork();
 		if (pid == 0)
 		{
-			apply_redirs(shell, cmd->redirs);
+			if (shell->parse_err == 5)
+				return (1);
 			if (!cmd->args)
 				exit(0);
 			execve((cmd->args)[0], cmd->args, shell->env->data);
@@ -153,7 +208,8 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	t_cmd_access	access;
 
 	access = (t_cmd_access){false, false, false};
-	apply_redirs(shell, cmd->redirs); 
+	if (apply_redirs(shell, cmd->redirs))
+		exit(shell->exit_status);
 	if (cmd->command_kind == BUILTIN) // builtins in child
 	{
 		exit(run_builtin(shell, cmd, CHILD_SHELL)); // run in child, not parent

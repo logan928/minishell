@@ -99,14 +99,24 @@ void	ft_export(t_shell *shell, char **args)
 	while (args && args[i])
 	{
 		if (!ft_is_valid_var_name(args[i]))
-			printf("Invalid argument: [%s]\n", args[i]);
+		{
+			char *err = ft_str_join3_cpy_safe(shell, "minishell: export: `", args[i], "': not a valid identifier\n");
+			ft_write_safe(shell, err, STDERR_FILENO);
+		}
 		else
 		{
 			eq = ft_strchr(args[i], '=');
 			if (eq == NULL)
 				shell->exp = ft_strvec_update(shell->exp, args[i], ft_strdup_safe(shell, args[i]));
-//			else
-//		 		shell->exp = ft_strvec_update(shell->exp, char *s, char *val)
+			else
+			{
+				char *var = ft_strndup_safe(shell, args[i], eq - args[i]);
+				char *val = ft_strdup_safe(shell, eq);
+		 		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, val, ""));
+		 		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, val, ""));
+				free(val);
+				free(var);
+			}
 		}
 		i++;
 	}

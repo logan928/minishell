@@ -14,4 +14,4 @@
 - [x] ./minishell exits immediately
 - [x] crash if there's only redirect, e.g. > a, << eof
 - [x] crash if no environment
-- [] SHLVL
+- [x] SHLVL

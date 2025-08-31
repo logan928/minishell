@@ -42,6 +42,8 @@ bool ft_is_valid_var_name(char *s)
 	i = 1;
 	while (s[i])
 	{
+		if (s[i] == '=')
+			return (true);
 		if (!ft_valid_env_char(s[i]))
 			return (false);
 		i++;
