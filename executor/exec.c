@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/08/29 17:50:38 by uwettasi         ###   ########.fr       */
+/*   Updated: 2025/08/31 21:09:34 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,19 @@
 
 int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 {
-	if (ft_strncmp(cmd->args[0], "exit", 4) == 0)
+	if (ft_strcmp(cmd->args[0], "exit", 0) == 0)
 		ft_exit(shell, cmd->args, shell_type);
-	if (ft_strncmp(cmd->args[0], "echo", 4) == 0)
+	if (ft_strcmp(cmd->args[0], "echo", 0) == 0)
 		ft_echo(shell, cmd->args);
-	if (ft_strncmp(cmd->args[0], "env", 3) == 0)
+	if (ft_strcmp(cmd->args[0], "env", 0) == 0)
 		ft_env(shell, cmd->args);
-	if (ft_strncmp(cmd->args[0], "pwd", 3) == 0)
+	if (ft_strcmp(cmd->args[0], "pwd", 0) == 0)
 		ft_pwd(shell, cmd->args);
-	if (ft_strncmp(cmd->args[0], "cd", 2) == 0)
+	if (ft_strcmp(cmd->args[0], "cd", 0) == 0)
 		ft_cd(shell, cmd->args);
-	if (ft_strncmp(cmd->args[0], "unset", 5) == 0)
+	if (ft_strcmp(cmd->args[0], "unset", 0) == 0)
 		ft_unset(shell, cmd->args);
-	if (ft_strncmp(cmd->args[0], "export", 6) == 0)
+	if (ft_strcmp(cmd->args[0], "export", 0) == 0)
 		ft_export(shell, cmd->args);
 	return (0);
 }
@@ -38,13 +38,12 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir)
 	int	fd;
 	int	pipefd[2];
 
-	(void)shell;
 	fd = -1;
 	while (redir)
 	{
 		char *tmp = ft_strdup_safe(shell, redir->file[0]);
 		ft_variable_expansion(shell, redir->file, 0);
-		ft_filename_expansion(shell, &redir->file, 0);
+		ft_filename_expansion(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
 		if (!redir->file || !redir->file[0] || redir->file[1] != NULL)
         {
@@ -154,7 +153,8 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 	{
 		if (apply_redirs(shell, cmd->redirs))
 			return (1);
-		return (run_builtin(shell, cmd, MAIN_SHELL));
+		run_builtin(shell, cmd, MAIN_SHELL);
+		return (shell->exit_status);
 	}
 	else
 	{
@@ -205,21 +205,21 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 
 static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
-	t_cmd_access	access;
+	int	access_err;
 
-	access = (t_cmd_access){false, false, false};
 	if (apply_redirs(shell, cmd->redirs))
 		exit(shell->exit_status);
 	if (cmd->command_kind == BUILTIN) // builtins in child
 	{
 		exit(run_builtin(shell, cmd, CHILD_SHELL)); // run in child, not parent
 	}
-	access = ft_get_cmd_path(shell, cmd->args);
-	if (access.executable)
-	{
-		execve((cmd->args)[0], cmd->args, shell->env->data); //use resolved path
-		perror("execve");
-	}
+
+	access_err = ft_check_access(shell, cmd);
+	if (access_err)
+		exit(access_err);
+	
+	execve((cmd->args)[0], cmd->args, shell->env->data); //use resolved path
+	perror("execve");
 	exit(127);
 }
 
@@ -275,8 +275,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		if (pids[j] == 0) // this is the child process. 
 		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
 
 			if (j > 0)
 			{

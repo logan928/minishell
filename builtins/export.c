@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 10:38:49 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/27 14:01:05 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/31 20:23:44 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,32 @@ static void	ft_print_exp(t_shell *shell)
 	ft_write_safe(shell, res, STDOUT_FILENO);
 }
 
+void	ft_set_val(t_shell *shell, char *eq, char *s)
+{
+	char	*var;
+	char	*val;
+	char	*prev;
+
+	var = ft_strndup_safe(shell, s, eq - s);
+	val = ft_strdup_safe(shell, eq);
+	if (*(eq - 1) == '+')
+	{
+		prev = ft_get_env_var(shell, var);
+		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, prev, val));
+		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, prev, val));
+		free(val);
+		free(var);
+		free(prev);
+	}
+	else
+	{
+		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, val, ""));
+		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, val, ""));
+		free(val);
+		free(var);
+	}
+}
+
 void	ft_export(t_shell *shell, char **args)
 {
 	size_t	i;
@@ -101,6 +127,7 @@ void	ft_export(t_shell *shell, char **args)
 		if (!ft_is_valid_var_name(args[i]))
 		{
 			char *err = ft_str_join3_cpy_safe(shell, "minishell: export: `", args[i], "': not a valid identifier\n");
+			shell->exit_status = 1;
 			ft_write_safe(shell, err, STDERR_FILENO);
 		}
 		else
@@ -109,14 +136,7 @@ void	ft_export(t_shell *shell, char **args)
 			if (eq == NULL)
 				shell->exp = ft_strvec_update(shell->exp, args[i], ft_strdup_safe(shell, args[i]));
 			else
-			{
-				char *var = ft_strndup_safe(shell, args[i], eq - args[i]);
-				char *val = ft_strdup_safe(shell, eq);
-		 		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, val, ""));
-		 		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, val, ""));
-				free(val);
-				free(var);
-			}
+				ft_set_val(shell, eq, args[i]);
 		}
 		i++;
 	}

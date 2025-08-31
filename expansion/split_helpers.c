@@ -35,24 +35,28 @@ size_t	ft_lst_size(t_token *tokens)
 	return (size);
 }
 
-void	ft_merge(t_shell *shell, char ***arr, size_t lst_size)
+void	ft_merge(t_shell *shell, char ***arr, size_t lst_size, int is_cmd)
 {
 	char	**new_arr;
 	size_t	i;
 	t_token	*tmp;
 
 	tmp = shell->lexer->tmp;
-	new_arr = ft_malloc_safe(shell, sizeof(char *) * (lst_size + 2));
+	new_arr = ft_malloc_safe(shell, sizeof(char *) * (lst_size + 1 + is_cmd));
 	if (!new_arr)
 		ft_critical_error(shell);
 	i = 0;
-	new_arr[i] = ft_strdup_safe(shell, (*arr)[i]);
+	if (is_cmd)
+		new_arr[0] = ft_strdup_safe(shell, (*arr)[i++]);
 	while (tmp)
 	{
-		new_arr[++i] = ft_strdup_safe(shell, tmp->data);
+		new_arr[i++] = ft_strdup_safe(shell, tmp->data);
 		tmp = tmp->next;
 	}
-	new_arr[lst_size + 1] = NULL;
+	if (is_cmd)
+		new_arr[lst_size + 1] = NULL;
+	else
+		new_arr[lst_size] = NULL;
 	ft_free_arr(*arr);
 	*arr = new_arr;
 }

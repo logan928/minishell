@@ -21,10 +21,8 @@ void	ft_unset(t_shell *shell, char **args)
 	j = 1;
 	while (args[j] != NULL)
 	{
-		if (!ft_strvec_remove(shell->env, args[j]))
-			shell->exit_status = 1;
-		if (!ft_strvec_remove(shell->exp, args[j]))
-			shell->exit_status = 1;
+		ft_strvec_remove(shell->env, args[j]);
+		ft_strvec_remove(shell->exp, args[j]);
 		j++;
 	}
 }

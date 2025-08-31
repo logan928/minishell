@@ -36,8 +36,8 @@
 # define MAIN_SHELL 1
 # define CHILD_SHELL 0
 
-# define CMD_NOT_FOUND	126
-# define CMD_NOT_EXEC	127
+# define CMD_NOT_EXEC	126
+# define CMD_NOT_FOUND	127
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -216,8 +216,8 @@ void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
 size_t			ft_arr_size(char **arr);
 size_t			ft_lst_size(t_token *tokens);
 void			ft_free_arr(char **arr);
-void			ft_merge(t_shell *shell, char ***arr, size_t lst_size);
-void			ft_filename_expansion(t_shell *shell, char ***arr, size_t idx);
+void			ft_merge(t_shell *shell, char ***arr, size_t lst_size, int is_cmd);
+void			ft_filename_expansion(t_shell *shell, char ***arr, size_t idx, int is_cmd);
 void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);

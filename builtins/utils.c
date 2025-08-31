@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:36:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 17:05:53 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/31 19:50:03 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ bool ft_is_valid_var_name(char *s)
 	i = 1;
 	while (s[i])
 	{
+		if (s[i] == '+')
+			return (s[i + 1] == '=');
 		if (s[i] == '=')
 			return (true);
 		if (!ft_valid_env_char(s[i]))

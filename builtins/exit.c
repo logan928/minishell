@@ -38,12 +38,17 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 	char		*end;
 	long long	n;
 
-	if (!ft_is_valid_number(arg))
+	if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+		n = 0;
+	else if (!ft_is_valid_number(arg))
 		return (ft_num_arg_req(shell, "minishell: exit: ", arg));
-	n = ft_strtoll(arg, &end, 10);
-	if (*end != '\0')
-		return (ft_num_arg_req(shell, "minishell: exit: ", arg));
-	shell->exit_status = (unsigned char) n;
+	else
+	{
+		n = ft_strtoll(arg, &end, 10);
+		if (*end != '\0')
+			return (ft_num_arg_req(shell, "minishell: exit: ", arg));
+		shell->exit_status = (unsigned char) n;
+	}
 }
 
 void	ft_exit(t_shell *shell, char **args, int shell_type)
@@ -53,6 +58,6 @@ void	ft_exit(t_shell *shell, char **args, int shell_type)
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);
 	if (args && args[1] != NULL && args[2] != NULL)
-		return (ft_too_many_args(shell, "exit", 2));
+		return (ft_too_many_args(shell, "exit", 1));
 	ft_free_exit(shell);
 }

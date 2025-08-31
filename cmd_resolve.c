@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:31:19 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 13:06:34 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/08/31 20:58:55 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,27 +71,24 @@ bool	ft_try_paths(t_shell *shell, char **paths, char **args, t_cmd_access *cmd_a
 
 void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
 {
-	int		i;
 	char	**paths;
-	
-	i = 0;
-	while (shell->env->data[i])
+	char	*path;
+
+	path = ft_get_env_var(shell, "PATH");
+	if (path[0] != '\0')
 	{
-		if (ft_strncmp(shell->env->data[i], "PATH=", 5) == 0)
+		paths = ft_split(path, ':');
+		if (paths)
 		{
-			paths = ft_split(shell->env->data[i] + 5, ':');
-			if (paths)
+			if (ft_try_paths(shell, paths, args, cmd_access))
 			{
-				if (ft_try_paths(shell, paths, args, cmd_access))
-				{
-					ft_free_arr(paths);
-					return ;
-				}
+				free(path);
 				ft_free_arr(paths);
+				return ;
 			}
-			break ;
+			free(path);
+			ft_free_arr(paths);
 		}
-		i++;
 	}
 }
 

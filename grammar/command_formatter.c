@@ -91,18 +91,16 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 
 static int is_builtin(const char *cmd)
 {
-//	size_t len;
 	if (!cmd)
 		return 0;
-	//len = ft_strlen(cmd);
 	return (
-		ft_strncmp(cmd, "echo", 4) == 0 ||
-		ft_strncmp(cmd, "cd", 2) == 0 ||
-		ft_strncmp(cmd, "pwd", 3) == 0 ||
-		ft_strncmp(cmd, "export", 5) == 0 ||
-		ft_strncmp(cmd, "unset", 5) == 0 ||
-		ft_strncmp(cmd, "env", 3) == 0 ||
-		ft_strncmp(cmd, "exit", 4) == 0
+		ft_strcmp(cmd, "echo", 0) == 0 ||
+		ft_strcmp(cmd, "cd", 0) == 0 ||
+		ft_strcmp(cmd, "pwd", 0) == 0 ||
+		ft_strcmp(cmd, "export", 0) == 0 ||
+		ft_strcmp(cmd, "unset", 0) == 0 ||
+		ft_strcmp(cmd, "env", 0) == 0 ||
+		ft_strcmp(cmd, "exit", 0) == 0
 	);
 }
 
@@ -154,7 +152,7 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 	{
 		ft_variable_expansion(shell, cmd->args, 1);
 		ft_field_splitting(shell, &cmd->args, 1);
-		ft_filename_expansion(shell, &cmd->args, 1);
+		ft_filename_expansion(shell, &cmd->args, 1, 1);
 		ft_quote_removal(shell, cmd->args, 0);
 	}
 	cmd->command_kind = EXTERNAL; // TODO: this is probably the best place to expand args (we need to remove quotes from args[0])

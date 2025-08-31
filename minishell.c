@@ -18,6 +18,10 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
 
+	//if (argc > 1)
+	//	return(EXIT_SUCCESS);
+	//if (!isatty(STDIN_FILENO))
+//		return(EXIT_SUCCESS);
 	(void)argc;
 	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0};

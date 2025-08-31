@@ -57,17 +57,12 @@ static void	ft_glob_dir(t_shell *shell, const char *pattern)
 	closedir(dir);
 }
 
-void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
+void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx, int is_cmd)
 {
 	size_t	lst_size;
 	t_token	*t;
 	char	*copy;
-	int		red;
 	
-	if (idx == 0)
-		red = 1;
-	else
-		red = 0;
 	shell->lexer->tmp2 = NULL;
 	while ((*arr)[idx])
 	{
@@ -85,8 +80,6 @@ void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx)
 	}
 	lst_size = ft_lst_size(shell->lexer->tmp2);
 	shell->lexer->tmp = shell->lexer->tmp2;
-	ft_merge(shell, arr, lst_size);
+	ft_merge(shell, arr, lst_size, is_cmd);
 	shell->lexer->tmp2 = NULL;
-	if (ft_arr_size(*arr) != 1 && red)
-		shell->parse_err = 5;
 }
