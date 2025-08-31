@@ -150,7 +150,7 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable.
 	if (cmd->args)
 	{
-		ft_variable_expansion(shell, cmd->args, 1);
+		ft_variable_expansion(shell, cmd->args, 0);
 		ft_field_splitting(shell, &cmd->args, 1);
 		ft_filename_expansion(shell, &cmd->args, 1, 1);
 		ft_quote_removal(shell, cmd->args, 0);

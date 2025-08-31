@@ -21,7 +21,7 @@ static bool	ft_is_n_flag(const char *s, int	*newline)
 {
 	int	i;
 
-	if (!s || s[0] != '-')
+	if (!s || s[0] != '-' || s[1] == '\0')
 		return (false);
 	i = 1;
 	while (s[i])
