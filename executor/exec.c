@@ -13,6 +13,7 @@
 #include "../minishell.h"
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 {
@@ -141,12 +142,10 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
-	//t_cmd_access	access;
 	pid_t			pid;
 	int				status;
 	int				access_err;
 
-	//access = (t_cmd_access){false, false, false};
 	pid = -1;
 	status = -1;
 	if (cmd->command_kind == BUILTIN)
@@ -158,6 +157,9 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 	}
 	else
 	{
+		pid = fork();
+		if (pid == 0)
+		{
 		if (apply_redirs(shell, cmd->redirs))
 			return (1);
 		if (cmd->args)
@@ -165,29 +167,7 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 			access_err = ft_check_access(shell, cmd);
 			if (access_err)
 				return (access_err);
-		/*	access = ft_get_cmd_path(shell, cmd->args);
-			if (!access.exist)
-			{
-				ft_write_safe(shell, ft_strdup_safe(shell, \
-					"command not found\n"), STDERR_FILENO);
-				return (CMD_NOT_FOUND);
-			}
-			else if (access.is_dir && ft_strchr(cmd->args[0], '/'))
-			{
-				ft_write_safe(shell, ft_strdup_safe(shell, \
-					"Is a directory\n"), STDERR_FILENO);
-				return (CMD_NOT_EXEC);
-			}
-			else if (!access.executable)
-			{
-				ft_write_safe(shell, ft_strdup_safe(shell, \
-					"permission denied\n"), STDERR_FILENO);
-				return (CMD_NOT_EXEC);
-			}*/
 		}
-		pid = fork();
-		if (pid == 0)
-		{
 			if (shell->parse_err == 5)
 				return (1);
 			if (!cmd->args)
@@ -397,56 +377,3 @@ int	exec_ast(t_shell *shell, t_ast *ast)
 	}
 
 }
-
-/*
-static int exec_pipeline(t_shell *shell, t_ast *ast)
-{
-	//(void) ast;
-	printf("creating pipelines\n");
-	
-	int pipefd[2];
-	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		return 1;
-	}
-
-
-
-	pid_t left_pid = fork();
-	if (left_pid == 0)
-	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		if (ast->left->type == AST_CMD && ast->left->cmd)
-			apply_redirs(ast->left->cmd->redirs);
-		exit(exec_ast(shell, ast->left));
-	}
-
-	pid_t right_pid = fork();
-	if (right_pid == 0)
-	{
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
-		if (ast->right->type == AST_CMD && ast->right->cmd)
-			apply_redirs(ast->right->cmd->redirs);
-		exit(exec_ast(shell, ast->right));
-	}
-
-	close(pipefd[0]);
-	close(pipefd[1]);
-
-
-	int status;
-	waitpid(left_pid, &status, 0);
-	waitpid(right_pid, &status, 0);
-
-
-	if (WIFEXITED(status))
-		return WEXITSTATUS(status);
-	return 1;
-	
-} */
-
