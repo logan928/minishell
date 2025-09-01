@@ -122,7 +122,7 @@ typedef enum e_redir_type
 	R_IN,     // <
 	R_OUT,    // >
 	R_APP,    // >>
-	R_HDOC    // <<
+	R_HDOC   // <<
 }	t_redir_type;
 
 
