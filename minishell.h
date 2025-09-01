@@ -6,14 +6,14 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/27 16:24:14 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 16:41:05 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include <stddef.h>
+# include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <readline/readline.h>
@@ -78,7 +78,7 @@ typedef struct s_token
 	t_token			*next;
 }	t_token;
 
-typedef struct s_lexer 			//map with t_ast
+typedef struct s_lexer
 {
 	char	*word;
 	bool	io_here;
@@ -94,7 +94,6 @@ typedef struct s_shell
 	t_lexer			*lexer;
 	t_strvec		*env;
 	t_strvec		*exp;
-	//char			**env;
 	char			*input;
 	char			*pwd;
 	t_ast			*ast;
@@ -103,7 +102,7 @@ typedef struct s_shell
 
 typedef enum e_ast_type
 {
-	AST_CMD, // seperate to built-in and external
+	AST_CMD,
 	AST_PIPE,
 	AST_AND,
 	AST_OR,
@@ -169,46 +168,46 @@ typedef struct s_glob_state
 	int	filename_index;
 }	t_glob_state;
 
-char	*ft_set_prompt(t_shell *shell);
-void	ft_init_shell(t_shell *shell, char *envp[]);
-void	ft_critical_error(t_shell *shell);
-void	lex(t_shell *shell, char *input);
-int		ft_check_syntax(t_shell *shell);
-int		ft_valid_env_char(int c);
-char	*ft_get_env_var(t_shell *shell, char *s);
-void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
-void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
-void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
-void	ft_append_exit_status(t_shell *s, t_cursor *c, char **res);
-void	ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res);
-void	ft_free_lexer(t_lexer *lexer);
-int		ft_pattern_match(const char *pattern, const char *filename);
-int		ft_is_pattern(char *word);
-t_token	*ft_new_token(t_token_kind kind, char *data);
-void	ft_add_token(t_token **head, t_token *token);
-void	ft_insert_after(t_token *target, t_token *token);
-void	ft_free_tokens(t_token *head);
-void	ft_add_token_sorted(t_token **head, t_token *token);
-void	ft_clone_env(t_shell *shell, char *envp[]);
-void	ft_env(t_shell *shell, char *env[]);
-void	ft_free_env(char *envp[]);
-void	ft_exit(t_shell *shell, char **args, int shell_type);
-void	ft_echo(t_shell *shell, char **args);
-char	*ft_get_cwd(t_shell *shell);
-void	ft_pwd(t_shell *shell, char **args);
-void	ft_cd(t_shell *shell, char **args);
-void	ft_set_pwd(t_shell *shell);
-void	ft_sigint_handler(int sig);
-void	ft_sigquit_trap(int sig);
+char			*ft_set_prompt(t_shell *shell);
+void			ft_init_shell(t_shell *shell, char *envp[]);
+void			ft_critical_error(t_shell *shell);
+void			lex(t_shell *shell, char *input);
+int				ft_check_syntax(t_shell *shell);
+int				ft_valid_env_char(int c);
+char			*ft_get_env_var(t_shell *shell, char *s);
+void			ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_append_exit_status(t_shell *s, t_cursor *c, char **res);
+void			ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_free_lexer(t_lexer *lexer);
+int				ft_pattern_match(const char *pattern, const char *filename);
+int				ft_is_pattern(char *word);
+t_token			*ft_new_token(t_token_kind kind, char *data);
+void			ft_add_token(t_token **head, t_token *token);
+void			ft_insert_after(t_token *target, t_token *token);
+void			ft_free_tokens(t_token *head);
+void			ft_add_token_sorted(t_token **head, t_token *token);
+void			ft_clone_env(t_shell *shell, char *envp[]);
+void			ft_env(t_shell *shell, char *env[]);
+void			ft_free_env(char *envp[]);
+void			ft_exit(t_shell *shell, char **args, int shell_type);
+void			ft_echo(t_shell *shell, char **args);
+char			*ft_get_cwd(t_shell *shell);
+void			ft_pwd(t_shell *shell, char **args);
+void			ft_cd(t_shell *shell, char **args);
+void			ft_set_pwd(t_shell *shell);
+void			ft_sigint_handler(int sig);
+void			ft_sigquit_trap(int sig);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
-char	*ft_strdup_safe(t_shell *shell, const char *s);
-char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
-t_token	*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
-char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
-char	*ft_itoa_safe(t_shell *shell, long n);
-void 	*ft_malloc_safe(t_shell *shell, size_t size);
-bool	ft_is_valid_number(char *s);
-void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
+char			*ft_strdup_safe(t_shell *shell, const char *s);
+char			*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
+t_token			*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
+char			*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
+char			*ft_itoa_safe(t_shell *shell, long n);
+void			*ft_malloc_safe(t_shell *shell, size_t size);
+bool			ft_is_valid_number(char *s);
+void			ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void			ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
 char			*ft_get_pwd(t_shell *shell);
 void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
@@ -240,15 +239,19 @@ char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 int				ft_valid_env_first_char(int c);
 void			ft_export(t_shell *shell, char **args);
 bool 			ft_is_valid_var_name(char *s);
-void	ft_skip_empty_vars(t_shell *shell);
-
-t_strvec	*ft_strvec_init(size_t cap);
-void	ft_strvec_free(t_strvec *sv);
-t_strvec	*ft_strvec_push(t_strvec **sv, char *s);
-t_strvec	*ft_strvec_update(t_strvec *sv, char *s, char *val);
-size_t	ft_strvec_remove(t_strvec *sv, const char *s);
-char	*ft_strvec_getval(const t_strvec *sv, const char *s);
-ssize_t	ft_strvec_find(const t_strvec *sv, const char *s);
+void			ft_skip_empty_vars(t_shell *shell);
+t_strvec		*ft_strvec_init(size_t cap);
+void			ft_strvec_free(t_strvec *sv);
+t_strvec		*ft_strvec_push(t_strvec **sv, char *s);
+t_strvec		*ft_strvec_update(t_strvec *sv, char *s, char *val);
+size_t			ft_strvec_remove(t_strvec *sv, const char *s);
+char			*ft_strvec_getval(const t_strvec *sv, const char *s);
+ssize_t			ft_strvec_find(const t_strvec *sv, const char *s);
+void			ft_not_valid_identifier(t_shell *shell, char *arg);
+t_token_kind	ft_get_token_kind(const char *s);
+int				ft_get_operator_length(t_token_kind kind);
+int				ft_is_normal_char(char c);
+int				ft_is_operator_char(char c);
 
 typedef enum e_lexem_kind
 {

@@ -74,12 +74,13 @@ static void	ft_print_exp(t_shell *shell)
 		eq = ft_strchr(shell->exp->data[i], '=');
 		if (eq == NULL)
 		{
-			var = ft_str_join3_cpy_safe(shell, "declare -x ", shell->exp->data[i], "\n");
+			var = ft_str_join3_cpy_safe(shell,
+					"declare -x ", shell->exp->data[i], "\n");
 			res = ft_strjoin_free_safe(shell, res, var);
 		}
 		else 
 			res = ft_strjoin_free_safe(shell, res, 
-				ft_built_exp_var(shell, shell->exp->data[i], eq));
+					ft_built_exp_var(shell, shell->exp->data[i], eq));
 		i++;
 	}
 	ft_write_safe(shell, res, STDOUT_FILENO);
@@ -96,19 +97,21 @@ void	ft_set_val(t_shell *shell, char *eq, char *s)
 	if (*(eq - 1) == '+')
 	{
 		prev = ft_get_env_var(shell, var);
-		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, prev, val));
-		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, prev, val));
-		free(val);
-		free(var);
+		shell->exp = ft_strvec_update(shell->exp, 
+				var, ft_str_join3_cpy_safe(shell, var, prev, val));
+		shell->env = ft_strvec_update(shell->env,
+				var, ft_str_join3_cpy_safe(shell, var, prev, val));
 		free(prev);
 	}
 	else
 	{
-		shell->exp = ft_strvec_update(shell->exp, var, ft_str_join3_cpy_safe(shell, var, val, ""));
-		shell->env = ft_strvec_update(shell->env, var, ft_str_join3_cpy_safe(shell, var, val, ""));
-		free(val);
-		free(var);
+		shell->exp = ft_strvec_update(shell->exp, 
+				var, ft_str_join3_cpy_safe(shell, var, val, ""));
+		shell->env = ft_strvec_update(shell->env,
+				var, ft_str_join3_cpy_safe(shell, var, val, ""));
 	}
+	free(val);
+	free(var);
 }
 
 void	ft_export(t_shell *shell, char **args)
@@ -125,16 +128,13 @@ void	ft_export(t_shell *shell, char **args)
 	while (args && args[i])
 	{
 		if (!ft_is_valid_var_name(args[i]))
-		{
-			char *err = ft_str_join3_cpy_safe(shell, "minishell: export: `", args[i], "': not a valid identifier\n");
-			shell->exit_status = 1;
-			ft_write_safe(shell, err, STDERR_FILENO);
-		}
+			ft_not_valid_identifier(shell, args[i]);
 		else
 		{
 			eq = ft_strchr(args[i], '=');
 			if (eq == NULL)
-				shell->exp = ft_strvec_update(shell->exp, args[i], ft_strdup_safe(shell, args[i]));
+				shell->exp = ft_strvec_update(shell->exp, 
+						args[i], ft_strdup_safe(shell, args[i]));
 			else
 				ft_set_val(shell, eq, args[i]);
 		}

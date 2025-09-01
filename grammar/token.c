@@ -48,7 +48,7 @@ void	ft_add_token(t_token **head, t_token *token)
 
 void	ft_add_token_sorted(t_token **head, t_token *token)
 {
-	t_token *cur;
+	t_token	*cur;
 	t_token	*prev;
 
 	cur = *head;
@@ -84,29 +84,4 @@ void	ft_insert_after(t_token *target, t_token *token)
 {
 	token->next = target->next;
 	target->next = token;
-}
-
-void	ft_free_lexer(t_lexer *lexer)
-{
-	if (!lexer)
-		return ;
-	if (lexer->word)
-	{
-		free(lexer->word);
-		lexer->word = NULL;
-	}
-	if (lexer->tokens)
-		ft_free_tokens(lexer->tokens);
-	if (lexer->tmp == lexer->tmp2 && lexer->tmp)
-		ft_free_tokens(lexer->tmp);
-	else
-	{
-		if (lexer->tmp)
-			ft_free_tokens(lexer->tmp);
-		if (lexer->tmp2)
-			ft_free_tokens(lexer->tmp2);
-	}
-	lexer->tokens = NULL;
-	lexer->tmp = NULL;
-	lexer->tmp2 = NULL;
 }
