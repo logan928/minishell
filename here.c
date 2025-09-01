@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 14:15:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 14:22:20 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 16:51:16 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	ft_here_doc(t_shell *shell, t_token *t)
 
 void	ft_here(t_shell *shell)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	tmp = shell->lexer->tokens;
 	while (tmp)

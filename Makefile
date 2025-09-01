@@ -7,23 +7,43 @@ BUILTINS_DIR := ./builtins
 GRAMMAR_DIR := ./grammar
 EXPANSION_DIR := ./expansion
 EXECUTOR_DIR := ./executor
+STRVEC_DIR := ./strvec
 
 NAME := minishell
-SRCS := minishell.c signals.c shell.c safe_wrappers.c safe_wrappers_2.c \
+SRCS := minishell.c \
+		signals.c \
+		shell.c \
+		safe_wrappers.c \
+		safe_wrappers_2.c \
 		cmd_resolve.c here.c \
-		$(BUILTINS_DIR)/env.c $(BUILTINS_DIR)/echo.c \
-		$(GRAMMAR_DIR)/token.c $(GRAMMAR_DIR)/lexer.c \
-		$(GRAMMAR_DIR)/validator.c \
-		$(EXPANSION_DIR)/variable_expansion.c $(EXPANSION_DIR)/field_splitting.c \
-		$(EXPANSION_DIR)/filename_expansion.c $(EXPANSION_DIR)/quote_removal.c \
+		fancy_prompt.c \
+		$(STRVEC_DIR)/strvec.c \
+		$(STRVEC_DIR)/strvec_op.c \
+		$(BUILTINS_DIR)/env.c \
+		$(BUILTINS_DIR)/echo.c \
+		$(BUILTINS_DIR)/utils.c \
+		$(BUILTINS_DIR)/pwd.c \
+		$(BUILTINS_DIR)/cd.c \
+		$(BUILTINS_DIR)/canonical_path.c \
+		$(BUILTINS_DIR)/reconstruct_path.c \
+		$(BUILTINS_DIR)/unset.c \
+		$(BUILTINS_DIR)/export.c \
+		$(BUILTINS_DIR)/exit.c \
+		$(EXECUTOR_DIR)/exec.c \
+		$(EXPANSION_DIR)/variable_expansion.c \
+		$(EXPANSION_DIR)/field_splitting.c \
+		$(EXPANSION_DIR)/filename_expansion.c \
+		$(EXPANSION_DIR)/quote_removal.c \
 		$(EXPANSION_DIR)/variable_expansion_append.c \
 		$(EXPANSION_DIR)/pattern_match.c \
-		$(GRAMMAR_DIR)/command_formatter.c $(GRAMMAR_DIR)/parser.c \
-		$(EXPANSION_DIR)/split_helpers.c $(BUILTINS_DIR)/exit.c \
-		$(BUILTINS_DIR)/utils.c $(BUILTINS_DIR)/pwd.c $(BUILTINS_DIR)/cd.c $(EXECUTOR_DIR)/exec.c \
-		$(BUILTINS_DIR)/canonical_path.c $(BUILTINS_DIR)/reconstruct_path.c \
-		$(BUILTINS_DIR)/unset.c fancy_prompt.c ft_strvec.c \
-		$(BUILTINS_DIR)/export.c skip_empty_vars.c $(GRAMMAR_DIR)/lexer_helpers.c
+		$(EXPANSION_DIR)/split_helpers.c \
+		$(GRAMMAR_DIR)/token.c \
+		$(GRAMMAR_DIR)/lexer.c \
+		$(GRAMMAR_DIR)/validator.c \
+		$(GRAMMAR_DIR)/command_formatter.c \
+		$(GRAMMAR_DIR)/parser.c \
+		$(GRAMMAR_DIR)/lexer_helpers.c
+		$(GRAMMAR_DIR)/skip_empty_vars.c
 
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)

@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 16:41:05 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 17:07:35 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,6 +252,7 @@ t_token_kind	ft_get_token_kind(const char *s);
 int				ft_get_operator_length(t_token_kind kind);
 int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
+t_strvec		*ft_strvec_realloc(t_strvec *sv);
 
 typedef enum e_lexem_kind
 {

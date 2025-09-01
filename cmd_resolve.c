@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:31:19 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/31 20:58:55 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 16:50:55 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 
 void	ft_check_cmd(char *cmd, t_cmd_access *cmd_access)
 {
-	struct stat st;
+	struct stat	st;
 
 	if (stat(cmd, &st) == 0)
 	{
@@ -42,7 +42,7 @@ void	ft_check_cmd(char *cmd, t_cmd_access *cmd_access)
 	}
 }
 
-bool	ft_try_paths(t_shell *shell, char **paths, char **args, t_cmd_access *cmd_access)
+bool	ft_try_paths(t_shell *sh, char **paths, char **args, t_cmd_access *acc)
 {
 	int			i;
 	char		*full_path;
@@ -51,18 +51,18 @@ bool	ft_try_paths(t_shell *shell, char **paths, char **args, t_cmd_access *cmd_a
 	i = 0;
 	while (paths[i])
 	{
-		full_path = ft_combine_path(shell, paths[i], args[0]);
+		full_path = ft_combine_path(sh, paths[i], args[0]);
 		if (stat(full_path, &st) == 0)
 		{
-			args[0] = ft_strdup_safe(shell, full_path);
-			cmd_access->exist = true;
+			args[0] = ft_strdup_safe(sh, full_path);
+			acc->exist = true;
 			if (S_ISDIR(st.st_mode))
-				cmd_access->is_dir = true;
+				acc->is_dir = true;
 			else if (access(full_path, X_OK) == 0)
-			cmd_access->executable = true;
+				acc->executable = true;
 		}
 		free(full_path);
-		if (cmd_access->exist && cmd_access->executable)
+		if (acc->exist && acc->executable)
 			return (true);
 		i++;
 	}
