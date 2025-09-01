@@ -6,60 +6,11 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:19:02 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 13:23:20 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 16:39:17 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static int	ft_is_operator_char(char c)
-{
-	const char	*chars;
-
-	chars = "|&<>()";
-	while (*chars)
-	{
-		if (c == *chars)
-			return (1);
-		chars++;
-	}
-	return (0);
-}
-
-static int	ft_is_normal_char(char c)
-{
-	return (!ft_isspace(c) && !ft_is_operator_char(c));
-}
-
-static t_token_kind	ft_get_token_kind(const char *s)
-{
-	if (s[0] == '|' && s[1] == '|')
-		return (OR_IF);
-	else if (s[0] == '|')
-		return (PIPE);
-	else if (s[0] == '&' && s[1] == '&')
-		return (AND_IF);
-	else if (s[0] == '<' && s[1] == '<')
-		return (DLESS);
-	else if (s[0] == '<')
-		return (LESS);
-	else if (s[0] == '>' && s[1] == '>')
-		return (DGREAT);
-	else if (s[0] == '>')
-		return (GREAT);
-	else if (s[0] == '(')
-		return (L_PAREN);
-	else if (s[0] == ')')
-		return (R_PAREN);
-	return (WORD);
-}
-
-static int	ft_get_operator_length(t_token_kind kind)
-{
-	if (kind == OR_IF || kind == AND_IF || kind == DLESS || kind == DGREAT)
-		return (2);
-	return (1);
-}
 
 void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 {
@@ -101,7 +52,7 @@ void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 void	lex(t_shell *s, char *in)
 {
 	t_cursor	c;
-	
+
 	c = (t_cursor){0, 0, 0};
 	while (in[c.cur])
 	{
@@ -116,7 +67,7 @@ void	lex(t_shell *s, char *in)
 			{
 				if (ft_isquote(in[c.cur]) && !c.quote)
 					c.quote = in[c.cur];
-				else if (ft_isquote(in[c.cur]) && c.quote)
+				else if (ft_isquote(in[c.cur]) && c.quote == in[c.cur])
 					c.quote = 0;
 				c.cur++;
 			}

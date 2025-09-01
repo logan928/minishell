@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:39:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 18:07:51 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 16:37:08 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,37 +57,37 @@ static void	ft_glob_dir(t_shell *shell, const char *pattern)
 	closedir(dir);
 }
 
-void	ft_filename_expansion(t_shell *shell, char ***arr, size_t idx, int is_cmd)
+void	ft_copy_single_item(t_shell *sh, char *s)
+{
+	char	*copy;
+	t_token	*t;
+
+	copy = ft_strdup_safe(sh, s);
+	t = ft_new_token_safe(sh, WORD, copy);
+	ft_add_token(&sh->lexer->tmp, t);
+}
+
+void	ft_filename_expansion(t_shell *sh, char ***arr, size_t idx, int is_cmd)
 {
 	size_t	lst_size;
-	t_token	*t;
-	char	*copy;
-	
-	shell->lexer->tmp2 = NULL;
+
+	sh->lexer->tmp2 = NULL;
 	while ((*arr)[idx])
 	{
-		shell->lexer->tmp = NULL;
+		sh->lexer->tmp = NULL;
 		if (ft_is_pattern((*arr)[idx]))
 		{
-			ft_glob_dir(shell, (*arr)[idx]);
-			if (shell->lexer->tmp == NULL)
-			{
-				 copy = ft_strdup_safe(shell, (*arr)[idx]);
-				 t = ft_new_token_safe(shell, WORD, copy);
-				ft_add_token(&shell->lexer->tmp, t);
-			}
+			ft_glob_dir(sh, (*arr)[idx]);
+			if (sh->lexer->tmp == NULL)
+				ft_copy_single_item(sh, (*arr)[idx]);
 		}
 		else
-		{
-			copy = ft_strdup_safe(shell, (*arr)[idx]);
-			t = ft_new_token_safe(shell, WORD, copy);
-			ft_add_token(&shell->lexer->tmp, t);
-		}
-		ft_add_token(&shell->lexer->tmp2, shell->lexer->tmp);
+			ft_copy_single_item(sh, (*arr)[idx]);
+		ft_add_token(&sh->lexer->tmp2, sh->lexer->tmp);
 		idx++;
 	}
-	lst_size = ft_lst_size(shell->lexer->tmp2);
-	shell->lexer->tmp = shell->lexer->tmp2;
-	ft_merge(shell, arr, lst_size, is_cmd);
-	shell->lexer->tmp2 = NULL;
+	lst_size = ft_lst_size(sh->lexer->tmp2);
+	sh->lexer->tmp = sh->lexer->tmp2;
+	ft_merge(sh, arr, lst_size, is_cmd);
+	sh->lexer->tmp2 = NULL;
 }

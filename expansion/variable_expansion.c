@@ -34,24 +34,7 @@ char	*ft_get_env_var(t_shell *shell, char *s)
 	var = ft_strvec_getval(shell->env, s);
 	return (ft_strdup_safe(shell, var));
 }
-/*
-char	*ft_get_env_var(t_shell *shell, char *s, size_t len)
-{
-	size_t	i;
 
-	i = 0;
-	while (shell->env->data[i])
-	{
-		if (!ft_strncmp(s, shell->env->data[i], len))
-		{
-			if (shell->env->data[i][len] == '=')
-				return (ft_strdup_safe(shell, shell->env->data[i] + len + 1));
-		}
-		i++;
-	}
-	return (ft_strdup_safe(shell, ""));
-}
-*/
 void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	while (t[c->cur])
