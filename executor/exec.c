@@ -34,7 +34,7 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-static	int	apply_redirs(t_shell *shell, t_redir *redir)
+static	int	apply_redirs(t_shell *shell, t_redir *redir, t_command_kind kind, int shell_type)
 {
 	int	fd;
 	int	pipefd[2];
@@ -60,11 +60,17 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir)
 			fd = open(redir->file[0], O_RDONLY);
 			if (fd < 0)
 			{
-				perror("open"); 
-				exit(1); 
+				perror("open");
+				if (shell_type == CHILD_SHELL)
+					exit(1);
+				else
+				 	return (1);
 			}
-			dup2(fd, STDIN_FILENO);
-			close(fd);
+			if (kind != BUILTIN)
+			{
+				dup2(fd, STDIN_FILENO);
+				close(fd);
+			}
 		}
 		else if (redir->kind == R_OUT)
 		{
@@ -72,7 +78,10 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir)
 			if (fd < 0) 
 			{
 				perror("open"); 
-				exit(1); 
+				if (shell_type == CHILD_SHELL)
+					exit(1);
+				else
+				 	return (1);
 			}
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
@@ -83,7 +92,10 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir)
 			if (fd < 0) 
 			{
 				perror("open"); 
-				exit(1);
+				if (shell_type == CHILD_SHELL)
+					exit(1);
+				else
+					return (1);
 			}
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
@@ -93,12 +105,18 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir)
 			if (pipe(pipefd) == -1) 
 			{
 				perror("pipe");
-				exit(1);
+				if (shell_type == CHILD_SHELL)
+					exit(1); 
+				else
+				 	return (1);
 			}
-			write(pipefd[1], redir->file[0], strlen(redir->file[0]));
-			close(pipefd[1]);
-			dup2(pipefd[0], STDIN_FILENO);
-			close(pipefd[0]);
+			if (kind != BUILTIN)
+			{
+				write(pipefd[1], redir->file[0], strlen(redir->file[0]));
+				close(pipefd[1]);
+				dup2(pipefd[0], STDIN_FILENO);
+				close(pipefd[0]);
+			}
 		}
 		redir = redir->next;
 	}
@@ -150,9 +168,13 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 	status = -1;
 	if (cmd->command_kind == BUILTIN)
 	{
-		if (apply_redirs(shell, cmd->redirs))
+		pid_t saved;
+		saved = dup(STDOUT_FILENO);
+		if (apply_redirs(shell, cmd->redirs, cmd->command_kind, MAIN_SHELL))
 			return (1);
+
 		run_builtin(shell, cmd, MAIN_SHELL);
+		dup2(saved, STDOUT_FILENO);
 		return (shell->exit_status);
 	}
 	else
@@ -160,7 +182,7 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		pid = fork();
 		if (pid == 0)
 		{
-		if (apply_redirs(shell, cmd->redirs))
+		if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 			return (1);
 		if (cmd->args)
 		{
@@ -187,7 +209,7 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
 	int	access_err;
 
-	if (apply_redirs(shell, cmd->redirs))
+	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 		exit(shell->exit_status);
 	if (cmd->command_kind == BUILTIN) // builtins in child
 	{
@@ -329,7 +351,7 @@ static int	exec_subshell(t_shell *shell, t_ast *ast)
 		// child executes the subshell AST
 		// (redirections on the subshell node itself should apply here)
 		if (ast->cmd && ast->cmd->redirs)
-			apply_redirs(shell, ast->cmd->redirs);
+			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, CHILD_SHELL);
 
 		exit(exec_ast(shell, ast->left));
 	}
