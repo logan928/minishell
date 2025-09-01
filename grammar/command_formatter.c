@@ -1,31 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   command_formatter.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/01 15:38:27 by uwettasi          #+#    #+#             */
+/*   Updated: 2025/09/01 15:38:32 by uwettasi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
-
-/*
-static char	*str_append(char *s1, const char *s2) //ft_strjoin doesn't work for this. 
-{
-	size_t	len1; 
-	size_t	len2; 
-	char	*res; 
-
-
-	len1 = 0;
-	len2 = 0;
-	if (s1)
-		len1 = ft_strlen(s1);
-	if(s2)
-		len2 = ft_strlen(s2);
-	res = malloc(len1 + len2 + 1);
-	if (!res)
-		return (NULL);
-	if (s1)
-		ft_memcpy(res, s1, len1);
-	if (s2)
-		ft_memcpy(res + len1, s2, len2);
-	res[len1 + len2] = '\0';
-	free(s1);
-	return (res);
-}
-*/
 
 static char	**argv_add(char **argv, int *argc, const char *word)
 {
@@ -50,26 +35,27 @@ static char	**argv_add(char **argv, int *argc, const char *word)
 
 static t_command	*command_new(void)
 {
-	t_command	*lx = ft_calloc(1, sizeof(t_command));
-	if (!lx)
+	t_command	*cmd;
+
+	cmd = ft_calloc(1, sizeof(t_command));
+	if (!cmd)
 		return (NULL);
-	lx->command_kind = EXTERNAL; // default, refine later
-	lx->args = NULL;
-	//lx->op = NULL;
-	//lx->file = NULL;
-	return (lx);
+	cmd->command_kind = EXTERNAL;
+	cmd->args = NULL;
+	return (cmd);
 }
 
 static t_redir	*redir_new(t_redir_type kind, const char *file)
 {
-	int	i;
+	int		i;
+	t_redir	*r;
 
 	i = 0;
-	t_redir	*r = ft_calloc(1, sizeof(t_redir));
+	r = ft_calloc(1, sizeof(t_redir));
 	if (!r)
 		return (NULL);
 	r->kind = kind;
-	r->file = argv_add(r->file, &i, file); //strdup(file);
+	r->file = argv_add(r->file, &i, file);
 	r->next = NULL;
 	return (r);
 }
@@ -89,27 +75,28 @@ static void	redir_add(t_command *cmd, t_redir *redir)
 	}
 }
 
-static int is_builtin(const char *cmd)
+static int	is_builtin(const char *cmd)
 {
 	if (!cmd)
-		return 0;
+		return (0);
 	return (
-		ft_strcmp(cmd, "echo", 0) == 0 ||
-		ft_strcmp(cmd, "cd", 0) == 0 ||
-		ft_strcmp(cmd, "pwd", 0) == 0 ||
-		ft_strcmp(cmd, "export", 0) == 0 ||
-		ft_strcmp(cmd, "unset", 0) == 0 ||
-		ft_strcmp(cmd, "env", 0) == 0 ||
-		ft_strcmp(cmd, "exit", 0) == 0
+		ft_strcmp(cmd, "echo", 0) == 0 
+		|| ft_strcmp(cmd, "cd", 0) == 0
+		|| ft_strcmp(cmd, "pwd", 0) == 0
+		|| ft_strcmp(cmd, "export", 0) == 0
+		|| ft_strcmp(cmd, "unset", 0) == 0
+		|| ft_strcmp(cmd, "env", 0) == 0
+		|| ft_strcmp(cmd, "exit", 0) == 0
 	);
 }
 
-t_command	*command_formatter(t_shell *shell, t_token **tokptr)
+static void format_next_token(t_shell *shell, t_token **tok_pointer, t_command *cmd)
 {
-	t_token	*tok = *tokptr;
-	t_command	*cmd = command_new();
-	int		argc = 0;
+	t_token	*tok;
+	int		argc;
 
+	tok = *tok_pointer;
+	argc = 0;
 	while (tok)
 	{
 		if (tok->token_kind == WORD)
@@ -132,7 +119,7 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 			tok = tok->next;
 			if (!tok || tok->token_kind != WORD)
 			{
-				printf("minishell: syntax error near redirection\n");//ft_printf()
+				printf("minishell: syntax error near redirection\n");
 				shell->parse_err = 1;
 				break;//TODO: fix this bug. Need to clear everything and return to prompt. 
 			}
@@ -147,7 +134,60 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 		}
 		tok = tok->next;
 	}
-	*tokptr = tok; // tell caller where we stopped. Useful when integrating the Parser. consider, passing this as a pointer instead of a local variable.
+	*tok_pointer = tok;
+}
+
+
+t_command	*command_formatter(t_shell *shell, t_token **tokptr)
+{
+	t_token		*tok;
+	t_command	*cmd;
+	//int			argc;
+
+	tok = *tokptr;
+	cmd = command_new();
+	//argc = 0;
+	/*
+	while (tok)
+	{
+		if (tok->token_kind == WORD)
+		{
+			cmd->args = argv_add(cmd->args, &argc, tok->data);
+		}
+		else if (tok->token_kind == LESS || tok->token_kind == GREAT
+			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)
+		{
+			t_redir_type kind;
+			if (tok->token_kind == LESS)
+				kind = R_IN;
+			else if (tok->token_kind == GREAT)
+				kind = R_OUT;
+			else if (tok->token_kind == DGREAT)
+				kind = R_APP;
+			else
+				kind = R_HDOC;
+
+			tok = tok->next;
+			if (!tok || tok->token_kind != WORD)
+			{
+				printf("minishell: syntax error near redirection\n");
+				shell->parse_err = 1;
+				break;//TODO: fix this bug. Need to clear everything and return to prompt. 
+			}
+			redir_add(cmd, redir_new(kind, tok->data));
+			
+		}
+		else if (tok->token_kind == PIPE || tok->token_kind == AND_IF
+			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
+			|| tok->token_kind == R_PAREN || tok->token_kind == NL)
+		{
+			break;
+		}
+		tok = tok->next;
+	}
+		*/
+	//*tokptr = tok; 
+	format_next_token(shell, tokptr, cmd);
 	if (cmd->args)
 	{
 		ft_variable_expansion(shell, cmd->args, 0);
@@ -155,39 +195,9 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 		ft_filename_expansion(shell, &cmd->args, 1, 1);
 		ft_quote_removal(shell, cmd->args, 0);
 	}
-	cmd->command_kind = EXTERNAL; // TODO: this is probably the best place to expand args (we need to remove quotes from args[0])
+	cmd->command_kind = EXTERNAL;
 	if(cmd->args && cmd->args[0] && is_builtin(cmd->args[0]))
 		cmd->command_kind = BUILTIN;
 	return (cmd);
 }
-/*
-void	print_lexem(t_command *cmd) //TODO: temporary function. Remove once the Parser is integrated. 
-{
-	if (!cmd)
-		return;
-	printf("=== Command ===\n");
 
-	if (cmd->args)
-	{
-		printf("argv:");
-		for (int i = 0; cmd->args[i]; i++)
-			printf(" [%s]", cmd->args[i]);
-		printf("\n");
-	}
-	else
-		printf("argv: (none)\n");
-
-	// redirections of the same command are printed here.
-	t_redir *r = cmd->redirs;
-	if (!r)
-		printf("redirs: (none)\n");
-	while (r)
-	{
-		const char *k = (r->kind == R_IN ? "<" :
-						r->kind == R_OUT ? ">" :
-						r->kind == R_APP ? ">>" : "<<");
-		//printf("redir: %s %s\n", k, r->file);
-		r = r->next;
-	}
-}
-*/
