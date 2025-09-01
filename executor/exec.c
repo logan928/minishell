@@ -132,9 +132,18 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 	access = ft_get_cmd_path(shell, cmd->args);
 	if (!access.exist)
 	{
-		ft_write_safe(shell,
+		if (ft_strchr(cmd->args[0], '/') != NULL)
+		{
+			ft_write_safe(shell,
+				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": No such file or directory\n"),
+				STDERR_FILENO);
+		}
+		else
+		{
+			ft_write_safe(shell,
 				ft_str_join3_cpy_safe(shell, cmd->args[0], ": command not found\n", ""),
 				STDERR_FILENO);
+		}
 		free(cmd_name);
 		return (CMD_NOT_FOUND);
 	}
@@ -182,16 +191,16 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		pid = fork();
 		if (pid == 0)
 		{
-		if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-			return (1);
-		if (cmd->args)
-		{
-			access_err = ft_check_access(shell, cmd);
-			if (access_err)
-				return (access_err);
-		}
+			if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
+				exit (1);
+			if (cmd->args)
+			{
+				access_err = ft_check_access(shell, cmd);
+				if (access_err)
+					exit (access_err);
+			}
 			if (shell->parse_err == 5)
-				return (1);
+				exit (1);
 			if (!cmd->args)
 				exit(0);
 			execve((cmd->args)[0], cmd->args, shell->env->data);

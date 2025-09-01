@@ -86,7 +86,6 @@ void	ft_insert_after(t_token *target, t_token *token)
 	target->next = token;
 }
 
-
 void	ft_free_lexer(t_lexer *lexer)
 {
 	if (!lexer)
