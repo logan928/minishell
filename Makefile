@@ -42,8 +42,8 @@ SRCS := minishell.c \
 		$(GRAMMAR_DIR)/validator.c \
 		$(GRAMMAR_DIR)/command_formatter.c \
 		$(GRAMMAR_DIR)/parser.c \
-		$(GRAMMAR_DIR)/lexer_helpers.c
-		$(GRAMMAR_DIR)/skip_empty_vars.c
+		$(GRAMMAR_DIR)/lexer_helpers.c \
+		$(GRAMMAR_DIR)/skip_empty_vars.c \
 		$(GRAMMAR_DIR)/cf_utils.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
