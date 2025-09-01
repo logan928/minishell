@@ -50,14 +50,70 @@ static int	open_file(t_redir *redir, int shell_type, int flags)
 	return (fd);
 }
 
+static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
+{
+	int	fd;
+	int	pipefd[2];
+
+	if (redir->kind == R_IN)
+	{
+		fd = open_file(redir, shell_type, O_RDONLY);
+		if (fd < 0)
+			return (1);
+		if (kind != BUILTIN)
+		{
+			dup2(fd, STDIN_FILENO);
+			close(fd);
+		}
+		return (0);
+	}
+	else if (redir->kind == R_OUT)
+	{
+		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
+		if (fd < 0)
+			return (1);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+		return (0);
+	}
+	else if (redir->kind == R_APP)
+	{
+		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
+		if (fd < 0)
+			return (1);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+		return (0);
+	}
+	else if (redir->kind == R_HDOC)
+	{
+		if (pipe(pipefd) == -1) 
+		{
+			perror("pipe");
+			if (shell_type == CHILD_SHELL)
+				exit(1); 
+			else
+				return (1);
+		}
+		if (kind != BUILTIN)
+		{
+			write(pipefd[1], redir->file[0], strlen(redir->file[0]));
+			close(pipefd[1]);
+			dup2(pipefd[0], STDIN_FILENO);
+			close(pipefd[0]);
+		}
+		return (0);
+	}
+	return (0);
+}
+
 static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	t_command_kind kind, int shell_type)
 {
 	int	fd;
-	int	pipefd[2];
+	//int	pipefd[2];
 	char *tmp;
 
-	//fd = -1;
 	while (redir)
 	{
 		tmp = ft_strdup_safe(shell, redir->file[0]);
@@ -73,20 +129,9 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 			return (1);
 		}
 		fd = -1;
+		/*
 		if (redir->kind == R_IN)
 		{
-			/*
-			fd = open(redir->file[0], O_RDONLY);
-			if (fd < 0)
-			{
-				perror("open");
-				if (shell_type == CHILD_SHELL)
-					exit(1);
-				else
-				 	return (1);
-			}
-			*/
-		
 			fd = open_file(redir, shell_type, O_RDONLY);
 			if (fd < 0)
 				return (1);
@@ -98,34 +143,12 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		}
 		else if (redir->kind == R_OUT)
 		{
-			/*
-			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd < 0) 
-			{
-				perror("open"); 
-				if (shell_type == CHILD_SHELL)
-					exit(1);
-				else
-				 	return (1);
-			}
-			*/
 			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
 		}
 		else if (redir->kind == R_APP)
 		{
-			/*
-			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd < 0) 
-			{
-				perror("open"); 
-				if (shell_type == CHILD_SHELL)
-					exit(1);
-				else
-					return (1);
-			}
-			*/
 			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
@@ -148,6 +171,9 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 				close(pipefd[0]);
 			}
 		}
+		*/
+		if(handle_redir(redir, shell_type, kind))
+			return (1);
 		redir = redir->next;
 	}
 	return (0);
