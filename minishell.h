@@ -240,7 +240,10 @@ char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 int				ft_valid_env_first_char(int c);
 void			ft_export(t_shell *shell, char **args);
 bool 			ft_is_valid_var_name(char *s);
-void	ft_skip_empty_vars(t_shell *shell);
+void			ft_skip_empty_vars(t_shell *shell);
+int				is_builtin(const char *cmd);
+char			**argv_add(char **argv, int *argc, const char *word);
+t_command		*command_new(void);
 
 t_strvec	*ft_strvec_init(size_t cap);
 void	ft_strvec_free(t_strvec *sv);
