@@ -34,17 +34,20 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-static int	open_file(t_shell *shell, t_redir *redir, int shell_type, )
+static int	open_file(t_redir *redir, int shell_type, int flags)
 {
-	fd = open(redir->file[0], O_RDONLY);
+	int	fd;
+
+	fd = open(redir->file[0], flags, 0644);
 	if (fd < 0)
 	{
 		perror("open");
 		if (shell_type == CHILD_SHELL)
 			exit(1);
 		else
-			return (1);
+			return (-1);
 	}
+	return (fd);
 }
 
 static	int	apply_redirs(t_shell *shell, t_redir *redir, \
@@ -72,6 +75,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		fd = -1;
 		if (redir->kind == R_IN)
 		{
+			/*
 			fd = open(redir->file[0], O_RDONLY);
 			if (fd < 0)
 			{
@@ -81,6 +85,11 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 				else
 				 	return (1);
 			}
+			*/
+		
+			fd = open_file(redir, shell_type, O_RDONLY);
+			if (fd < 0)
+				return (1);
 			if (kind != BUILTIN)
 			{
 				dup2(fd, STDIN_FILENO);
@@ -89,6 +98,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		}
 		else if (redir->kind == R_OUT)
 		{
+			/*
 			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd < 0) 
 			{
@@ -98,11 +108,14 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 				else
 				 	return (1);
 			}
+			*/
+			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
 		}
 		else if (redir->kind == R_APP)
 		{
+			/*
 			fd = open(redir->file[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd < 0) 
 			{
@@ -112,6 +125,8 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 				else
 					return (1);
 			}
+			*/
+			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
 			dup2(fd, STDOUT_FILENO);
 			close(fd);
 		}
