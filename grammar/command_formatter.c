@@ -90,6 +90,35 @@ static int	is_builtin(const char *cmd)
 	);
 }
 
+static bool update_redirs(t_shell *shell, t_token **tok_pointer, t_command *cmd)
+{
+	t_redir_type	kind;
+	t_token			*tok;
+
+	tok = *tok_pointer;
+	if (tok->token_kind == LESS)
+		kind = R_IN;
+	else if (tok->token_kind == GREAT)
+		kind = R_OUT;
+	else if (tok->token_kind == DGREAT)
+		kind = R_APP;
+	else
+		kind = R_HDOC;
+
+	tok = tok->next;
+	if (!tok || tok->token_kind != WORD)
+	{
+		printf("minishell: syntax error near redirection\n");
+		shell->parse_err = 1;
+		//break;//TODO: fix this bug. Need to clear everything and return to prompt. 
+		//kind = R_INVALID;
+		return (false);
+	}
+	redir_add(cmd, redir_new(kind, tok->data));
+	*tok_pointer = tok;
+	return (true);
+}
+
 static void format_next_token(t_shell *shell, t_token **tok_pointer, t_command *cmd)
 {
 	t_token	*tok;
@@ -106,6 +135,7 @@ static void format_next_token(t_shell *shell, t_token **tok_pointer, t_command *
 		else if (tok->token_kind == LESS || tok->token_kind == GREAT
 			|| tok->token_kind == DGREAT || tok->token_kind == DLESS)
 		{
+			/*
 			t_redir_type kind;
 			if (tok->token_kind == LESS)
 				kind = R_IN;
@@ -124,7 +154,11 @@ static void format_next_token(t_shell *shell, t_token **tok_pointer, t_command *
 				break;//TODO: fix this bug. Need to clear everything and return to prompt. 
 			}
 			redir_add(cmd, redir_new(kind, tok->data));
-			
+			*/
+			if (!update_redirs(shell, &tok, cmd))
+			{
+				break ;
+			}
 		}
 		else if (tok->token_kind == PIPE || tok->token_kind == AND_IF
 			|| tok->token_kind == OR_IF || tok->token_kind == L_PAREN
