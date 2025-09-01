@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 18:21:38 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 18:23:24 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 18:27:04 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ void	ft_shlvl_warning(t_shell *sh, char *lvl)
 
 	left = "minishell: warning: shell sevel (";
 	right = ") too high, resetting to 1\n";
-	
 	ft_write_safe(sh, ft_str_join3_cpy_safe(sh, 
-				left, lvl, right), STDERR_FILENO);
+			left, lvl, right), STDERR_FILENO);
 }
+
 void	ft_increment_shlvl(t_shell *sh, char *shlvl)
 {
 	int		lvl;
