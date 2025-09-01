@@ -6,47 +6,11 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 20:31:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/27 16:03:17 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 18:22:13 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	ft_shlvl(t_shell *shell)
-{
-	char	*shlvl;
-	int		lvl;
-	char	*end;
-
-	shlvl = ft_strvec_getval(shell->env, "SHLVL");
-	if (shlvl == NULL || ft_strlen(shlvl) == 0)
-	{
-		if (!ft_strvec_push(&shell->env, ft_strdup_safe(shell, "SHLVL=1")))
-			ft_critical_error(shell);
-	}
-	else if (!ft_is_valid_number(shlvl))
-		ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
-	else
-	{
-		lvl = (int) ft_strtoll(shlvl, &end, 10);
-		if (*end != '\0')
-			ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
-		else
-		{
-			char	*tmp = ft_itoa_safe(shell, (long) ++lvl);
-			if (lvl >= 1000)
-			{
-				ft_write_safe(shell, ft_str_join3_cpy_safe(shell, "minishell: warning: shell level (", tmp,") too high, resetting to 1"), STDERR_FILENO);
-				lvl = 1;
-				ft_strvec_update(shell->env, "SHLVL", ft_strdup_safe(shell, "SHLVL=1"));
-				free(tmp);
-				return ;
-			}
-			ft_strvec_update(shell->env, "SHLVL", ft_str_join3_cpy_safe(shell, "SHLVL=", tmp, ""));
-			free(tmp);
-		}
-	}
-}
 
 void	ft_clone_exp(t_shell *shell)
 {
