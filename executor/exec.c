@@ -34,26 +34,41 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-static	int	apply_redirs(t_shell *shell, t_redir *redir, t_command_kind kind, int shell_type)
+static int	open_file(t_shell *shell, t_redir *redir, int shell_type, )
+{
+	fd = open(redir->file[0], O_RDONLY);
+	if (fd < 0)
+	{
+		perror("open");
+		if (shell_type == CHILD_SHELL)
+			exit(1);
+		else
+			return (1);
+	}
+}
+
+static	int	apply_redirs(t_shell *shell, t_redir *redir, \
+	t_command_kind kind, int shell_type)
 {
 	int	fd;
 	int	pipefd[2];
+	char *tmp;
 
-	fd = -1;
+	//fd = -1;
 	while (redir)
 	{
-		char *tmp = ft_strdup_safe(shell, redir->file[0]);
+		tmp = ft_strdup_safe(shell, redir->file[0]);
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_filename_expansion(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
 		if (!redir->file || !redir->file[0] || redir->file[1] != NULL)
-        {
+		{
 			char	*err = ft_str_join3_cpy_safe(shell, "minishell: ", tmp, ": ambiguous redirect\n");
-            ft_write_safe(shell, err, STDERR_FILENO);
-            shell->exit_status = 1;
-            shell->parse_err = 1;
-            return (1);
-        }
+			ft_write_safe(shell, err, STDERR_FILENO);
+			shell->exit_status = 1;
+			shell->parse_err = 1;
+			return (1);
+		}
 		fd = -1;
 		if (redir->kind == R_IN)
 		{
