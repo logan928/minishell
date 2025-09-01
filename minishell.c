@@ -6,13 +6,37 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 13:35:35 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 17:57:00 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t	g_sig = 0;
+
+void	ft_run_lex(t_shell *shell)
+{
+	lex(shell, shell->input);
+	ft_skip_empty_vars(shell);
+	if (ft_check_syntax(shell))
+	{
+		shell->parse_err = 0;
+		if (isatty(STDIN_FILENO))
+			ft_here(shell);
+		shell->ast = parse(shell, &shell->lexer->tokens);
+		if (shell->parse_err != 0)
+		{
+			printf("Parse error: %d\n", shell->parse_err);
+			shell->parse_err = 0;
+		}
+		else
+			shell->exit_status = (unsigned char) exec_ast(shell, shell->ast);
+	}
+	free(shell->input);
+	ft_free_lexer(shell->lexer);
+	if (g_sig)
+		g_sig = 0;
+}
 
 void	ft_interactive(t_shell *shell)
 {
@@ -31,25 +55,7 @@ void	ft_interactive(t_shell *shell)
 				continue ;
 			}
 		}
-		lex(shell, shell->input);
-		ft_skip_empty_vars(shell);
-		if (ft_check_syntax(shell))
-		{
-			shell->parse_err = 0;
-			ft_here(shell);
-			t_ast *root = parse(shell, &shell->lexer->tokens);
-			if (shell->parse_err != 0)
-			{
-				printf("Parse error: %d\n", shell->parse_err);
-				shell->parse_err = 0;
-			}
-			else
-				shell->exit_status = (unsigned char) exec_ast(shell, root);
-		}	
-		free(shell->input);
-		ft_free_lexer(shell->lexer);
-		if (g_sig)
-			g_sig = 0;
+		ft_run_lex(shell);
 	}
 }
 
@@ -71,24 +77,7 @@ void	ft_non_interactive(t_shell *shell)
 	}
 	else
 		shell->input = line;
-	lex(shell, shell->input);
-	if (ft_check_syntax(shell))
-	{
-		shell->parse_err = 0;
-		//ft_here(shell);
-		t_ast *root = parse(shell, &shell->lexer->tokens);
-		if (shell->parse_err != 0)
-		{
-			printf("Parse error: %d\n", shell->parse_err);
-			shell->parse_err = 0;
-		}
-		else
-			shell->exit_status = (unsigned char) exec_ast(shell, root);
-	}	
-	free(shell->input);
-	ft_free_lexer(shell->lexer);
-	if (g_sig)
-		g_sig = 0;
+	ft_run_lex(shell);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -100,9 +89,6 @@ int	main(int argc, char *argv[], char *envp[])
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, NULL, NULL, NULL};
-	//if (isatty(STDIN_FILENO))
-		ft_interactive(&shell);
-	//else
-	 //	ft_non_interactive(&shell);
+	ft_interactive(&shell);
 	return (0);
 }

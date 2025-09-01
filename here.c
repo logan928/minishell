@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 14:15:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 16:51:16 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 17:42:34 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,31 @@ static bool	ft_is_quoted(char *s)
 	return (false);
 }
 
-void	ft_here_doc(t_shell *shell, t_token *t)
+void	ft_read_line(t_shell *shell, char **res, char *limiter)
 {
 	char	*line;
+	size_t	limiter_len;
+
+	limiter_len = ft_strlen(limiter);
+	while (1)
+	{
+		if (write(1, "> ", 2) != 2)
+			ft_critical_error(shell);
+		line = ft_get_next_line(STDIN_FILENO);
+		if (!line)
+			break ;
+		if (ft_strncmp(line, limiter, limiter_len) == 0
+			&& line[limiter_len] == '\n')
+		{
+			free(line);
+			break ;
+		}
+		*res = ft_strjoin_free_safe(shell, *res, line);
+	}
+}
+
+void	ft_here_doc(t_shell *shell, t_token *t)
+{
 	bool	is_quoted;
 	char	*res;
 
@@ -37,20 +59,7 @@ void	ft_here_doc(t_shell *shell, t_token *t)
 	if (is_quoted)
 		ft_quote_removal_str(shell, t);
 	res = NULL;
-	while (1)
-	{
-		write(1, "> ", 2);
-		line = ft_get_next_line(STDIN_FILENO);
-		if (!line)
-			break ;
-		if (ft_strncmp(line, t->data, ft_strlen(t->data)) == 0
-			&& line[ft_strlen(t->data)] == '\n')
-		{
-			free(line);
-			break ;
-		}
-		res = ft_strjoin_free_safe(shell, res, line);
-	}
+	ft_read_line(shell, &res, t->data);
 	if (!res)
 		res = ft_strdup_safe(shell, "");
 	if (is_quoted)

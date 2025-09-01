@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 12:24:41 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:13:29 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/01 17:33:34 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*ft_strdup_safe(t_shell *shell, const char *s)
 {
 	char	*copy;
-	
+
 	copy = ft_strdup(s);
 	if (!copy)
 	{
