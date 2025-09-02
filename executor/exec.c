@@ -264,6 +264,8 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		pid = fork();
 		if (pid == 0)
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 				exit (1);
 			if (cmd->args)
@@ -283,6 +285,15 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		waitpid(pid, &status, 0);
 		signal(SIGINT, ft_sigint_handler);
 		signal(SIGQUIT, ft_sigquit_trap);
+		if (WIFSIGNALED(status))
+		{
+			int sig = WTERMSIG(status);
+			if (sig == SIGINT)
+				write(STDOUT_FILENO, "\n", 1);
+			else if (sig == SIGQUIT)
+				write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+			return 128 + sig;
+		}
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		return (1);
