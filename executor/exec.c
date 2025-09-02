@@ -91,53 +91,39 @@ static int	handle_r_app(t_redir *redir, int shell_type, int flags)
 	
 }
 
-static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
+static int	handle_r_heredoc(t_redir *redir, int shell_type, t_command_kind kind)
 {
-	//int	fd;
 	int	pipefd[2];
 
-	if (redir->kind == R_IN)
+	if (pipe(pipefd) == -1) 
 	{
-		/*
-		fd = open_file(redir, shell_type, O_RDONLY);
-		if (fd < 0)
+		perror("pipe");
+		if (shell_type == CHILD_SHELL)
+			exit(1); 
+		else
 			return (1);
-		if (kind != BUILTIN)
-		{
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
-		return (0);
-		*/
-		return (handle_r_in(redir, shell_type, O_RDONLY, kind));
 	}
-	else if (redir->kind == R_OUT)
+	if (kind != BUILTIN)
 	{
-		/*
-		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
-		if (fd < 0)
-			return (1);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		return (0);
-		*/
-		return (handle_r_out(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC));
+		write(pipefd[1], redir->file[0], strlen(redir->file[0]));
+		close(pipefd[1]);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
 	}
+	return (0);	
+}
 
+static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
+{
+	if (redir->kind == R_IN)
+		return (handle_r_in(redir, shell_type, O_RDONLY, kind));
+	else if (redir->kind == R_OUT)
+		return (handle_r_out(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC));
 	else if (redir->kind == R_APP)
-	{
-		/*
-		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
-		if (fd < 0)
-			return (1);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		return (0);
-		*/
 		return (handle_r_app(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND));
-	}
 	else if (redir->kind == R_HDOC)
 	{
+		/*
 		if (pipe(pipefd) == -1) 
 		{
 			perror("pipe");
@@ -154,6 +140,8 @@ static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
 			close(pipefd[0]);
 		}
 		return (0);
+		*/
+		return (handle_r_heredoc(redir, shell_type, kind));
 	}
 	return (0);
 }
