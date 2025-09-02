@@ -4,8 +4,8 @@
 - Check for memory leaks
 
 ### Builtins
-- [] export
-- [] adapt find_env_var to find not only VAR=VAL, but also VAR or VAR=
+- [x] export
+- [x] adapt find_env_var to find not only VAR=VAL, but also VAR or VAR=
 
 ### Misc
 - [] Norminette
@@ -15,3 +15,4 @@
 - [x] crash if there's only redirect, e.g. > a, << eof
 - [x] crash if no environment
 - [x] SHLVL
+- [] empty command after var expansion -> exit with 0

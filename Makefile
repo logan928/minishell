@@ -15,7 +15,8 @@ SRCS := minishell.c \
 		shell.c \
 		safe_wrappers.c \
 		safe_wrappers_2.c \
-		cmd_resolve.c here.c \
+		cmd_resolve.c \
+		here.c \
 		fancy_prompt.c \
 		shlvl.c \
 		$(STRVEC_DIR)/strvec.c \

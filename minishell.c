@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 volatile sig_atomic_t	g_sig = 0;
-
+extern volatile sig_atomic_t g_abort;
 void	ft_run_lex(t_shell *shell)
 {
 	lex(shell, shell->input);
@@ -22,20 +22,30 @@ void	ft_run_lex(t_shell *shell)
 	{
 		shell->parse_err = 0;
 		if (isatty(STDIN_FILENO))
-			ft_here(shell);
-		shell->ast = parse(shell, &shell->lexer->tokens);
-		if (shell->parse_err != 0)
 		{
-			printf("Parse error: %d\n", shell->parse_err);
-			shell->parse_err = 0;
+			ft_here(shell);
+			if (g_abort)
+			{
+				printf("[DEBUG] aborted inside ft_run_lex with g_abort: %d\n", g_abort);
+				shell->exit_status = 130;
+			}
+		}
+		if (!g_abort)
+		{
+			shell->ast = parse(shell, &shell->lexer->tokens);
+			if (shell->parse_err != 0)
+			{
+				printf("Parse error: %d\n", shell->parse_err);
+				shell->parse_err = 0;
+			}
+			else
+				shell->exit_status = (unsigned char) exec_ast(shell, shell->ast);
 		}
 		else
-			shell->exit_status = (unsigned char) exec_ast(shell, shell->ast);
+			printf("[DEBUG] parsing is skipped\n");
 	}
 	free(shell->input);
 	ft_free_lexer(shell->lexer);
-	if (g_sig)
-		g_sig = 0;
 }
 
 void	ft_interactive(t_shell *shell)
@@ -55,6 +65,8 @@ void	ft_interactive(t_shell *shell)
 				continue ;
 			}
 		}
+		g_abort = 0; // reset flag at the start of processing
+		shell->parse_err = 0;
 		ft_run_lex(shell);
 	}
 }

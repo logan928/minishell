@@ -257,6 +257,7 @@ int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
 t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
+void			sigint_heredoc(int sig);
 
 typedef enum e_lexem_kind
 {

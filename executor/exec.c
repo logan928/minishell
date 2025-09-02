@@ -110,7 +110,7 @@ static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
 static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	t_command_kind kind, int shell_type)
 {
-	int	fd;
+	//int	fd;
 	//int	pipefd[2];
 	char *tmp;
 
@@ -120,7 +120,8 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_filename_expansion(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
-		if (!redir->file || !redir->file[0] || redir->file[1] != NULL)
+		if (redir->kind != R_HDOC
+			&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
 		{
 			char	*err = ft_str_join3_cpy_safe(shell, "minishell: ", tmp, ": ambiguous redirect\n");
 			ft_write_safe(shell, err, STDERR_FILENO);
@@ -128,7 +129,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 			shell->parse_err = 1;
 			return (1);
 		}
-		fd = -1;
+	//	fd = -1;
 		/*
 		if (redir->kind == R_IN)
 		{
@@ -240,10 +241,13 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 
 		run_builtin(shell, cmd, MAIN_SHELL);
 		dup2(saved, STDOUT_FILENO);
+		close(saved);
 		return (shell->exit_status);
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		pid = fork();
 		if (pid == 0)
 		{
@@ -264,6 +268,8 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 			exit(127);
 		}
 		waitpid(pid, &status, 0);
+		signal(SIGINT, ft_sigint_handler);
+		signal(SIGQUIT, ft_sigquit_trap);
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		return (1);

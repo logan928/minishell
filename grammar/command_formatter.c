@@ -97,10 +97,10 @@ static void	format_next_token(t_shell *shell, t_token **tok_ptr, t_command *cmd)
 
 t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 {
-	t_token		*tok;
+	//t_token		*tok;
 	t_command	*cmd;
 
-	tok = *tokptr;
+	//tok = *tokptr;
 	cmd = command_new();
 	format_next_token(shell, tokptr, cmd);
 	if (cmd->args)
