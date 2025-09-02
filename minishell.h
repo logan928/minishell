@@ -28,15 +28,18 @@
 # include <sys/stat.h>
 # include <errno.h>
 
-# define EUNEXPTKN "minishell: syntax error near unexpected token `"
-# define ETMARGS ": too many arguments\n"
-# define ENUMREQ ": numeric argument required\n"
+# define EUNEXPTKN		"minishell: syntax error near unexpected token `"
+# define ETMARGS		": too many arguments\n"
+# define ENUMREQ		": numeric argument required\n"
 
-# define MAIN_SHELL 1
-# define CHILD_SHELL 0
+# define MAIN_SHELL		1
+# define CHILD_SHELL	0
 
 # define CMD_NOT_EXEC	126
 # define CMD_NOT_FOUND	127
+
+# define HEREDOC_EOF	1
+# define HEREDOC_INT	130
 
 typedef struct s_token	t_token;
 typedef struct s_lexem	t_lexem;
@@ -57,7 +60,8 @@ typedef enum e_token_kind
 	NL,
 }	t_token_kind;
 
-typedef struct s_strvec {
+typedef struct s_strvec
+{
 	char	**data;
 	size_t	len;
 	size_t	cap;
@@ -136,7 +140,7 @@ typedef struct s_redir
 
 typedef enum e_command_kind
 {
-	BUILTIN, 
+	BUILTIN,
 	EXTERNAL,
 }	t_command_kind;
 
@@ -172,7 +176,6 @@ typedef struct  s_check_access_msgs
 	char	*msg;
 	bool	is_access_exists;
 }	t_cehck_access_msgs;
-
 
 char			*ft_set_prompt(t_shell *shell);
 void			ft_init_shell(t_shell *shell, char *envp[]);
