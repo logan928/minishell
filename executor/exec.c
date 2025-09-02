@@ -65,9 +65,35 @@ static int	handle_r_in(t_redir *redir, int shell_type, int flags, t_command_kind
 	return (0);	
 }
 
+static int	handle_r_out(t_redir *redir, int shell_type, int flags)
+{
+	int fd;
+
+	fd = open_file(redir, shell_type, flags);
+	if (fd < 0)
+		return (1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+	
+}
+
+static int	handle_r_app(t_redir *redir, int shell_type, int flags)
+{
+	int fd;
+
+	fd = open_file(redir, shell_type, flags);
+	if (fd < 0)
+		return (1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+	
+}
+
 static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
 {
-	int	fd;
+	//int	fd;
 	int	pipefd[2];
 
 	if (redir->kind == R_IN)
@@ -87,21 +113,28 @@ static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
 	}
 	else if (redir->kind == R_OUT)
 	{
+		/*
 		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
 		if (fd < 0)
 			return (1);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 		return (0);
+		*/
+		return (handle_r_out(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC));
 	}
+
 	else if (redir->kind == R_APP)
 	{
+		/*
 		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
 		if (fd < 0)
 			return (1);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 		return (0);
+		*/
+		return (handle_r_app(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND));
 	}
 	else if (redir->kind == R_HDOC)
 	{
