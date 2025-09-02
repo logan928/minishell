@@ -78,7 +78,7 @@ bool	ft_cd_oldpwd(t_shell *shell, char **cur)
 	tmp = ft_get_env_var(shell, "OLDPWD");
 	if (tmp[0] == '\0')
 		return (false);
-	*cur = tmp;
+	*cur = ft_strdup_safe(shell, tmp);
 	tmp = NULL;
 	return (true);
 }
@@ -95,7 +95,7 @@ void	ft_cd(t_shell *shell, char **args)
 		if (!ft_cd_home(shell, &curpath))
 			return (ft_not_set(shell, "HOME"));
 	}
-	else if (args[1] == NULL || (args[1][0] == '-' && args[1][1] == '\0'))
+	else if (args[1][0] == '-' && args[1][1] == '\0')
 	{
 		if (!ft_cd_oldpwd(shell, &curpath))
 			return (ft_not_set(shell, "OLDPWD"));
