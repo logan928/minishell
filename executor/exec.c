@@ -177,6 +177,22 @@ static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 	return (exit_condition);
 }
 
+static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para)
+{
+	if (ft_strchr(cmd->args[0], '/') != NULL)
+	{
+		acc_para.msg = ": No such file or directory\n";
+		acc_para.is_access_exists = true;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+	}
+	else
+	{
+		acc_para.msg = ": command not found\n";
+		acc_para.is_access_exists = false;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+	}
+}
+
 static int	ft_check_access(t_shell *shell, t_command *cmd)
 {
 	char				*cmd_name;
@@ -191,21 +207,6 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 		/*
 		if (ft_strchr(cmd->args[0], '/') != NULL)
 		{
-			ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], \
-					": No such file or directory\n"), STDERR_FILENO);
-		}
-		else
-		{
-			ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, cmd->args[0], \
-				": command not found\n", ""), STDERR_FILENO);
-		}
-		free(cmd_name);
-		return (CMD_NOT_FOUND);
-		*/
-		if (ft_strchr(cmd->args[0], '/') != NULL)
-		{
 			acc_para.msg = ": No such file or directory\n";
 			acc_para.is_access_exists = true;
 			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
@@ -216,6 +217,8 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 			acc_para.is_access_exists = false;
 			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
 		}
+			*/
+		return (handle_access_exist(shell, cmd, acc_para));
 	}
 	else if (access.is_dir)
 	{
