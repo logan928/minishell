@@ -97,7 +97,7 @@ void	ft_here_doc(t_shell *shell, t_token *t)
 		ft_quote_removal_str(shell, t);
 	res = NULL;
 	ft_read_line(shell, &res, t->data);
-	if (g_abort)
+	if (g_abort == HEREDOC_INT)
 	{
 		free(res);
 		return ;
@@ -120,7 +120,7 @@ void	ft_here(t_shell *shell)
 	tmp = shell->lexer->tokens;
 	while (tmp)
 	{
-		if (g_abort)
+		if (g_abort == HEREDOC_INT)
 			break ;
 		if (tmp->token_kind == DLESS)
 			shell->lexer->io_here = true;

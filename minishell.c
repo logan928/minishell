@@ -14,14 +14,6 @@
 
 extern volatile sig_atomic_t g_abort;
 
-void	ft_set_here_exit(t_shell *shell)
-{
-	if (g_abort == HEREDOC_INT)
-		shell->exit_status = HEREDOC_INT;
-	else if (g_abort == HEREDOC_EOF)
-		shell->exit_status = 0;
-}
-
 void	ft_run_lex(t_shell *shell)
 {
 	lex(shell, shell->input);
@@ -31,7 +23,7 @@ void	ft_run_lex(t_shell *shell)
 		shell->parse_err = 0;
 		if (isatty(STDIN_FILENO))
 			ft_here(shell);
-		if (!g_abort)
+		if (g_abort != HEREDOC_INT)
 		{
 			shell->ast = parse(shell, &shell->lexer->tokens);
 			if (shell->parse_err != 0)
@@ -39,9 +31,10 @@ void	ft_run_lex(t_shell *shell)
 			else
 				shell->exit_status = (unsigned char) exec_ast(shell, shell->ast);
 		}
-		ft_set_here_exit(shell);
 	}
 	free(shell->input);
+	if (g_abort == HEREDOC_INT)
+		shell->exit_status = 130;
 	ft_free_lexer(shell->lexer);
 }
 
