@@ -50,69 +50,88 @@ static int	open_file(t_redir *redir, int shell_type, int flags)
 	return (fd);
 }
 
-static int	handle_redir(t_redir *redir,int shell_type, t_command_kind kind )
+static int	handle_r_in(t_redir *redir, int shell_type, int flags, \
+	t_command_kind kind)
 {
 	int	fd;
+
+	fd = open_file(redir, shell_type, flags);
+	if (fd < 0)
+		return (1);
+	if (kind != BUILTIN)
+	{
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+	}
+	return (0);
+}
+
+static int	handle_r_out(t_redir *redir, int shell_type, int flags)
+{
+	int	fd;
+
+	fd = open_file(redir, shell_type, flags);
+	if (fd < 0)
+		return (1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
+static int	handle_r_app(t_redir *redir, int shell_type, int flags)
+{
+	int	fd;
+
+	fd = open_file(redir, shell_type, flags);
+	if (fd < 0)
+		return (1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
+static int	handle_r_heredoc(t_redir *redir, int shell_type, \
+	t_command_kind kind)
+{
 	int	pipefd[2];
 
+	if (pipe(pipefd) == -1) 
+	{
+		perror("pipe");
+		if (shell_type == CHILD_SHELL)
+			exit(1); 
+		else
+			return (1);
+	}
+	if (kind != BUILTIN)
+	{
+		write(pipefd[1], redir->file[0], strlen(redir->file[0]));
+		close(pipefd[1]);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+	}
+	return (0);
+}
+
+static int	handle_redir(t_redir *redir, int shell_type, \
+	t_command_kind kind )
+{
 	if (redir->kind == R_IN)
-	{
-		fd = open_file(redir, shell_type, O_RDONLY);
-		if (fd < 0)
-			return (1);
-		if (kind != BUILTIN)
-		{
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
-		return (0);
-	}
+		return (handle_r_in(redir, shell_type, O_RDONLY, kind));
 	else if (redir->kind == R_OUT)
-	{
-		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
-		if (fd < 0)
-			return (1);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		return (0);
-	}
+		return (handle_r_out(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC));
 	else if (redir->kind == R_APP)
-	{
-		fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
-		if (fd < 0)
-			return (1);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-		return (0);
-	}
+		return (handle_r_app(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND));
 	else if (redir->kind == R_HDOC)
-	{
-		if (pipe(pipefd) == -1) 
-		{
-			perror("pipe");
-			if (shell_type == CHILD_SHELL)
-				exit(1); 
-			else
-				return (1);
-		}
-		if (kind != BUILTIN)
-		{
-			write(pipefd[1], redir->file[0], strlen(redir->file[0]));
-			close(pipefd[1]);
-			dup2(pipefd[0], STDIN_FILENO);
-			close(pipefd[0]);
-		}
-		return (0);
-	}
+		return (handle_r_heredoc(redir, shell_type, kind));
 	return (0);
 }
 
 static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	t_command_kind kind, int shell_type)
 {
-	//int	fd;
-	//int	pipefd[2];
-	char *tmp;
+	char	*tmp;
+	char	*err;
 
 	while (redir)
 	{
@@ -123,102 +142,96 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		if (redir->kind != R_HDOC
 			&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
 		{
-			char	*err = ft_str_join3_cpy_safe(shell, "minishell: ", tmp, ": ambiguous redirect\n");
+			err = ft_str_join3_cpy_safe(shell, "minishell: ", \
+				tmp, ": ambiguous redirect\n");
 			ft_write_safe(shell, err, STDERR_FILENO);
 			shell->exit_status = 1;
 			shell->parse_err = 1;
 			return (1);
 		}
-	//	fd = -1;
-		/*
-		if (redir->kind == R_IN)
-		{
-			fd = open_file(redir, shell_type, O_RDONLY);
-			if (fd < 0)
-				return (1);
-			if (kind != BUILTIN)
-			{
-				dup2(fd, STDIN_FILENO);
-				close(fd);
-			}
-		}
-		else if (redir->kind == R_OUT)
-		{
-			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-		else if (redir->kind == R_APP)
-		{
-			fd = open_file(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-		else if (redir->kind == R_HDOC)
-		{
-			if (pipe(pipefd) == -1) 
-			{
-				perror("pipe");
-				if (shell_type == CHILD_SHELL)
-					exit(1); 
-				else
-				 	return (1);
-			}
-			if (kind != BUILTIN)
-			{
-				write(pipefd[1], redir->file[0], strlen(redir->file[0]));
-				close(pipefd[1]);
-				dup2(pipefd[0], STDIN_FILENO);
-				close(pipefd[0]);
-			}
-		}
-		*/
-		if(handle_redir(redir, shell_type, kind))
+		if (handle_redir(redir, shell_type, kind))
 			return (1);
 		redir = redir->next;
 	}
 	return (0);
 }
 
-static int	ft_check_access(t_shell *shell, t_command *cmd)
+static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
+	t_cehck_access_msgs acc_para, int exit_condition)
 {
 	char			*cmd_name;
-	t_cmd_access	access;
+
+	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
+	if (acc_para.is_access_exists)
+	{
+		ft_write_safe(shell,
+			ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], \
+			acc_para.msg), STDERR_FILENO);
+	}
+	else
+	{
+		ft_write_safe(shell,
+			ft_str_join3_cpy_safe(shell, cmd->args[0], \
+			acc_para.msg, ""), STDERR_FILENO);
+	}
+	free(cmd_name);
+	return (exit_condition);
+}
+
+static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para)
+{
+	if (ft_strchr(cmd->args[0], '/') != NULL)
+	{
+		acc_para.msg = ": No such file or directory\n";
+		acc_para.is_access_exists = true;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+	}
+	else
+	{
+		acc_para.msg = ": command not found\n";
+		acc_para.is_access_exists = false;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+	}
+}
+
+static int	ft_check_access(t_shell *shell, t_command *cmd)
+{
+	char				*cmd_name;
+	t_cmd_access		access;
+	t_cehck_access_msgs	acc_para;
 
 	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
 	access = ft_get_cmd_path(shell, cmd->args);
+	acc_para = (t_cehck_access_msgs){NULL, true};
 	if (!access.exist)
 	{
+		/*
 		if (ft_strchr(cmd->args[0], '/') != NULL)
 		{
-			ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": No such file or directory\n"),
-				STDERR_FILENO);
+			acc_para.msg = ": No such file or directory\n";
+			acc_para.is_access_exists = true;
+			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
 		}
 		else
 		{
-			ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, cmd->args[0], ": command not found\n", ""),
-				STDERR_FILENO);
+			acc_para.msg = ": command not found\n";
+			acc_para.is_access_exists = false;
+			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
 		}
-		free(cmd_name);
-		return (CMD_NOT_FOUND);
+			*/
+		return (handle_access_exist(shell, cmd, acc_para));
 	}
 	else if (access.is_dir)
 	{
-		ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": Is a directory\n"),
-				STDERR_FILENO);
-		free(cmd_name);
-		return (CMD_NOT_EXEC);
+		acc_para.msg = ": Is a directory\n";
+		acc_para.is_access_exists = true;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
 	}
 	else if (!access.executable)
 	{
-		ft_write_safe(shell,
-				ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], ": Permission denied\n"),
-				STDERR_FILENO);
-		free(cmd_name);
-		return (CMD_NOT_EXEC);
+		acc_para.msg = ": Permission denied\n";
+		acc_para.is_access_exists = true;
+		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
 	}
 	free(cmd_name);
 	return (0);

@@ -168,6 +168,13 @@ typedef struct s_glob_state
 	int	filename_index;
 }	t_glob_state;
 
+typedef struct  s_check_access_msgs
+{
+	char	*msg;
+	bool	is_access_exists;
+}	t_cehck_access_msgs;
+
+
 char			*ft_set_prompt(t_shell *shell);
 void			ft_init_shell(t_shell *shell, char *envp[]);
 void			ft_critical_error(t_shell *shell);
