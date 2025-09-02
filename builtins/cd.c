@@ -18,11 +18,11 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 
 	if (chdir(path) == 0)
 	{
-		shell->env = ft_strvec_update(shell->env, "OLDPWD", 
+		shell->env = ft_strvec_update(shell->env, "OLDPWD",
 				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
 		shell->env = ft_strvec_update(shell->env, "PWD",
 				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
-		shell->exp = ft_strvec_update(shell->exp, "OLDPWD", 
+		shell->exp = ft_strvec_update(shell->exp, "OLDPWD",
 				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
 		shell->exp = ft_strvec_update(shell->exp, "PWD",
 				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
@@ -59,21 +59,46 @@ void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 		*cur = ft_strdup_safe(shell, arg);
 }
 
+bool	ft_cd_home(t_shell *shell, char **cur)
+{
+	char	*tmp;
+
+	tmp = ft_get_env_var(shell, "HOME");
+	if (tmp[0] == '\0')
+		return (false);
+	*cur = tmp;
+	tmp = NULL;
+	return (true);
+}
+
+bool	ft_cd_oldpwd(t_shell *shell, char **cur)
+{
+	char	*tmp;
+
+	tmp = ft_get_env_var(shell, "OLDPWD");
+	if (tmp[0] == '\0')
+		return (false);
+	*cur = tmp;
+	tmp = NULL;
+	return (true);
+}
+
 void	ft_cd(t_shell *shell, char **args)
 {
 	char	*curpath;
-	char	*tmp;
 
 	curpath = NULL;
 	if (args[1] != NULL && args[2] != NULL)
 		return (ft_too_many_args(shell, "cd", 1));
 	if (args[1] == NULL || (args[1][0] == '~' && args[1][1] == '\0'))
 	{
-		tmp = ft_get_env_var(shell, "HOME");
-		if (tmp[0] == '\0')
-			return (ft_home_not_set(shell, "cd", tmp));
-		curpath = tmp;
-		tmp = NULL;
+		if (!ft_cd_home(shell, &curpath))
+			return (ft_not_set(shell, "HOME"));
+	}
+	else if (args[1] == NULL || (args[1][0] == '-' && args[1][1] == '\0'))
+	{
+		if (!ft_cd_oldpwd(shell, &curpath))
+			return (ft_not_set(shell, "OLDPWD"));
 	}
 	else
 		ft_parse_cd_arg(shell, args[1], &curpath);

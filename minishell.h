@@ -31,7 +31,6 @@
 # define EUNEXPTKN "minishell: syntax error near unexpected token `"
 # define ETMARGS ": too many arguments\n"
 # define ENUMREQ ": numeric argument required\n"
-# define ENOHOME ": HOME not set\n"
 
 # define MAIN_SHELL 1
 # define CHILD_SHELL 0
@@ -215,7 +214,7 @@ char			*ft_itoa_safe(t_shell *shell, long n);
 void			*ft_malloc_safe(t_shell *shell, size_t size);
 bool			ft_is_valid_number(char *s);
 void			ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
-void			ft_home_not_set(t_shell *shell, char *cmd, char *tmp);
+void			ft_not_set(t_shell *shell, char *var);
 char			*ft_get_pwd(t_shell *shell);
 void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
 void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
