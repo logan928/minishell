@@ -171,7 +171,7 @@ typedef struct s_glob_state
 typedef struct  s_check_access_msgs
 {
 	char	*msg;
-	bool	with_ms_prefix;
+	bool	is_access_exists;
 }	t_cehck_access_msgs;
 
 

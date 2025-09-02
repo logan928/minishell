@@ -156,14 +156,23 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 }
 
 static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
-	t_cehck_access_msgs *acc_para, int exit_condition)
+	t_cehck_access_msgs acc_para, int exit_condition)
 {
 	char			*cmd_name;
 
 	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
-	ft_write_safe(shell,
-		ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], \
-		acc_para->msg), STDERR_FILENO);
+	if (acc_para.is_access_exists)
+	{
+		ft_write_safe(shell,
+			ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], \
+			acc_para.msg), STDERR_FILENO);
+	}
+	else
+	{
+		ft_write_safe(shell,
+			ft_str_join3_cpy_safe(shell, cmd->args[0], \
+			acc_para.msg, ""), STDERR_FILENO);
+	}
 	free(cmd_name);
 	return (exit_condition);
 }
@@ -172,12 +181,14 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 {
 	char				*cmd_name;
 	t_cmd_access		access;
-	t_cehck_access_msgs	*acc_para;
+	t_cehck_access_msgs	acc_para;
 
 	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
 	access = ft_get_cmd_path(shell, cmd->args);
+	acc_para = (t_cehck_access_msgs){NULL, true};
 	if (!access.exist)
 	{
+		/*
 		if (ft_strchr(cmd->args[0], '/') != NULL)
 		{
 			ft_write_safe(shell,
@@ -192,17 +203,30 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 		}
 		free(cmd_name);
 		return (CMD_NOT_FOUND);
+		*/
+		if (ft_strchr(cmd->args[0], '/') != NULL)
+		{
+			acc_para.msg = ": No such file or directory\n";
+			acc_para.is_access_exists = true;
+			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+		}
+		else
+		{
+			acc_para.msg = ": command not found\n";
+			acc_para.is_access_exists = false;
+			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
+		}
 	}
 	else if (access.is_dir)
 	{
-		acc_para->msg = ": Is a directory\n";
-		acc_para->with_ms_prefix = true;
+		acc_para.msg = ": Is a directory\n";
+		acc_para.is_access_exists = true;
 		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
 	}
 	else if (!access.executable)
 	{
-		acc_para->msg = ": Permission denied\n";
-		acc_para->with_ms_prefix = true;
+		acc_para.msg = ": Permission denied\n";
+		acc_para.is_access_exists = true;
 		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
 	}
 	free(cmd_name);
