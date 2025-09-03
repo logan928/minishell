@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/03 23:58:43 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 01:28:19 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	while (redir)
 	{
 		tmp = ft_strdup_safe(shell, redir->file[0]);
+		ft_skip_empty_vars(shell, redir->file);
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_file_exp(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
@@ -151,6 +152,9 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 
 	if (cmd->args)
 	{
+		ft_skip_empty_vars(shell, cmd->args);
+		if (!cmd->args[0])
+			return (0);
 		ft_variable_expansion(shell, cmd->args, 0);
 		ft_field_splitting(shell, &cmd->args, 0);
 		ft_file_exp(shell, &cmd->args, 1, 1);
@@ -219,6 +223,9 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 
 	if (cmd->args)
 	{
+		ft_skip_empty_vars(shell, cmd->args);
+		if (!cmd->args[0])
+			return (0);
 		ft_variable_expansion(shell, cmd->args, 0);
 		ft_field_splitting(shell, &cmd->args, 0);
 		ft_file_exp(shell, &cmd->args, 1, 1);
