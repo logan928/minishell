@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:31:19 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 16:50:55 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/03 23:46:28 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args)
 	struct stat		st;
 
 	cmd_access = (t_cmd_access){false, false, false, true};
+	ft_init_access(shell, &cmd_access);
 	if (!args || !args[0] || args[0][0] == '\0')
 		return (cmd_access);
 	else if (ft_strchr(args[0], '/'))

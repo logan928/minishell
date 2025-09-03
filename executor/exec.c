@@ -85,7 +85,8 @@ static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 
 static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para, t_cmd_access access)
 {
-	if (cmd->args[0][0] == '\0' || ft_strchr(cmd->args[0], '/') != NULL || !access.path)
+	if (ft_strchr(cmd->args[0], '/') != NULL || !access.path
+		|| (cmd->args[0][0] && !access.path))
 	{
 		acc_para.msg = ": No such file or directory\n";
 		acc_para.is_access_exists = true;

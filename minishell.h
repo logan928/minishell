@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 18:22:06 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/03 23:43:24 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,11 +285,11 @@ int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
 t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
-//void			sigint_heredoc(int sig);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
 int				open_file(t_redir *redir, int shell_type, int flags);
 int				handle_redir(t_redir *redir, int shell_type, \
 				t_command_kind kind);
+void			ft_init_access(t_shell *shell, t_cmd_access *access);
 
 #endif
