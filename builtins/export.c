@@ -92,11 +92,11 @@ void	ft_set_val(t_shell *shell, char *eq, char *s)
 	char	*val;
 	char	*prev;
 
-	var = ft_strndup_safe(shell, s, eq - s);
-	val = ft_strdup_safe(shell, eq);
+	val = ft_strdup_safe(shell, eq + 1);
 	if (*(eq - 1) == '+')
 	{
-		prev = ft_get_env_var(shell, var);
+		var = ft_strndup_safe(shell, s, eq - s - 1);
+		prev = ft_strjoin_free_safe(shell, ft_strdup_safe(shell, "="), ft_get_env_var(shell, var));
 		shell->exp = ft_strvec_update(shell->exp,
 				var, fts_strjoin3cpy(shell, var, prev, val));
 		shell->env = ft_strvec_update(shell->env,
@@ -105,10 +105,11 @@ void	ft_set_val(t_shell *shell, char *eq, char *s)
 	}
 	else
 	{
+		var = ft_strndup_safe(shell, s, eq - s);
 		shell->exp = ft_strvec_update(shell->exp,
-				var, fts_strjoin3cpy(shell, var, val, ""));
+				var, fts_strjoin3cpy(shell, var, "=", val));
 		shell->env = ft_strvec_update(shell->env,
-				var, fts_strjoin3cpy(shell, var, val, ""));
+				var, fts_strjoin3cpy(shell, var, "=", val));
 	}
 	free(val);
 	free(var);

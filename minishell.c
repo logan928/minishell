@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <unistd.h>
 
 extern volatile sig_atomic_t	g_abort;
 
@@ -61,36 +62,34 @@ void	ft_interactive(t_shell *shell)
 	}
 }
 
-void	ft_non_interactive(t_shell *shell)
+void	ft_non_interactive(t_shell *shell, char **argv)
 {
-	char	*line;
-	char	*input;
-	char	*newline;
+	char	**input;
+	int		i;
 
-	line = ft_get_next_line(STDIN_FILENO);
-	if (!line || line[0] == '\0' || line[0] == '\n')
-		return ;
-	newline = ft_strchr(line, '\n');
-	if (newline)
+	input = ft_split(argv[2], ';');
+	if (!input)
+		exit(0);
+	i = 0;
+	while (input[i])
 	{
-		input = ft_strndup_safe(shell, line, ft_strlen(line) - 1);
-		free(line);
-		shell->input = input;
+		shell->input = input[i];
+		ft_run_lex(shell);
+		i++;
 	}
-	else
-		shell->input = line;
-	ft_run_lex(shell);
+	exit(shell->exit_status);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
 
-	(void)argc;
-	(void)argv;
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0};
 	ft_init_shell(&shell, envp);
 	shell.lexer = &(t_lexer){NULL, 0, NULL, NULL, NULL};
-	ft_interactive(&shell);
+	if (argc == 3 && ft_strcmp(argv[1], "-c", 0) == 0 && argv[2])
+		ft_non_interactive(&shell, argv);
+	else
+		ft_interactive(&shell);
 	return (0);
 }

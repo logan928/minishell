@@ -308,7 +308,8 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 		exit(shell->exit_status);
 	if (cmd->command_kind == BUILTIN) // builtins in child
 	{
-		exit(run_builtin(shell, cmd, CHILD_SHELL)); // run in child, not parent
+		run_builtin(shell, cmd, CHILD_SHELL); // run in child, not parent
+		exit(shell->exit_status);
 	}
 
 	access_err = ft_check_access(shell, cmd);
