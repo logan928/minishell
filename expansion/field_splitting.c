@@ -52,7 +52,7 @@ void	ft_field_splitting(t_shell *shell, char ***arr, size_t idx)
 	lst_size = ft_lst_size(shell->lexer->tmp);
 	arr_size = ft_arr_size(*arr);
 	if (lst_size != arr_size - 1)
-		ft_merge(shell, arr, lst_size, 1);
+		ft_merge(shell, arr, lst_size, 0);
 	ft_free_tokens(shell->lexer->tmp);
 	shell->lexer->tmp = NULL;
 }
