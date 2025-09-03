@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <sys/wait.h>
 #include <fcntl.h>
-#include <unistd.h>
 
 int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 {
@@ -31,99 +29,6 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 		ft_unset(shell, cmd->args);
 	if (ft_strcmp(cmd->args[0], "export", 0) == 0)
 		ft_export(shell, cmd->args);
-	return (0);
-}
-
-static int	open_file(t_redir *redir, int shell_type, int flags)
-{
-	int	fd;
-
-	fd = open(redir->file[0], flags, 0644);
-	if (fd < 0)
-	{
-		perror("open");
-		if (shell_type == CHILD_SHELL)
-			exit(1);
-		else
-			return (-1);
-	}
-	return (fd);
-}
-
-static int	handle_r_in(t_redir *redir, int shell_type, int flags, \
-	t_command_kind kind)
-{
-	int	fd;
-
-	fd = open_file(redir, shell_type, flags);
-	if (fd < 0)
-		return (1);
-	if (kind != BUILTIN)
-	{
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-	}
-	return (0);
-}
-
-static int	handle_r_out(t_redir *redir, int shell_type, int flags)
-{
-	int	fd;
-
-	fd = open_file(redir, shell_type, flags);
-	if (fd < 0)
-		return (1);
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	return (0);
-}
-
-static int	handle_r_app(t_redir *redir, int shell_type, int flags)
-{
-	int	fd;
-
-	fd = open_file(redir, shell_type, flags);
-	if (fd < 0)
-		return (1);
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	return (0);
-}
-
-static int	handle_r_heredoc(t_redir *redir, int shell_type, \
-	t_command_kind kind)
-{
-	int	pipefd[2];
-
-	if (pipe(pipefd) == -1) 
-	{
-		perror("pipe");
-		if (shell_type == CHILD_SHELL)
-			exit(1); 
-		else
-			return (1);
-	}
-	if (kind != BUILTIN)
-	{
-		write(pipefd[1], redir->file[0], strlen(redir->file[0]));
-		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-	}
-	return (0);
-}
-
-static int	handle_redir(t_redir *redir, int shell_type, \
-	t_command_kind kind )
-{
-	if (redir->kind == R_IN)
-		return (handle_r_in(redir, shell_type, O_RDONLY, kind));
-	else if (redir->kind == R_OUT)
-		return (handle_r_out(redir, shell_type, O_WRONLY | O_CREAT | O_TRUNC));
-	else if (redir->kind == R_APP)
-		return (handle_r_app(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND));
-	else if (redir->kind == R_HDOC)
-		return (handle_r_heredoc(redir, shell_type, kind));
 	return (0);
 }
 
@@ -339,8 +244,12 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 	count++; 
 	node = ast;
-	t_ast	*commands[count];
+	t_ast	**commands;
+	commands = malloc(sizeof(t_ast *) * count);
+	if (!commands)
+		return (1);
 	i = count-1;
+
 	while (node && node->type == AST_PIPE)
 	{
 		commands[i] = node->right;
@@ -348,8 +257,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		i--;
 	}
 	commands[i] = node; 
-
-	//int pipefd[count - 1][2];
 
 	int **pipefd;
 	pipefd = malloc(sizeof(int *) * (count - 1));

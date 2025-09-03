@@ -46,7 +46,9 @@ SRCS := minishell.c \
 		$(GRAMMAR_DIR)/parser.c \
 		$(GRAMMAR_DIR)/lexer_helpers.c \
 		$(GRAMMAR_DIR)/skip_empty_vars.c \
-		$(GRAMMAR_DIR)/cf_utils.c
+		$(GRAMMAR_DIR)/cf_utils.c \
+		$(EXECUTOR_DIR)/open_file.c \
+		$(EXECUTOR_DIR)/handle_redir.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

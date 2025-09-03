@@ -27,6 +27,7 @@
 # include <stdbool.h>
 # include <sys/stat.h>
 # include <errno.h>
+#include <sys/wait.h>
 
 # define EUNEXPTKN		"minishell: syntax error near unexpected token `"
 # define ETMARGS		": too many arguments\n"
@@ -286,5 +287,8 @@ void			ft_shlvl(t_shell *shell);
 //void			sigint_heredoc(int sig);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
+int				open_file(t_redir *redir, int shell_type, int flags);
+int				handle_redir(t_redir *redir, int shell_type, \
+				t_command_kind kind);
 
 #endif
