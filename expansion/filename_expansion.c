@@ -23,13 +23,13 @@ static void	ft_add_match_token(t_shell *shell, int prefix_len,
 	{
 		prefix = ft_strndup_safe(shell, pattern, prefix_len);
 		base = ft_strdup_safe(shell, filename);
-		new = ft_new_token_safe(shell, WORD,
+		new = fts_new_token(shell, WORD,
 				ft_strjoin_free_safe(shell, prefix, base));
 	}
 	else
 	{
 		base = ft_strdup_safe(shell, filename);
-		new = ft_new_token_safe(shell, WORD, base);
+		new = fts_new_token(shell, WORD, base);
 	}
 	ft_add_token_sorted(&shell->lexer->tmp, new);
 }
@@ -63,11 +63,11 @@ void	ft_copy_single_item(t_shell *sh, char *s)
 	t_token	*t;
 
 	copy = ft_strdup_safe(sh, s);
-	t = ft_new_token_safe(sh, WORD, copy);
+	t = fts_new_token(sh, WORD, copy);
 	ft_add_token(&sh->lexer->tmp, t);
 }
 
-void	ft_filename_expansion(t_shell *sh, char ***arr, size_t idx, int is_cmd)
+void	ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd)
 {
 	size_t	lst_size;
 

@@ -25,7 +25,7 @@ void	*ft_malloc_safe(t_shell *shell, size_t size)
 	return (ptr);
 }
 
-char	*ft_str_join3_cpy_safe(t_shell *shell, char *s1, char *s2, char *s3)
+char	*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3)
 {
 	size_t	len1;
 	size_t	len2;

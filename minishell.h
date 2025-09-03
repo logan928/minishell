@@ -120,21 +120,36 @@ typedef struct s_cmd_access
 	bool	is_dir;
 }	t_cmd_access;
 
+/*
+	R_IN	<
+	R_OUT	>
+	R_APP	>>
+	R_HDOC	<<
+*/
+
 typedef enum e_redir_type
 {
-	R_IN,     // <
-	R_OUT,    // >
-	R_APP,    // >>
-	R_HDOC   // <<
+	R_IN,
+	R_OUT,
+	R_APP,
+	R_HDOC
 }	t_redir_type;
 
+/*
+ *	t_redir stores information about a rediridection.
+ *	file has a value of the next WORD following a redirection operator.
+ *	For heredoc it is user input. We transform a limiter into text
+ *	before parsing.
+ *	After expansion there could be arbitrary number of elements
+ *	(except for heredoc). Only 1 is valid.
+ *	TODO: content is not used and can be removed.
+ */
 
-// TODO: the idea is to store filename/heredoc content as a string array, so we can pass it to expansion functions
 typedef struct s_redir
 {
 	t_redir_type	kind;
-	char			**file;     // filename or heredoc limiter
-	char			*content; //What is usually under content??? heredocs?? TODO: handle content
+	char			**file;
+	char			*content;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -144,22 +159,24 @@ typedef enum e_command_kind
 	EXTERNAL,
 }	t_command_kind;
 
+//TODO: We don't use env inside this struct
 typedef struct s_command
 {
-	t_command_kind	command_kind; //consider renaming as command_kind??
+	t_command_kind	command_kind;
 	char			*path;
-	char			**args;   // argv for execve()
+	char			**args;
 	char			**env;
-	t_redir			*redirs;  // linked list of redirections
+	t_redir			*redirs;
 }	t_command;
 
+//TODO: Do we need ast_depth?
 typedef struct s_ast
 {
 	t_ast_type		type;
 	t_command		*cmd;
-	struct s_ast	*left;        // for binary ops
-	struct s_ast	*right;       // for binary ops
-	int				ast_depth;	//tol: will this be useful for traversing?
+	struct s_ast	*left;
+	struct s_ast	*right;
+	int				ast_depth;
 }	t_ast;
 
 typedef struct s_glob_state
@@ -171,7 +188,7 @@ typedef struct s_glob_state
 	int	filename_index;
 }	t_glob_state;
 
-typedef struct  s_check_access_msgs
+typedef struct s_check_access_msgs
 {
 	char	*msg;
 	bool	is_access_exists;
@@ -184,11 +201,11 @@ void			lex(t_shell *shell, char *input);
 int				ft_check_syntax(t_shell *shell);
 int				ft_valid_env_char(int c);
 char			*ft_get_env_var(t_shell *shell, char *s);
-void			ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_append_exit_status(t_shell *s, t_cursor *c, char **res);
-void			ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_var(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_exit(t_shell *s, t_cursor *c, char **res);
+void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
 void			ft_free_lexer(t_lexer *lexer);
 int				ft_pattern_match(const char *pattern, const char *filename);
 int				ft_is_pattern(char *word);
@@ -211,7 +228,7 @@ void			ft_sigquit_trap(int sig);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
 char			*ft_strdup_safe(t_shell *shell, const char *s);
 char			*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
-t_token			*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data);
+t_token			*fts_new_token(t_shell *shell, t_token_kind kind, char *data);
 char			*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
 char			*ft_itoa_safe(t_shell *shell, long n);
 void			*ft_malloc_safe(t_shell *shell, size_t size);
@@ -224,8 +241,8 @@ void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
 size_t			ft_arr_size(char **arr);
 size_t			ft_lst_size(t_token *tokens);
 void			ft_free_arr(char **arr);
-void			ft_merge(t_shell *shell, char ***arr, size_t lst_size, int is_cmd);
-void			ft_filename_expansion(t_shell *shell, char ***arr, size_t idx, int is_cmd);
+void			ft_merge(t_shell *sh, char ***arr, size_t lst_size, int is_cmd);
+void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
 void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
 void			ft_here_doc(t_shell *shell, t_token *t);
@@ -237,7 +254,7 @@ t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 void			print_ast(t_shell *shell, t_ast *node, int depth);
-char			*ft_str_join3_cpy_safe(t_shell *shell, char *s1, char *s2, char *s3);
+char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
 void			ft_write_safe(t_shell *shell, char *s, int fd);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
@@ -247,7 +264,7 @@ void			ft_unset(t_shell *shell, char **args);
 char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 int				ft_valid_env_first_char(int c);
 void			ft_export(t_shell *shell, char **args);
-bool 			ft_is_valid_var_name(char *s);
+bool			ft_is_valid_var_name(char *s);
 void			ft_skip_empty_vars(t_shell *shell);
 int				is_builtin(const char *cmd);
 char			**argv_add(char **argv, int *argc, const char *word);
@@ -266,15 +283,8 @@ int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
 t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
-void			sigint_heredoc(int sig);
+//void			sigint_heredoc(int sig);
+void			ft_sigint_handler_here(int sig);
+void			ft_set_here_sigint(void);
 
-typedef enum e_lexem_kind
-{
-	//BUILTIN, - //builtin/external to be identified at executor
-	CMAND,
-	LOGICAL,
-	PIPELINE,
-	PAREN,
-	REDIRECTION,
-}	t_lexem_kind;
 #endif

@@ -38,7 +38,7 @@ char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n)
 	return (copy);
 }
 
-t_token	*ft_new_token_safe(t_shell *shell, t_token_kind kind, char *data)
+t_token	*fts_new_token(t_shell *shell, t_token_kind kind, char *data)
 {
 	t_token	*new;
 

@@ -74,7 +74,7 @@ static void	ft_print_exp(t_shell *shell)
 		eq = ft_strchr(shell->exp->data[i], '=');
 		if (eq == NULL)
 		{
-			var = ft_str_join3_cpy_safe(shell,
+			var = fts_strjoin3cpy(shell,
 					"declare -x ", shell->exp->data[i], "\n");
 			res = ft_strjoin_free_safe(shell, res, var);
 		}
@@ -98,17 +98,17 @@ void	ft_set_val(t_shell *shell, char *eq, char *s)
 	{
 		prev = ft_get_env_var(shell, var);
 		shell->exp = ft_strvec_update(shell->exp,
-				var, ft_str_join3_cpy_safe(shell, var, prev, val));
+				var, fts_strjoin3cpy(shell, var, prev, val));
 		shell->env = ft_strvec_update(shell->env,
-				var, ft_str_join3_cpy_safe(shell, var, prev, val));
+				var, fts_strjoin3cpy(shell, var, prev, val));
 		free(prev);
 	}
 	else
 	{
 		shell->exp = ft_strvec_update(shell->exp,
-				var, ft_str_join3_cpy_safe(shell, var, val, ""));
+				var, fts_strjoin3cpy(shell, var, val, ""));
 		shell->env = ft_strvec_update(shell->env,
-				var, ft_str_join3_cpy_safe(shell, var, val, ""));
+				var, fts_strjoin3cpy(shell, var, val, ""));
 	}
 	free(val);
 	free(var);

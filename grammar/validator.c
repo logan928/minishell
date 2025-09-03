@@ -26,7 +26,7 @@ static int	ft_syntax_error(t_shell *shell, char *token)
 {
 	char	*err;
 
-	err = ft_str_join3_cpy_safe(shell, EUNEXPTKN, token, "'\n");
+	err = fts_strjoin3cpy(shell, EUNEXPTKN, token, "'\n");
 	ft_write_safe(shell, err, STDERR_FILENO);
 	shell->exit_status = 2;
 	return (0);

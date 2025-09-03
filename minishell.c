@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern volatile sig_atomic_t g_abort;
+extern volatile sig_atomic_t	g_abort;
 
 void	ft_run_lex(t_shell *shell)
 {
@@ -29,7 +29,7 @@ void	ft_run_lex(t_shell *shell)
 			if (shell->parse_err != 0)
 				shell->parse_err = 0;
 			else
-				shell->exit_status = (unsigned char) exec_ast(shell, shell->ast);
+				shell->exit_status = exec_ast(shell, shell->ast);
 		}
 	}
 	free(shell->input);

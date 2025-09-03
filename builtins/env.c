@@ -48,7 +48,7 @@ void	ft_env(t_shell *shell, char **args)
 	res = ft_strdup_safe(shell, "");
 	while (*e != NULL)
 	{
-		var = ft_str_join3_cpy_safe(shell, *e, "\n", "");
+		var = fts_strjoin3cpy(shell, *e, "\n", "");
 		res = ft_strjoin_free_safe(shell, res, var);
 		e++;
 	}

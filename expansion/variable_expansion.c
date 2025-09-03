@@ -40,17 +40,17 @@ void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 	while (t[c->cur])
 	{
 		if (ft_isquote(t[c->cur]) && c->quote == 0)
-			ft_append_unquoted_quote(s, c, t, res);
+			ft_app_uquote(s, c, t, res);
 		else if (ft_isquote(t[c->cur]) && c->quote == t[c->cur])
-			ft_append_quoted_quote(s, c, t, res);
+			ft_app_qquote(s, c, t, res);
 		else if ((c->quote != '\'') && t[c->cur] == '$'
 			&& ft_valid_env_first_char(t[c->cur + 1]))
-			ft_append_variable(s, c, t, res);
+			ft_app_var(s, c, t, res);
 		else if ((c->quote != '\'') && t[c->cur] == '$'
 			&& t[c->cur + 1] == '?')
-			ft_append_exit_status(s, c, res);
+			ft_app_exit(s, c, res);
 		else
-			ft_append_normal_chars(s, c, t, res);
+			ft_app_char(s, c, t, res);
 	}
 }
 

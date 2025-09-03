@@ -28,7 +28,7 @@ void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
 	char	*err;
 
 	shell->exit_status = (unsigned char) 2;
-	err = ft_str_join3_cpy_safe(shell, cmd, arg, ENUMREQ);
+	err = fts_strjoin3cpy(shell, cmd, arg, ENUMREQ);
 	ft_write_safe(shell, err, STDERR_FILENO);
 	ft_free_exit(shell);
 }

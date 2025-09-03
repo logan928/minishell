@@ -107,7 +107,7 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 	{
 		ft_variable_expansion(shell, cmd->args, 0);
 		ft_field_splitting(shell, &cmd->args, 1);
-		ft_filename_expansion(shell, &cmd->args, 1, 1);
+		ft_file_exp(shell, &cmd->args, 1, 1);
 		ft_quote_removal(shell, cmd->args, 0);
 	}
 	cmd->command_kind = EXTERNAL;

@@ -137,12 +137,12 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	{
 		tmp = ft_strdup_safe(shell, redir->file[0]);
 		ft_variable_expansion(shell, redir->file, 0);
-		ft_filename_expansion(shell, &redir->file, 0, 0);
+		ft_file_exp(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
 		if (redir->kind != R_HDOC
 			&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
 		{
-			err = ft_str_join3_cpy_safe(shell, "minishell: ", \
+			err = fts_strjoin3cpy(shell, "minishell: ", \
 				tmp, ": ambiguous redirect\n");
 			ft_write_safe(shell, err, STDERR_FILENO);
 			shell->exit_status = 1;
@@ -165,13 +165,13 @@ static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 	if (acc_para.is_access_exists)
 	{
 		ft_write_safe(shell,
-			ft_str_join3_cpy_safe(shell, "minishell: ", cmd->args[0], \
+			fts_strjoin3cpy(shell, "minishell: ", cmd->args[0], \
 			acc_para.msg), STDERR_FILENO);
 	}
 	else
 	{
 		ft_write_safe(shell,
-			ft_str_join3_cpy_safe(shell, cmd->args[0], \
+			fts_strjoin3cpy(shell, cmd->args[0], \
 			acc_para.msg, ""), STDERR_FILENO);
 	}
 	free(cmd_name);

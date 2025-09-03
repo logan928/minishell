@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-extern sig_atomic_t	g_sig;
+extern sig_atomic_t	g_abort;
 
 void	ft_sigint_handler(int sig)
 {
@@ -27,4 +27,21 @@ void	ft_sigquit_trap(int sig)
 {
 	(void)sig;
 	return ;
+}
+
+void	ft_sigint_handler_here(int sig)
+{
+	(void)sig;
+	g_abort = HEREDOC_INT;
+	write(STDOUT_FILENO, "\n", 1);
+}
+
+void	ft_set_here_sigint(void)
+{
+	struct sigaction	sa1;
+
+	sa1.sa_handler = ft_sigint_handler_here;
+	sigemptyset(&sa1.sa_mask);
+	sa1.sa_flags = 0;
+	sigaction(SIGINT, &sa1, NULL);
 }

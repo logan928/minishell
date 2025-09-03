@@ -58,7 +58,7 @@ void	ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit)
 	char	*err;
 
 	shell->exit_status = exit;
-	err = ft_str_join3_cpy_safe(shell, "minishell: ", cmd, ETMARGS);
+	err = fts_strjoin3cpy(shell, "minishell: ", cmd, ETMARGS);
 	ft_write_safe(shell, err, STDERR_FILENO);
 }
 
@@ -67,7 +67,7 @@ void	ft_not_set(t_shell *shell, char *var)
 	char	*err;
 
 	shell->exit_status = (unsigned char) 1;
-	err = ft_str_join3_cpy_safe(shell, "minishell: cd: ", var, " not set\n");
+	err = fts_strjoin3cpy(shell, "minishell: cd: ", var, " not set\n");
 	ft_write_safe(shell, err, STDERR_FILENO);
 }
 
@@ -75,7 +75,7 @@ void	ft_not_valid_identifier(t_shell *shell, char *arg)
 {
 	char	*err;
 
-	err = ft_str_join3_cpy_safe(shell, "minishell: export: `",
+	err = fts_strjoin3cpy(shell, "minishell: export: `",
 			arg, "': not a valid identifier\n");
 	shell->exit_status = 1;
 	ft_write_safe(shell, err, STDERR_FILENO);

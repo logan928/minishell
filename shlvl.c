@@ -19,7 +19,7 @@ void	ft_shlvl_warning(t_shell *sh, char *lvl)
 
 	left = "minishell: warning: shell sevel (";
 	right = ") too high, resetting to 1\n";
-	ft_write_safe(sh, ft_str_join3_cpy_safe(sh, 
+	ft_write_safe(sh, fts_strjoin3cpy(sh, 
 			left, lvl, right), STDERR_FILENO);
 }
 
@@ -44,7 +44,7 @@ void	ft_increment_shlvl(t_shell *sh, char *shlvl)
 			return ;
 		}
 		ft_strvec_update(sh->env, "SHLVL", 
-			ft_str_join3_cpy_safe(sh, "SHLVL=", tmp, ""));
+			fts_strjoin3cpy(sh, "SHLVL=", tmp, ""));
 		free(tmp);
 	}
 }

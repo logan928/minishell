@@ -22,7 +22,7 @@ void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 	kind = ft_get_token_kind(&(shell->input[c->cur]));
 	len = ft_get_operator_length(kind);
 	data = ft_strndup_safe(shell, &shell->input[c->cur], len);
-	next = ft_new_token_safe(shell, kind, data);
+	next = fts_new_token(shell, kind, data);
 	ft_add_token(&(shell->lexer->tokens), next);
 	c->cur += len;
 }
@@ -33,7 +33,7 @@ void	ft_tokenize_nl(t_shell *shell)
 	char	*data;
 
 	data = ft_strdup_safe(shell, "newline");
-	next = ft_new_token_safe(shell, NL, data);
+	next = fts_new_token(shell, NL, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }
 
@@ -45,7 +45,7 @@ void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 
 	input = shell->input;
 	data = ft_strndup_safe(shell, &input[c->start], c->cur - c->start);
-	next = ft_new_token_safe(shell, WORD, data);
+	next = fts_new_token(shell, WORD, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }
 

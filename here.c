@@ -14,13 +14,6 @@
 
 volatile sig_atomic_t	g_abort = 0;
 
-void	sigint_handler(int sig)
-{
-	(void)sig;
-	g_abort = HEREDOC_INT;
-	write(STDOUT_FILENO, "\n", 1);
-}
-
 static bool	ft_is_quoted(char *s)
 {
 	size_t	i;
@@ -35,16 +28,6 @@ static bool	ft_is_quoted(char *s)
 	return (false);
 }
 
-void	ft_set_here_sigint(void)
-{
-	struct sigaction	sa1;
-
-	sa1.sa_handler = sigint_handler;
-	sigemptyset(&sa1.sa_mask);
-	sa1.sa_flags = 0;
-	sigaction(SIGINT, &sa1, NULL);
-}
-
 void	ft_here_eof_warning(t_shell *shell, char *limiter)
 {
 	char	*err;
@@ -52,10 +35,11 @@ void	ft_here_eof_warning(t_shell *shell, char *limiter)
 	if (!g_abort)
 	{
 		g_abort = HEREDOC_EOF;
-		err = ft_str_join3_cpy_safe(shell,
-		"\nminishell: warning: here-document delimited by end-of-file (wanted `",
-		limiter,
-		"')\n");
+		err = fts_strjoin3cpy(shell,
+				"\nminishell: warning: here-document \
+delimited by end-of-file (wanted `",
+				limiter,
+				"')\n");
 		ft_write_safe(shell, err, STDERR_FILENO);
 	}
 }

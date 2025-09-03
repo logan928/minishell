@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res)
+void	ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*quote;
 
@@ -22,7 +22,7 @@ void	ft_append_unquoted_quote(t_shell *s, t_cursor *c, char *t, char **res)
 	c->cur++;
 }
 
-void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res)
+void	ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*quote;
 
@@ -32,7 +32,7 @@ void	ft_append_quoted_quote(t_shell *s, t_cursor *c, char *t, char **res)
 	c->cur++;
 }
 
-void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res)
+void	ft_app_var(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*var;
 	int		start;
@@ -48,7 +48,7 @@ void	ft_append_variable(t_shell *s, t_cursor *c, char *t, char **res)
 	*res = ft_strjoin_free_safe(s, *res, var);
 }
 
-void	ft_append_exit_status(t_shell *s, t_cursor *c, char **res)
+void	ft_app_exit(t_shell *s, t_cursor *c, char **res)
 {
 	char	*val;
 
@@ -57,7 +57,7 @@ void	ft_append_exit_status(t_shell *s, t_cursor *c, char **res)
 	c->cur += 2;
 }
 
-void	ft_append_normal_chars(t_shell *s, t_cursor *c, char *t, char **res)
+void	ft_app_char(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	char	*str;
 	int		start;

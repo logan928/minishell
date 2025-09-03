@@ -19,24 +19,24 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 	if (chdir(path) == 0)
 	{
 		shell->env = ft_strvec_update(shell->env, "OLDPWD",
-				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
+				fts_strjoin3cpy(shell, "OLDPWD=", shell->pwd, ""));
 		shell->env = ft_strvec_update(shell->env, "PWD",
-				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
+				fts_strjoin3cpy(shell, "PWD=", path, ""));
 		shell->exp = ft_strvec_update(shell->exp, "OLDPWD",
-				ft_str_join3_cpy_safe(shell, "OLDPWD=", shell->pwd, ""));
+				fts_strjoin3cpy(shell, "OLDPWD=", shell->pwd, ""));
 		shell->exp = ft_strvec_update(shell->exp, "PWD",
-				ft_str_join3_cpy_safe(shell, "PWD=", path, ""));
+				fts_strjoin3cpy(shell, "PWD=", path, ""));
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD");
 		if (dir && dir[0] == '-' && dir[1] == '\0')
 		{
-			pwd = ft_str_join3_cpy_safe(shell, shell->pwd, "\n", "");
+			pwd = fts_strjoin3cpy(shell, shell->pwd, "\n", "");
 			ft_write_safe(shell, pwd, STDOUT_FILENO);
 		}
 	}
 	else
 	{
-		perror(ft_str_join3_cpy_safe(shell, "minishell: cd: ", dir, ""));
+		perror(fts_strjoin3cpy(shell, "minishell: cd: ", dir, ""));
 		shell->exit_status = (unsigned char) 1;
 	}
 }
@@ -54,7 +54,7 @@ void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 			free(oldpwd);
 	}
 	else if (arg[0] != '/')
-		*cur = ft_str_join3_cpy_safe(shell, ft_get_pwd(shell), "/", arg);
+		*cur = fts_strjoin3cpy(shell, ft_get_pwd(shell), "/", arg);
 	else
 		*cur = ft_strdup_safe(shell, arg);
 }
