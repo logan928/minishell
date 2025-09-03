@@ -54,6 +54,10 @@ void	ft_set_pwd(t_shell *shell)
 	}
 	else
 		shell->pwd = pwd;
+	shell->env = ft_strvec_update(shell->env,
+				"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
+	shell->exp = ft_strvec_update(shell->exp,
+				"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
 }
 
 char	*ft_get_pwd(t_shell *shell)
