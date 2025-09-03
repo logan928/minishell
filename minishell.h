@@ -119,6 +119,7 @@ typedef struct s_cmd_access
 	bool	exist;
 	bool	executable;
 	bool	is_dir;
+	bool	path;
 }	t_cmd_access;
 
 /*

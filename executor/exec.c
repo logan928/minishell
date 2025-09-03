@@ -83,9 +83,9 @@ static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 	return (exit_condition);
 }
 
-static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para)
+static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para, t_cmd_access access)
 {
-	if (ft_strchr(cmd->args[0], '/') != NULL)
+	if (cmd->args[0][0] == '\0' || ft_strchr(cmd->args[0], '/') != NULL || !access.path)
 	{
 		acc_para.msg = ": No such file or directory\n";
 		acc_para.is_access_exists = true;
@@ -124,7 +124,7 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
 		}
 			*/
-		return (handle_access_exist(shell, cmd, acc_para));
+		return (handle_access_exist(shell, cmd, acc_para, access));
 	}
 	else if (access.is_dir)
 	{
