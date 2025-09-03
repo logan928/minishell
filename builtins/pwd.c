@@ -65,5 +65,8 @@ void	ft_pwd(t_shell *shell, char **args)
 {
 	(void)args;
 	if (shell->pwd)
+	{
 		printf("%s\n", shell->pwd);
+		shell->exit_status = 0;
+	}
 }
