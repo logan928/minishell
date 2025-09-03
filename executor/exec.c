@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/08/31 21:09:34 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/03 23:58:43 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ static int	ft_check_access(t_shell *shell, t_command *cmd)
 	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
 	access = ft_get_cmd_path(shell, cmd->args);
 	acc_para = (t_cehck_access_msgs){NULL, true};
-	if (!access.exist)
+	if (!access.exist || (access.is_dir && ft_strchr(cmd->args[0], '/') == NULL && access.path))
 	{
 		/*
 		if (ft_strchr(cmd->args[0], '/') != NULL)
