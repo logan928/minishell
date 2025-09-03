@@ -18,7 +18,7 @@ extern volatile sig_atomic_t	g_abort;
 void	ft_run_lex(t_shell *shell)
 {
 	lex(shell, shell->input);
-	ft_skip_empty_vars(shell);
+	//ft_skip_empty_vars(shell);
 	if (ft_check_syntax(shell))
 	{
 		shell->parse_err = 0;
