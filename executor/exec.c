@@ -340,7 +340,7 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	count++; 
 	node = ast;
 	t_ast	*commands[count];
-	i = count-1;//get rid
+	i = count-1;
 	while (node && node->type == AST_PIPE)
 	{
 		commands[i] = node->right;
@@ -349,9 +349,21 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 	commands[i] = node; 
 
-	int pipefd[count - 1][2];
+	//int pipefd[count - 1][2];
+
+	int **pipefd;
+	pipefd = malloc(sizeof(int *) * (count - 1));
+	if (!pipefd)
+		return (1);
+
+
 	while ( j < count - 1)
 	{
+		pipefd[j] = malloc(sizeof(int) * 2);
+		if (!pipefd[j])
+			return (1);
+		
+		
 		if (pipe(pipefd[j]) == -1)
 		{
 			perror("pipe");
