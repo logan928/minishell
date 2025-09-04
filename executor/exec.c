@@ -265,41 +265,28 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	int		j;
 	t_ast	**commands;
 	int		**pipefd;
+	int 	status;
+	int  	last_status;
+	bool	new_line;
+	bool	core_dump;
+	int		sig;
 
 	count = 0;
 	j = 0;
 	pipefd = NULL;
 	commands = NULL;
-	// commands = get_leaf_commmands(ast, &count);
-	// if (!commands)
-	// 	return (1);
-	// pipefd = malloc(sizeof(int *) * (count - 1));
-	// if (!pipefd)
-	// 	return (1);
-
-
-	// while ( j < count - 1)
-	// {
-	// 	pipefd[j] = malloc(sizeof(int) * 2);
-	// 	if (!pipefd[j])
-	// 		return (1);
-		
-		
-	// 	if (pipe(pipefd[j]) == -1)
-	// 	{
-	// 		perror("pipe");
-	// 		return (1);
-	// 	}
-	// 	j++;
-	// }
-	
+	status = 0;
+	last_status = 0;
+	new_line = false;
+	core_dump = false;
+	sig = 0;
 	if (get_fd_array(ast, &commands, &count, &pipefd))
 		return (1);
-	j = 0; //counter reset to save lines
-
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	pid_t pids[count];
+	
+
+	pid_t	pids[count];
 	while (j < count)
 	{
 		int k = 0;
@@ -349,12 +336,13 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 
 	// wait for all children
-	int status = 0;
-	int  last_status = 0;
+	// int status = 0;
+	// int  last_status = 0;
+	// j =0;
+	// bool	new_line = false;
+	// bool	core_dump = false;
+	// int		sig;
 	j =0;
-	bool	new_line = false;
-	bool	core_dump = false;
-	int		sig;
 	while  (j < count)
 	{
 		if (waitpid(pids[j], &status, 0) > 0)

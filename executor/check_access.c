@@ -61,23 +61,7 @@ int	ft_check_access(t_shell *shell, t_command *cmd)
 	access = ft_get_cmd_path(shell, cmd->args);
 	acc_para = (t_cehck_access_msgs){NULL, true};
 	if (!access.exist || (access.is_dir && ft_strchr(cmd->args[0], '/') == NULL && access.path))
-	{
-		/*
-		if (ft_strchr(cmd->args[0], '/') != NULL)
-		{
-			acc_para.msg = ": No such file or directory\n";
-			acc_para.is_access_exists = true;
-			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-		}
-		else
-		{
-			acc_para.msg = ": command not found\n";
-			acc_para.is_access_exists = false;
-			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-		}
-			*/
 		return (handle_access_exist(shell, cmd, acc_para, access));
-	}
 	else if (access.is_dir)
 	{
 		acc_para.msg = ": Is a directory\n";
