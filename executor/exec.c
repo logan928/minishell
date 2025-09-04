@@ -287,42 +287,30 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	
 
 	pid_t	pids[count];
+	int		k;	
 	while (j < count)
 	{
-		int k = 0;
+		k = 0;
 		pids[j] = fork();
 		if (pids[j] == -1)
-		{
-			perror("fork");
-			return (1);
-		}
-		if (pids[j] == 0) // this is the child process. 
+			return (perror("fork"), 1);
+		if (pids[j] == 0) 
 		{
 			signal(SIGINT, SIG_DFL);
 			signal(SIGQUIT, SIG_DFL);
-
 			if (j > 0)
-			{
 				dup2(pipefd[j-1][0], STDIN_FILENO);
-			}
-
 			if (j < count - 1)		
-			{
 				dup2(pipefd[j][1], STDOUT_FILENO);
-			}
-
-			// close all pipe fds in child
 			while ( k < count - 1)
 			{
 				close(pipefd[k][0]);
 				close(pipefd[k][1]);
 				k++;
 			}
-
 			if (commands[j]->type == AST_CMD && commands[j]->cmd)
-				exec_command_child(shell, commands[j]->cmd); // builtins inside pipe needs to be executed inside child
-
-			exit(exec_ast(shell, commands[j])); // simple command
+				exec_command_child(shell, commands[j]->cmd);
+			exit(exec_ast(shell, commands[j]));
 		}
 		j++;
 	}
@@ -334,14 +322,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		close(pipefd[j][1]);
 		j++;
 	}
-
-	// wait for all children
-	// int status = 0;
-	// int  last_status = 0;
-	// j =0;
-	// bool	new_line = false;
-	// bool	core_dump = false;
-	// int		sig;
 	j =0;
 	while  (j < count)
 	{
