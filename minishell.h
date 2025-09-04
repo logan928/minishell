@@ -290,5 +290,6 @@ void			ft_set_here_sigint(void);
 int				open_file(t_redir *redir, int shell_type, int flags);
 int				handle_redir(t_redir *redir, int shell_type, \
 				t_command_kind kind);
+int				ft_check_access(t_shell *shell, t_command *cmd);
 
 #endif

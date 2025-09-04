@@ -61,87 +61,6 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	return (0);
 }
 
-static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
-	t_cehck_access_msgs acc_para, int exit_condition)
-{
-	char			*cmd_name;
-
-	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
-	if (acc_para.is_access_exists)
-	{
-		ft_write_safe(shell,
-			fts_strjoin3cpy(shell, "minishell: ", cmd->args[0], \
-			acc_para.msg), STDERR_FILENO);
-	}
-	else
-	{
-		ft_write_safe(shell,
-			fts_strjoin3cpy(shell, cmd->args[0], \
-			acc_para.msg, ""), STDERR_FILENO);
-	}
-	free(cmd_name);
-	return (exit_condition);
-}
-
-static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_msgs acc_para)
-{
-	if (ft_strchr(cmd->args[0], '/') != NULL)
-	{
-		acc_para.msg = ": No such file or directory\n";
-		acc_para.is_access_exists = true;
-		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-	}
-	else
-	{
-		acc_para.msg = ": command not found\n";
-		acc_para.is_access_exists = false;
-		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-	}
-}
-
-static int	ft_check_access(t_shell *shell, t_command *cmd)
-{
-	char				*cmd_name;
-	t_cmd_access		access;
-	t_cehck_access_msgs	acc_para;
-
-	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
-	access = ft_get_cmd_path(shell, cmd->args);
-	acc_para = (t_cehck_access_msgs){NULL, true};
-	if (!access.exist)
-	{
-		/*
-		if (ft_strchr(cmd->args[0], '/') != NULL)
-		{
-			acc_para.msg = ": No such file or directory\n";
-			acc_para.is_access_exists = true;
-			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-		}
-		else
-		{
-			acc_para.msg = ": command not found\n";
-			acc_para.is_access_exists = false;
-			return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_FOUND));
-		}
-			*/
-		return (handle_access_exist(shell, cmd, acc_para));
-	}
-	else if (access.is_dir)
-	{
-		acc_para.msg = ": Is a directory\n";
-		acc_para.is_access_exists = true;
-		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
-	}
-	else if (!access.executable)
-	{
-		acc_para.msg = ": Permission denied\n";
-		acc_para.is_access_exists = true;
-		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
-	}
-	free(cmd_name);
-	return (0);
-}
-
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
 	pid_t			pid;
@@ -226,6 +145,31 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	exit(127);
 }
 
+/*
+static int	**get_fd_array(int **pipefd, int count)
+{
+	int	j;
+
+	j = 0;
+	pipefd = malloc(sizeof(int *) * (count - 1));
+	if (!pipefd)
+		return (NULL);
+	while ( j < count - 1)
+	{
+		pipefd[j] = malloc(sizeof(int) * 2);
+		if (!pipefd[j])
+			return (NULL);
+		if (pipe(pipefd[j]) == -1)
+		{
+			perror("pipe");
+			return (NULL);
+		}
+		j++;
+	}
+	return (pipefd);
+}
+*/
+
 static int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int		count;
@@ -258,7 +202,15 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	}
 	commands[i] = node; 
 
-	int **pipefd;
+		int **pipefd;
+
+		/*
+		pipefd = NULL;
+		pipefd = get_fd_array(pipefd, count);
+		if(!pipefd)
+			return (1);
+		*/
+	
 	pipefd = malloc(sizeof(int *) * (count - 1));
 	if (!pipefd)
 		return (1);
@@ -278,6 +230,8 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		j++;
 	}
+	
+
 	j = 0; //counter reset to save lines
 
 	pid_t pids[count];
@@ -298,7 +252,7 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 				dup2(pipefd[j-1][0], STDIN_FILENO);
 			}
 
-			if (j < count - 1)
+			if (j < count - 1)		
 			{
 				dup2(pipefd[j][1], STDOUT_FILENO);
 			}
