@@ -44,13 +44,13 @@ static int	ft_check_last_quote(t_shell *shell, t_token *t)
 	{
 		if (!q && ft_isquote(t->data[i]))
 			q = t->data[i];
-		else if (q && ft_isquote(t->data[i]) == q)
+		else if (q && ft_isquote(t->data[i]) && t->data[i] == q)
 			q = '\0';
 		i++;
 	}
 	if (q)
 	{
-		shell->exit_status = 1;
+		shell->exit_status = 2;
 		if (q == '"')
 			ft_write_safe(shell, fts_strjoin3cpy(shell,
 			"minishell: unexpected EOF while looking for matching`\"'\n", "", ""), STDERR_FILENO);
