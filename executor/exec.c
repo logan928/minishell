@@ -227,9 +227,8 @@ static int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd
 	return (0);
 }
 
-static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands, t_pipe_parameters *tpp)
+static int	create_pipe_forks(t_shell *shell, t_ast ***commands, pid_t *pids, int ***pipefd, t_pipe_parameters *tpp)
 {
-	pid_t	pids[(tpp)->count];
 	int		k;
 	int		j;
 
@@ -260,6 +259,45 @@ static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands,
 		}
 		j++;
 	}
+	return (0);
+}
+
+static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands, t_pipe_parameters *tpp)
+{
+	pid_t	pids[(tpp)->count];
+	//int		k;
+	int		j;
+
+	// j = 0;
+	// while (j < tpp->count)
+	// {
+	// 	k = 0;
+	// 	pids[j] = fork();
+	// 	if (pids[j] == -1)
+	// 		return (perror("fork"), 1);
+	// 	if (pids[j] == 0) 
+	// 	{
+	// 		signal(SIGINT, SIG_DFL);
+	// 		signal(SIGQUIT, SIG_DFL);
+	// 		if (j > 0)
+	// 			dup2((*pipefd)[j-1][0], STDIN_FILENO);
+	// 		if (j < tpp->count - 1)		
+	// 			dup2((*pipefd)[j][1], STDOUT_FILENO);
+	// 		while ( k < tpp->count - 1)
+	// 		{
+	// 			close((*pipefd)[k][0]);
+	// 			close((*pipefd)[k][1]);
+	// 			k++;
+	// 		}
+	// 		if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
+	// 			exec_command_child(shell, (*commands)[j]->cmd);
+	// 		exit(exec_ast(shell, (*commands)[j]));
+	// 	}
+	// 	j++;
+	// }
+
+	if (create_pipe_forks(shell, commands, pids, pipefd, tpp))
+		return (1);
 
 	j = 0;
 	while ( j < tpp->count - 1)
@@ -291,115 +329,30 @@ static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands,
 		write(STDOUT_FILENO, "\n", 1);
 	else if (tpp->core_dump)
 		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-	
 	return (0);
-
 }
+
 static int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
-	int		count;
-	t_ast	**commands;
-	int		**pipefd;
-	// int 	status;
-	// int  	last_status;
-	// bool	new_line;
-	// bool	core_dump;
-	// int		sig;
+	int					count;
+	t_ast				**commands;
+	int					**pipefd;
+	t_pipe_parameters	*tpp;
 
-
-	t_pipe_parameters *tpp;
 	tpp = malloc(sizeof(t_pipe_parameters));
 	if (!tpp)
 		return (1);
-
 	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0};
-
-	// tpp->core_dump = false;
-	// tpp->count = 0;
-	// tpp->last_status = 0;
-	// tpp->status = 0;
-	// tpp->sig = 0;
-	// tpp->new_line = false;
-
 	count = 0;
-	// j = 0;
 	pipefd = NULL;
 	commands = NULL;
-	// status = 0;
-	// last_status = 0;
-	// new_line = false;
-	// core_dump = false;
-	// sig = 0;
 	if (get_fd_array(ast, &commands, &count, &pipefd))
 		return (1);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	
-
-	// pid_t	pids[count];
-	// int		k;	
-	// while (j < count)
-	// {
-	// 	k = 0;
-	// 	pids[j] = fork();
-	// 	if (pids[j] == -1)
-	// 		return (perror("fork"), 1);
-	// 	if (pids[j] == 0) 
-	// 	{
-	// 		signal(SIGINT, SIG_DFL);
-	// 		signal(SIGQUIT, SIG_DFL);
-	// 		if (j > 0)
-	// 			dup2(pipefd[j-1][0], STDIN_FILENO);
-	// 		if (j < count - 1)		
-	// 			dup2(pipefd[j][1], STDOUT_FILENO);
-	// 		while ( k < count - 1)
-	// 		{
-	// 			close(pipefd[k][0]);
-	// 			close(pipefd[k][1]);
-	// 			k++;
-	// 		}
-	// 		if (commands[j]->type == AST_CMD && commands[j]->cmd)
-	// 			exec_command_child(shell, commands[j]->cmd);
-	// 		exit(exec_ast(shell, commands[j]));
-	// 	}
-	// 	j++;
-	// }
-
-	// j = 0;
-	// while ( j < count - 1)
-	// {
-	// 	close(pipefd[j][0]);
-	// 	close(pipefd[j][1]);
-	// 	j++;
-	// }
-	// j =0;
-	// while  (j < count)
-	// {
-	// 	if (waitpid(pids[j], &status, 0) > 0)
-	// 	{
-	// 		sig = 0;
-	// 		if (WIFSIGNALED(status))
-	// 		{
-	// 			sig = WTERMSIG(status);
-	// 			if (sig == SIGINT)
-	// 				new_line = true;
-	// 			else if (sig == SIGQUIT)
-	// 				core_dump = true;
-	// 		}
-	// 		if (WIFEXITED(status))
-	// 			last_status = WEXITSTATUS(status);
-	// 	}
-	// 	j++;
-	// }
-	// if (new_line)
-	// 	write(STDOUT_FILENO, "\n", 1);
-	// else if (core_dump)
-	// 	write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
 	tpp->count = count;
-
 	if (exec_pipeline_core(shell, &pipefd, &commands, tpp))
 		return (1);
-
 	signal(SIGINT, ft_sigint_handler);
 	signal(SIGQUIT, ft_sigquit_trap);
 	if (tpp->sig)
