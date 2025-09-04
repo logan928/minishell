@@ -6,11 +6,36 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:56:56 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/29 16:36:54 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 17:37:50 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	ft_chdir_err(t_shell *shell, char *dir)
+{
+	if (chdir(shell->pwd) != 0)
+	{
+		shell->env = ft_strvec_update(shell->env, "OLDPWD",
+				fts_strjoin3cpy(shell, "OLDPWD=", shell->pwd, ""));
+		shell->env = ft_strvec_update(shell->env, "PWD",
+				fts_strjoin3cpy(shell, "PWD=", shell->pwd, fts_strjoin3cpy(shell, "/", dir, "")));
+		shell->exp = ft_strvec_update(shell->exp, "OLDPWD",
+				fts_strjoin3cpy(shell, "OLDPWD=", shell->pwd, fts_strjoin3cpy(shell, "/", dir, "")));
+		shell->exp = ft_strvec_update(shell->exp, "PWD",
+				fts_strjoin3cpy(shell, "PWD=", shell->pwd, dir));
+		ft_write_safe(shell, ft_strdup_safe(shell, 
+							"cd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n"), STDERR_FILENO);
+		shell->exit_status = (unsigned char) 0;
+		free(shell->pwd);
+		shell->pwd = ft_get_env_var(shell, "PWD");
+	}
+	else
+	{
+		perror(fts_strjoin3cpy(shell, "minishell: cd: ", dir, ""));
+		shell->exit_status = (unsigned char) 1;
+	}
+}
 
 void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
@@ -35,10 +60,7 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 		}
 	}
 	else
-	{
-		perror(fts_strjoin3cpy(shell, "minishell: cd: ", dir, ""));
-		shell->exit_status = (unsigned char) 1;
-	}
+		ft_chdir_err(shell, dir);
 }
 
 void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
