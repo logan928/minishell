@@ -25,4 +25,5 @@ void	ft_unset(t_shell *shell, char **args)
 		ft_strvec_remove(shell->exp, args[j]);
 		j++;
 	}
+	shell->exit_status = 0;
 }

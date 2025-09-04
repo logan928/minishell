@@ -47,7 +47,7 @@ void	ft_skip_empty_vars(t_shell *shell, char **args)
 				args[j] = args[j + 1];
 				j++;
 			}
-			//continue ;
+			continue ;
 		}
 		i++;
 	}
