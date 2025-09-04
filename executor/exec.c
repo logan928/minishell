@@ -225,41 +225,76 @@ static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 	return (commands);
 }
 
-static int	exec_pipeline(t_shell *shell, t_ast *ast)
+static int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
 {
-	int		count;
-	int		j;
-	t_ast	**commands;
+	int	j;
+	int	pipe_count;
 
-	count = 0;
 	j = 0;
-	commands = get_leaf_commmands(ast, &count);
-	if (!commands)
+	pipe_count = 0;
+	*commands = get_leaf_commmands(ast, &pipe_count);
+	if (!*commands)
+		return (1);
+	*count = pipe_count;
+	*pipefd = malloc(sizeof(int *) * (pipe_count - 1));
+	if (!*pipefd)
 		return (1);
 
-	int **pipefd;
 
-	pipefd = malloc(sizeof(int *) * (count - 1));
-	if (!pipefd)
-		return (1);
-
-
-	while ( j < count - 1)
+	while ( j < pipe_count - 1)
 	{
-		pipefd[j] = malloc(sizeof(int) * 2);
-		if (!pipefd[j])
+		(*pipefd)[j] = malloc(sizeof(int) * 2);
+		if (!(*pipefd)[j])
 			return (1);
 		
 		
-		if (pipe(pipefd[j]) == -1)
+		if (pipe((*pipefd)[j]) == -1)
 		{
 			perror("pipe");
 			return (1);
 		}
 		j++;
 	}
-	
+	return (0);
+}
 
+
+static int	exec_pipeline(t_shell *shell, t_ast *ast)
+{
+	int		count;
+	int		j;
+	t_ast	**commands;
+	int		**pipefd;
+
+	count = 0;
+	j = 0;
+	pipefd = NULL;
+	commands = NULL;
+	// commands = get_leaf_commmands(ast, &count);
+	// if (!commands)
+	// 	return (1);
+	// pipefd = malloc(sizeof(int *) * (count - 1));
+	// if (!pipefd)
+	// 	return (1);
+
+
+	// while ( j < count - 1)
+	// {
+	// 	pipefd[j] = malloc(sizeof(int) * 2);
+	// 	if (!pipefd[j])
+	// 		return (1);
+		
+		
+	// 	if (pipe(pipefd[j]) == -1)
+	// 	{
+	// 		perror("pipe");
+	// 		return (1);
+	// 	}
+	// 	j++;
+	// }
+	
+	if (get_fd_array(ast, &commands, &count, &pipefd))
+		return (1);
 	j = 0; //counter reset to save lines
 
 	signal(SIGINT, SIG_IGN);
