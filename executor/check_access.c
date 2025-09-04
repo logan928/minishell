@@ -51,7 +51,7 @@ static int	handle_access_exist(t_shell *shell, t_command *cmd, t_cehck_access_ms
 	}
 }
 
-static int	ft_check_access(t_shell *shell, t_command *cmd)
+int	ft_check_access(t_shell *shell, t_command *cmd)
 {
 	char				*cmd_name;
 	t_cmd_access		access;

@@ -292,5 +292,6 @@ int				open_file(t_redir *redir, int shell_type, int flags);
 int				handle_redir(t_redir *redir, int shell_type, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
+int				ft_check_access(t_shell *shell, t_command *cmd);
 
 #endif
