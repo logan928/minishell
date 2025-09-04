@@ -143,7 +143,7 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	{
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
-			return (0);
+			exit(0);
 		ft_variable_expansion(shell, cmd->args, 0);
 		ft_field_splitting(shell, &cmd->args, 0);
 		ft_file_exp(shell, &cmd->args, 1, 1);
