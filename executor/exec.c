@@ -62,6 +62,8 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	return (0);
 }
 
+
+
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
 	pid_t			pid;
@@ -191,28 +193,25 @@ static int	**get_fd_array(int **pipefd, int count)
 }
 */
 
-static int	exec_pipeline(t_shell *shell, t_ast *ast)
+static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 {
-	int		count;
 	t_ast	*node;
 	int		i;
-	int		j;
+	int		count;
+	t_ast	**commands;
 
+	node = n;
 	count = 0;
-	node = ast;
-	i = 0;
-	j = 0;
 	while (node && node->type == AST_PIPE)
 	{
 		count++;
 		node = node->left;
 	}
 	count++; 
-	node = ast;
-	t_ast	**commands;
+	node = n;
 	commands = malloc(sizeof(t_ast *) * count);
 	if (!commands)
-		return (1);
+		return (NULL);
 	i = count-1;
 
 	while (node && node->type == AST_PIPE)
@@ -221,17 +220,25 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		node = node->left;
 		i--;
 	}
-	commands[i] = node; 
+	commands[i] = node;
+	*pipe_count = count;
+	return (commands);
+}
 
-		int **pipefd;
+static int	exec_pipeline(t_shell *shell, t_ast *ast)
+{
+	int		count;
+	int		j;
+	t_ast	**commands;
 
-		/*
-		pipefd = NULL;
-		pipefd = get_fd_array(pipefd, count);
-		if(!pipefd)
-			return (1);
-		*/
-	
+	count = 0;
+	j = 0;
+	commands = get_leaf_commmands(ast, &count);
+	if (!commands)
+		return (1);
+
+	int **pipefd;
+
 	pipefd = malloc(sizeof(int *) * (count - 1));
 	if (!pipefd)
 		return (1);
