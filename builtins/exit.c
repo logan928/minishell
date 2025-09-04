@@ -46,7 +46,12 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 	{
 		n = ft_strtoll(arg, &end, 10);
 		if (*end != '\0')
-			return (ft_num_arg_req(shell, "minishell: exit: ", arg));
+		{
+			while (ft_isspace(*end))
+				end++;
+			if (*end != '\0')
+				return (ft_num_arg_req(shell, "minishell: exit: ", arg));
+		}
 		shell->exit_status = (unsigned char) n;
 	}
 }

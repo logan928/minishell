@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 17:57:00 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 01:01:47 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ extern volatile sig_atomic_t	g_abort;
 void	ft_run_lex(t_shell *shell)
 {
 	lex(shell, shell->input);
-	ft_skip_empty_vars(shell);
+	//ft_skip_empty_vars(shell);
 	if (ft_check_syntax(shell))
 	{
 		shell->parse_err = 0;

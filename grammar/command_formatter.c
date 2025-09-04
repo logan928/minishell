@@ -103,13 +103,13 @@ t_command	*command_formatter(t_shell *shell, t_token **tokptr)
 	//tok = *tokptr;
 	cmd = command_new();
 	format_next_token(shell, tokptr, cmd);
-	if (cmd->args)
-	{
-		ft_variable_expansion(shell, cmd->args, 0);
-		ft_field_splitting(shell, &cmd->args, 0);
-		ft_file_exp(shell, &cmd->args, 1, 1);
-		ft_quote_removal(shell, cmd->args, 0);
-	}
+	//if (cmd->args)
+	//{
+	//	ft_variable_expansion(shell, cmd->args, 0);
+	//	ft_field_splitting(shell, &cmd->args, 0);
+	//	ft_file_exp(shell, &cmd->args, 1, 1);
+	//	ft_quote_removal(shell, cmd->args, 0);
+	//}
 	cmd->command_kind = EXTERNAL;
 	if (cmd->args && cmd->args[0] && is_builtin(cmd->args[0]))
 		cmd->command_kind = BUILTIN;

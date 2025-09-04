@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   cmd_resolve_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/29 16:31:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/29 16:33:40 by mkugan           ###   ########.fr       */
+/*   Created: 2025/09/03 23:42:49 by mkugan            #+#    #+#             */
+/*   Updated: 2025/09/03 23:43:04 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
-void	ft_unset(t_shell *shell, char **args)
+void	ft_init_access(t_shell *shell, t_cmd_access *access)
 {
-	size_t	j;
+	char	*path;
 
-	if (!args || !args[0] || !args[1])
-		return ;
-	j = 1;
-	while (args[j] != NULL)
+	path = ft_get_env_var(shell, "PATH");
+	if (path == NULL || path[0] == '\0')
 	{
-		ft_strvec_remove(shell->env, args[j]);
-		ft_strvec_remove(shell->exp, args[j]);
-		j++;
+		access->path = false;
 	}
-	shell->exit_status = 0;
+	free(path);
 }

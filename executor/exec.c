@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/08/31 21:09:34 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 11:14:35 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	while (redir)
 	{
 		tmp = ft_strdup_safe(shell, redir->file[0]);
+		ft_skip_empty_vars(shell, redir->file);
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_file_exp(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
@@ -67,6 +68,16 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 	int				status;
 	int				access_err;
 
+	if (cmd->args)
+	{
+		ft_skip_empty_vars(shell, cmd->args);
+		if (!cmd->args[0])
+			return (0);
+		ft_variable_expansion(shell, cmd->args, 0);
+		ft_field_splitting(shell, &cmd->args, 0);
+		ft_file_exp(shell, &cmd->args, 1, 1);
+		ft_quote_removal(shell, cmd->args, 0);
+	}
 	pid = -1;
 	status = -1;
 	if (cmd->command_kind == BUILTIN)
@@ -128,6 +139,16 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
 	int	access_err;
 
+	if (cmd->args)
+	{
+		ft_skip_empty_vars(shell, cmd->args);
+		if (!cmd->args[0])
+			return (0);
+		ft_variable_expansion(shell, cmd->args, 0);
+		ft_field_splitting(shell, &cmd->args, 0);
+		ft_file_exp(shell, &cmd->args, 1, 1);
+		ft_quote_removal(shell, cmd->args, 0);
+	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 		exit(shell->exit_status);
 	if (cmd->command_kind == BUILTIN) // builtins in child
@@ -234,6 +255,8 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 
 	j = 0; //counter reset to save lines
 
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid_t pids[count];
 	while (j < count)
 	{
@@ -246,6 +269,8 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		}
 		if (pids[j] == 0) // this is the child process. 
 		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 
 			if (j > 0)
 			{
@@ -285,15 +310,35 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	int status = 0;
 	int  last_status = 0;
 	j =0;
+	bool	new_line = false;
+	bool	core_dump = false;
+	int		sig;
 	while  (j < count)
 	{
 		if (waitpid(pids[j], &status, 0) > 0)
 		{
+			sig = 0;
+			if (WIFSIGNALED(status))
+			{
+				sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					new_line = true;
+				else if (sig == SIGQUIT)
+					core_dump = true;
+			}
 			if (WIFEXITED(status))
 				last_status = WEXITSTATUS(status);
 		}
 		j++;
 	}
+	if (new_line)
+		write(STDOUT_FILENO, "\n", 1);
+	else if (core_dump)
+		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+	signal(SIGINT, ft_sigint_handler);
+	signal(SIGQUIT, ft_sigquit_trap);
+	if (sig)
+		return (128 + sig);
 	return (last_status);
 }
 

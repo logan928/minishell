@@ -16,6 +16,7 @@ SRCS := minishell.c \
 		safe_wrappers.c \
 		safe_wrappers_2.c \
 		cmd_resolve.c \
+		cmd_resolve_utils.c \
 		here.c \
 		fancy_prompt.c \
 		shlvl.c \

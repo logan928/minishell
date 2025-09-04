@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:10:49 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 17:32:57 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 01:26:15 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,37 +30,25 @@ bool	ft_is_valid_plain_var_name(char *s)
 	return (true);
 }
 
-void	ft_remove_empty_word(t_shell *shell, t_token *t, t_token *p)
+void	ft_skip_empty_vars(t_shell *shell, char **args)
 {
-	if (p == NULL)
-	{
-		shell->lexer->tokens = t->next;
-		free(t->data);
-		free(t);
-		t = shell->lexer->tokens;
-	}
-	else
-	{
-		p->next = t->next;
-		free(t->data);
-		free(t);
-	}
-}
+	size_t	i;
+	size_t	j;
 
-void	ft_skip_empty_vars(t_shell *shell)
-{
-	t_token	*t;
-	t_token	*prev;
-
-	t = shell->lexer->tokens;
-	prev = NULL;
-	while (t)
+	i = 0;
+	while (args[i])
 	{
-		if (t->token_kind == WORD
-			&& ft_is_valid_plain_var_name(t->data)
-			&& ft_strvec_find(shell->env, t->data + 1) == -1)
-			ft_remove_empty_word(shell, t, prev);
-		prev = t;
-		t = t->next;
+		if (ft_is_valid_plain_var_name(args[i]) && ft_strvec_find(shell->env, args[i] + 1) == -1)
+		{
+			free(args[i]);
+			j = i;
+			while (args[j])
+			{
+				args[j] = args[j + 1];
+				j++;
+			}
+			continue ;
+		}
+		i++;
 	}
 }

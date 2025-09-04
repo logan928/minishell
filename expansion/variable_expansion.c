@@ -49,6 +49,12 @@ void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 		else if ((c->quote != '\'') && t[c->cur] == '$'
 			&& t[c->cur + 1] == '?')
 			ft_app_exit(s, c, res);
+		else if (c->quote != '\'' && t[c->cur] == '$'
+         && t[c->cur + 1] == '\'')
+			c->cur++;
+		else if (c->quote != '"' && t[c->cur] == '$'
+         && t[c->cur + 1] == '"')
+			c->cur++;
 		else
 			ft_app_char(s, c, t, res);
 	}

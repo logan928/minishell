@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 18:22:06 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 01:08:31 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@
 # include <stdbool.h>
 # include <sys/stat.h>
 # include <errno.h>
-#include <sys/wait.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 # define EUNEXPTKN		"minishell: syntax error near unexpected token `"
 # define ETMARGS		": too many arguments\n"
@@ -119,6 +120,7 @@ typedef struct s_cmd_access
 	bool	exist;
 	bool	executable;
 	bool	is_dir;
+	bool	path;
 }	t_cmd_access;
 
 /*
@@ -266,7 +268,7 @@ char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 int				ft_valid_env_first_char(int c);
 void			ft_export(t_shell *shell, char **args);
 bool			ft_is_valid_var_name(char *s);
-void			ft_skip_empty_vars(t_shell *shell);
+void			ft_skip_empty_vars(t_shell *shell, char **args);
 int				is_builtin(const char *cmd);
 char			**argv_add(char **argv, int *argc, const char *word);
 t_command		*command_new(void);
@@ -284,12 +286,11 @@ int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
 t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
-//void			sigint_heredoc(int sig);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
 int				open_file(t_redir *redir, int shell_type, int flags);
 int				handle_redir(t_redir *redir, int shell_type, \
 				t_command_kind kind);
-int				ft_check_access(t_shell *shell, t_command *cmd);
+void			ft_init_access(t_shell *shell, t_cmd_access *access);
 
 #endif
