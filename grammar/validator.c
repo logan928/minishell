@@ -62,6 +62,21 @@ static int	ft_check_last_quote(t_shell *shell, t_token *t)
 	return (1);
 }
 
+int	ft_check_next_token(t_token *c, t_token *n)
+{
+	if (ft_isoperator(c->token_kind) && n && ft_isoperator(n->token_kind))
+		return (1);
+	else if (ft_isredirection(c->token_kind) && n->token_kind != WORD)
+		return (1);
+	if (c->token_kind == L_PAREN && n->token_kind == R_PAREN)
+		return (1);
+	if (c->token_kind == R_PAREN && n->token_kind == L_PAREN)
+		return (1);
+	if (c->token_kind == R_PAREN && n->token_kind == WORD)
+		return (1);
+	return (0);
+}
+
 int	ft_check_syntax(t_shell *shell)
 {
 	t_token	*token;
@@ -80,10 +95,7 @@ int	ft_check_syntax(t_shell *shell)
 		next = token->next;
 		if (i == 0 && ft_isoperator(token->token_kind))
 			return (ft_syntax_error(shell, token->data));
-		else if (ft_isoperator(token->token_kind) && next
-			&& ft_isoperator(next->token_kind))
-			return (ft_syntax_error(shell, next->data));
-		if (ft_isredirection(token->token_kind) && next->token_kind != WORD)
+		if (ft_check_next_token(token, next))
 			return (ft_syntax_error(shell, next->data));
 		i++;
 		token = next;
