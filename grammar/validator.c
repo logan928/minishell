@@ -77,6 +77,32 @@ int	ft_check_next_token(t_token *c, t_token *n)
 	return (0);
 }
 
+int ft_check_parens(t_shell *shell)
+{
+	t_token			*token;
+	t_token			*next;
+	int				p_depth;
+	
+	p_depth = 0;
+	token = shell->lexer->tokens;
+	while (token && token->token_kind != NL)
+	{
+		next = token->next;
+		if (token->token_kind == L_PAREN)
+			p_depth++;
+		else if (token->token_kind == R_PAREN)
+		{
+			if (p_depth == 0)
+				return (ft_syntax_error(shell, token->data));
+			p_depth--;
+		}
+		token = next;
+	}
+	if (p_depth > 0)
+		return (ft_syntax_error(shell, token->data));
+	return (1);
+}
+
 int	ft_check_syntax(t_shell *shell)
 {
 	t_token	*token;
@@ -100,5 +126,7 @@ int	ft_check_syntax(t_shell *shell)
 		i++;
 		token = next;
 	}
+	if (!ft_check_parens(shell))
+		return (0);
 	return (ft_check_last_quote(shell, last_word));
 }
