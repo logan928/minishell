@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:59:48 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 15:25:01 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 20:19:11 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 
 void	ft_exit(t_shell *shell, char **args, int shell_type)
 {
-	if (isatty(STDIN_FILENO) && shell_type == MAIN_SHELL)
+	if (isatty(STDOUT_FILENO) && shell_type == MAIN_SHELL)
 		write(2, "exit\n", 6);
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);

@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 16:47:33 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/04 20:10:54 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,14 @@ void	ft_non_interactive(t_shell *shell, char **argv)
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_shell	shell;
+	t_lexer	lexer;
 
 	shell = (t_shell){NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0};
 	ft_init_shell(&shell, envp);
-	shell.lexer = &(t_lexer){NULL, 0, NULL, NULL, NULL};
+	lexer = (t_lexer){NULL, 0, NULL, NULL, NULL};
+	shell.lexer = &lexer;
 	if (argc == 3 && ft_strcmp(argv[1], "-c", 0) == 0 && argv[2])
 		ft_non_interactive(&shell, argv);
 	else
 		ft_interactive(&shell);
-	return (0);
 }
