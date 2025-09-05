@@ -196,13 +196,6 @@ static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 	if (!commands)
 		return (NULL);
 	i = count-1;
-
-	// while (node && node->type == AST_PIPE)
-	// {
-	// 	commands[i] = node->right;
-	// 	node = node->left;
-	// 	i--;
-	// }
 	search_commands(&node, commands, &i);
 	commands[i] = node;
 	*pipe_count = count;
@@ -382,32 +375,51 @@ static int	exec_subshell(t_shell *shell, t_ast *ast)
 
 }
 
+static int	handle_and(t_shell *shell, t_ast *ast)
+{
+	int	left;
+
+	left = exec_ast(shell, ast->left);
+	if(left == 0)
+		return(exec_ast(shell, ast->right));
+	return (left);
+}
+
+static int	handle_or(t_shell *shell, t_ast *ast)
+{
+	int	left;
+
+	left = exec_ast(shell, ast->left);
+	if(left != 0)
+		return(exec_ast(shell, ast->right));
+	return (left);
+}
+
 int	exec_ast(t_shell *shell, t_ast *ast)
 {
+	// int left;
+
 	if (!ast)
 		return (0);
-
 	if (ast -> type == AST_CMD)
 		return (exec_command(shell, ast->cmd));
 	else if (ast->type == AST_PIPE)
 		return (exec_pipeline(shell, ast));
 	else if (ast->type == AST_AND)
 	{
-		int left;
-
-		left = exec_ast(shell, ast->left);
-		if(left == 0)
-			return(exec_ast(shell, ast->right));
-		return (left);
+		// left = exec_ast(shell, ast->left);
+		// if(left == 0)
+		// 	return(exec_ast(shell, ast->right));
+		// return (left);
+		return (handle_and(shell, ast));
 	}
 	else if (ast->type == AST_OR)
 	{
-		int left;
-
-		left = exec_ast(shell, ast->left);
-		if (left != 0)
-			return(exec_ast(shell, ast->right));
-		return (left);
+		// left = exec_ast(shell, ast->left);
+		// if (left != 0)
+		// 	return(exec_ast(shell, ast->right));
+		// return (left);
+		return (handle_or(shell, ast));
 	}
 	else if (ast->type == AST_SUBSHELL)
 		return (exec_subshell(shell, ast));
@@ -416,5 +428,4 @@ int	exec_ast(t_shell *shell, t_ast *ast)
 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
 		return (1);
 	}
-
 }
