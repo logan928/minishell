@@ -62,8 +62,6 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 	return (0);
 }
 
-
-
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
 	pid_t			pid;
@@ -168,6 +166,15 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	exit(127);
 }
 
+static void	search_commands(t_ast **node, t_ast **commands, int *i)
+{
+	while (*node && (*node)->type == AST_PIPE)
+	{
+		commands[*i] = (*node)->right;
+		(*node) = (*node)->left;
+		(*i)--;
+	}
+}
 
 static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 {
@@ -190,12 +197,13 @@ static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 		return (NULL);
 	i = count-1;
 
-	while (node && node->type == AST_PIPE)
-	{
-		commands[i] = node->right;
-		node = node->left;
-		i--;
-	}
+	// while (node && node->type == AST_PIPE)
+	// {
+	// 	commands[i] = node->right;
+	// 	node = node->left;
+	// 	i--;
+	// }
+	search_commands(&node, commands, &i);
 	commands[i] = node;
 	*pipe_count = count;
 	return (commands);
@@ -251,58 +259,26 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, t_pipe
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, pid_t *pids, t_pipe_parameters *tpp)
 {
-	//int		k;
 	int		j;
 
 	j = 0;
 	while (j < tpp->count)
 	{
-		//k = 0;
 		pids[j] = fork();
 		if (pids[j] == -1)
 			return (perror("fork"), 1);
 		if (pids[j] == 0) 
-		{
-			// signal(SIGINT, SIG_DFL);
-			// signal(SIGQUIT, SIG_DFL);
-			// if (j > 0)
-			// 	dup2((tpp->pipefd)[j-1][0], STDIN_FILENO);
-			// if (j < tpp->count - 1)		
-			// 	dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
-			// while ( k < tpp->count - 1)
-			// {
-			// 	close((tpp->pipefd)[k][0]);
-			// 	close((tpp->pipefd)[k][1]);
-			// 	k++;
-			// }
-			// if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-			// 	exec_command_child(shell, (*commands)[j]->cmd);
-			// exit(exec_ast(shell, (*commands)[j]));
 			exec_command_child_wrapper(shell, commands, tpp, j);
-		}
 		j++;
 	}
 	return (0);
 }
 
-static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands, t_pipe_parameters *tpp)
+static void	wait_child_exit(t_pipe_parameters *tpp, pid_t *pids)
 {
-	pid_t	pids[(tpp)->count];
-	//int		k;
-	int		j;
-
-
-	if (create_pipe_forks(shell, commands, pids, tpp))
-		return (1);
+	int	j;
 
 	j = 0;
-	while ( j < tpp->count - 1)
-	{
-		close((*pipefd)[j][0]);
-		close((*pipefd)[j][1]);
-		j++;
-	}
-	j =0;
 	while  (j < tpp->count)
 	{
 		if (waitpid(pids[j], &(tpp->status), 0) > 0)
@@ -321,6 +297,24 @@ static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands,
 		}
 		j++;
 	}
+}
+
+static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands, t_pipe_parameters *tpp)
+{
+	pid_t	pids[(tpp)->count];
+	int		j;
+
+	if (create_pipe_forks(shell, commands, pids, tpp))
+		return (1);
+	j = 0;
+	while ( j < tpp->count - 1)
+	{
+		close((*pipefd)[j][0]);
+		close((*pipefd)[j][1]);
+		j++;
+	}
+	j =0;
+	wait_child_exit(tpp, pids);
 	if (tpp->new_line)
 		write(STDOUT_FILENO, "\n", 1);
 	else if (tpp->core_dump)
@@ -332,7 +326,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
 	t_ast				**commands;
-	//int					**pipefd;
 	t_pipe_parameters	*tpp;
 
 	tpp = malloc(sizeof(t_pipe_parameters));
@@ -340,7 +333,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		return (1);
 	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL};
 	count = 0;
-	//pipefd = NULL;
 	commands = NULL;
 	if (get_fd_array(ast, &commands, &count, &tpp->pipefd))
 		return (1);
@@ -355,7 +347,6 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 		return (128 + tpp->sig);
 	return (tpp->last_status);
 }
-
 
 
 static int	exec_subshell(t_shell *shell, t_ast *ast)
