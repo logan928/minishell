@@ -12,81 +12,97 @@
 
 #include "../minishell.h"
 
-static int	ft_handle_quote(const char *pattern, int *p, int *quote)
+static int	ft_match(const char *pattern, const char *filename, int in_quotes);
+
+int	ft_first_unquoted_char(const char *pattern)
 {
-	if (ft_isquote(pattern[*p]) && !*quote)
+	int	i;
+	int	quote;
+
+	i = 0;
+	quote = 0;
+	while (pattern[i])
 	{
-		*quote = pattern[*p];
+		if (ft_isquote(pattern[i]) && !quote)
+			quote = pattern[i];
+		else if (ft_isquote(pattern[i]) && quote)
+			quote = 0;
+		else
+			return (pattern[i]);
+		i++;
+	}
+	return (0);
+}
+
+static int	ft_quote(const char **p, int *in_q)
+{
+	if (!*in_q)
+	{
+		*in_q = **p;
 		(*p)++;
 		return (1);
 	}
-	else if (ft_isquote(pattern[*p]) && *quote == pattern[*p])
+	else if (*in_q == **p)
 	{
-		*quote = 0;
+		*in_q = 0;
 		(*p)++;
 		return (1);
 	}
 	return (0);
 }
 
-static int	ft_step_match(const char *pattern, const char *filename,
-					t_glob_state *g)
+static int	ft_star_in_qoute(const char **p, const char **f)
 {
-	if (pattern[g->pattern_index] == filename[g->filename_index])
-	{
-		g->pattern_index++;
-		g->filename_index++;
-	}
-	else if (pattern[g->pattern_index] == '*')
-	{
-		g->last_star_index = g->pattern_index++;
-		g->star_match_index = g->filename_index;
-	}
-	else if (g->last_star_index != -1)
-	{
-		g->pattern_index = g->last_star_index + 1;
-		g->filename_index = ++g->star_match_index;
-	}
-	else
+	if (**f != '*')
 		return (0);
+	(*p)++;
+	(*f)++;
 	return (1);
+}
+
+static int ft_star_meta(const char **p, const char **f, int *in_q)
+{
+	(*p)++;
+	while (**f)
+	{
+		if (ft_match(*p, *f, *in_q))
+			return (1);
+		(*f)++;
+	}
+	return (ft_match(*p, *f, *in_q));
+}
+
+static int	ft_match(const char *pattern, const char *filename, int in_quotes)
+{
+	while (*pattern)
+	{
+		if (ft_isquote(*pattern))
+		{
+			if (!ft_quote(&pattern, &in_quotes))
+				return (0);
+			continue ;
+		}
+		if (*pattern == '*' && in_quotes)
+		{
+			if (!ft_star_in_qoute(&pattern, &filename))
+				return (0);
+			continue;
+		}
+		if (*pattern == '*')
+			return (ft_star_meta(&pattern, &filename, &in_quotes));
+		if (*pattern != *filename)
+			return (0);
+		pattern++;
+		filename++;
+	}
+	return (*filename == '\0');
 }
 
 int	ft_pattern_match(const char *pattern, const char *filename)
 {
-	t_glob_state	g;
-
-	g = (t_glob_state){-1, 0, 0, 0, 0};
-	if (filename[0] == '.' && pattern[0] != '.')
-		return (0);
-	while (filename[g.filename_index])
-	{
-		if (ft_handle_quote(pattern, &g.pattern_index, &g.in_quotes))
-			continue ;
-		if (!ft_step_match(pattern, filename, &g))
-			return (0);
-	}
-	while (pattern[g.pattern_index] == '*')
-		g.pattern_index++;
-	return (pattern[g.pattern_index] == '\0');
-}
-
-int	ft_is_pattern(char *word)
-{
-	int	pos;
-	int	quote;
-
-	quote = 0;
-	pos = 0;
-	while (word[pos])
-	{
-		if (ft_isquote(word[pos]) && !quote)
-			quote = word[pos];
-		else if (ft_isquote(word[pos]) && word[pos] == quote)
-			quote = 0;
-		else if (word[pos] == '*' && !quote)
-			return (1);
-		pos++;
-	}
-	return (0);
+	if (!ft_strcmp(filename, ".", 0) || !ft_strcmp(filename, "..", 0))
+		return 0;
+	if (filename[0] == '.' && ft_first_unquoted_char(pattern) != '.')
+		return 0;
+	return ft_match(pattern, filename, 0);
 }

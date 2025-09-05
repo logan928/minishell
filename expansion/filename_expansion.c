@@ -12,6 +12,26 @@
 
 #include "../minishell.h"
 
+static int	ft_is_pattern(char *word)
+{
+	int	pos;
+	int	quote;
+
+	quote = 0;
+	pos = 0;
+	while (word[pos])
+	{
+		if (ft_isquote(word[pos]) && !quote)
+			quote = word[pos];
+		else if (ft_isquote(word[pos]) && word[pos] == quote)
+			quote = 0;
+		else if (word[pos] == '*' && !quote)
+			return (1);
+		pos++;
+	}
+	return (0);
+}
+
 static void	ft_add_match_token(t_shell *shell, int prefix_len,
 							const char *pattern, char *filename)
 {

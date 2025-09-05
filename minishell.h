@@ -189,6 +189,7 @@ typedef struct s_glob_state
 	int	in_quotes;
 	int	pattern_index;
 	int	filename_index;
+	int	quoted_star;
 }	t_glob_state;
 
 typedef struct s_check_access_msgs
@@ -211,7 +212,6 @@ void			ft_app_exit(t_shell *s, t_cursor *c, char **res);
 void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
 void			ft_free_lexer(t_lexer *lexer);
 int				ft_pattern_match(const char *pattern, const char *filename);
-int				ft_is_pattern(char *word);
 t_token			*ft_new_token(t_token_kind kind, char *data);
 void			ft_add_token(t_token **head, t_token *token);
 void			ft_insert_after(t_token *target, t_token *token);
