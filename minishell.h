@@ -198,6 +198,17 @@ typedef struct s_check_access_msgs
 	bool	is_access_exists;
 }	t_cehck_access_msgs;
 
+typedef struct s_pipe_parameters
+{
+	int		count;
+	int 	status;
+	int  	last_status;
+	bool	new_line;
+	bool	core_dump;
+	int		sig;
+	int		**pipefd;
+}t_pipe_parameters;
+
 char			*ft_set_prompt(t_shell *shell);
 void			ft_init_shell(t_shell *shell, char *envp[]);
 void			ft_critical_error(t_shell *shell);
