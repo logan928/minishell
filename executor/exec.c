@@ -135,6 +135,14 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 	}
 }
 
+static void	handle_expansion_cmd_child(t_shell *shell, t_command *cmd)
+{
+	ft_variable_expansion(shell, cmd->args, 0);
+	ft_field_splitting(shell, &cmd->args, 0);
+	ft_file_exp(shell, &cmd->args, 1, 1);
+	ft_quote_removal(shell, cmd->args, 0);
+}
+
 static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
 	int	access_err;
@@ -144,24 +152,23 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
 			exit(0);
-		ft_variable_expansion(shell, cmd->args, 0);
-		ft_field_splitting(shell, &cmd->args, 0);
-		ft_file_exp(shell, &cmd->args, 1, 1);
-		ft_quote_removal(shell, cmd->args, 0);
+		// ft_variable_expansion(shell, cmd->args, 0);
+		// ft_field_splitting(shell, &cmd->args, 0);
+		// ft_file_exp(shell, &cmd->args, 1, 1);
+		// ft_quote_removal(shell, cmd->args, 0);
+		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 		exit(shell->exit_status);
-	if (cmd->command_kind == BUILTIN) // builtins in child
+	if (cmd->command_kind == BUILTIN)
 	{
-		run_builtin(shell, cmd, CHILD_SHELL); // run in child, not parent
+		run_builtin(shell, cmd, CHILD_SHELL); 
 		exit(shell->exit_status);
 	}
-
 	access_err = ft_check_access(shell, cmd);
 	if (access_err)
 		exit(access_err);
-	
-	execve((cmd->args)[0], cmd->args, shell->env->data); //use resolved path
+	execve((cmd->args)[0], cmd->args, shell->env->data);
 	perror("execve");
 	exit(127);
 }
@@ -341,38 +348,26 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	return (tpp->last_status);
 }
 
-
 static int	exec_subshell(t_shell *shell, t_ast *ast)
 {
-	//(void) ast;
-	//printf("inside sub-shell\n");
+	pid_t	pid;
+	int		status;
+	
+	pid = fork();
 	if (!ast || !ast->left) 
-	{ 
-		printf("no left\n");
-		return (0);
-	}
-
-	pid_t pid = fork();
+		return (printf("no left\n"), 0);
 	if (pid < 0)
-	{
-		perror("fork");
-		return (1);
-	}
+		return (perror("fork"), 1);
 	if (pid == 0)
 	{
-		// child executes the subshell AST
-		// (redirections on the subshell node itself should apply here)
 		if (ast->cmd && ast->cmd->redirs)
 			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, CHILD_SHELL);
-
 		exit(exec_ast(shell, ast->left));
 	}
-	int status;
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		return WEXITSTATUS(status);
 	return (1);
-
 }
 
 static int	handle_and(t_shell *shell, t_ast *ast)
@@ -397,8 +392,6 @@ static int	handle_or(t_shell *shell, t_ast *ast)
 
 int	exec_ast(t_shell *shell, t_ast *ast)
 {
-	// int left;
-
 	if (!ast)
 		return (0);
 	if (ast -> type == AST_CMD)
@@ -406,21 +399,9 @@ int	exec_ast(t_shell *shell, t_ast *ast)
 	else if (ast->type == AST_PIPE)
 		return (exec_pipeline(shell, ast));
 	else if (ast->type == AST_AND)
-	{
-		// left = exec_ast(shell, ast->left);
-		// if(left == 0)
-		// 	return(exec_ast(shell, ast->right));
-		// return (left);
 		return (handle_and(shell, ast));
-	}
 	else if (ast->type == AST_OR)
-	{
-		// left = exec_ast(shell, ast->left);
-		// if (left != 0)
-		// 	return(exec_ast(shell, ast->right));
-		// return (left);
 		return (handle_or(shell, ast));
-	}
 	else if (ast->type == AST_SUBSHELL)
 		return (exec_subshell(shell, ast));
 	else
