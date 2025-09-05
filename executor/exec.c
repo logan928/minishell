@@ -227,35 +227,58 @@ static int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd
 	return (0);
 }
 
+static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, t_pipe_parameters *tpp, int j)
+{
+	int	k;
+
+	k = 0;
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (j > 0)
+		dup2((tpp->pipefd)[j-1][0], STDIN_FILENO);
+	if (j < tpp->count - 1)		
+		dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
+	while ( k < tpp->count - 1)
+	{
+		close((tpp->pipefd)[k][0]);
+		close((tpp->pipefd)[k][1]);
+		k++;
+	}
+	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
+		exec_command_child(shell, (*commands)[j]->cmd);
+	exit(exec_ast(shell, (*commands)[j]));
+}
+
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, pid_t *pids, t_pipe_parameters *tpp)
 {
-	int		k;
+	//int		k;
 	int		j;
 
 	j = 0;
 	while (j < tpp->count)
 	{
-		k = 0;
+		//k = 0;
 		pids[j] = fork();
 		if (pids[j] == -1)
 			return (perror("fork"), 1);
 		if (pids[j] == 0) 
 		{
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			if (j > 0)
-				dup2((tpp->pipefd)[j-1][0], STDIN_FILENO);
-			if (j < tpp->count - 1)		
-				dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
-			while ( k < tpp->count - 1)
-			{
-				close((tpp->pipefd)[k][0]);
-				close((tpp->pipefd)[k][1]);
-				k++;
-			}
-			if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-				exec_command_child(shell, (*commands)[j]->cmd);
-			exit(exec_ast(shell, (*commands)[j]));
+			// signal(SIGINT, SIG_DFL);
+			// signal(SIGQUIT, SIG_DFL);
+			// if (j > 0)
+			// 	dup2((tpp->pipefd)[j-1][0], STDIN_FILENO);
+			// if (j < tpp->count - 1)		
+			// 	dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
+			// while ( k < tpp->count - 1)
+			// {
+			// 	close((tpp->pipefd)[k][0]);
+			// 	close((tpp->pipefd)[k][1]);
+			// 	k++;
+			// }
+			// if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
+			// 	exec_command_child(shell, (*commands)[j]->cmd);
+			// exit(exec_ast(shell, (*commands)[j]));
+			exec_command_child_wrapper(shell, commands, tpp, j);
 		}
 		j++;
 	}
