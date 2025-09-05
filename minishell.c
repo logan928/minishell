@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/05 15:46:54 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 16:50:07 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,8 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_non_interactive(&shell, argv);
 	else
 	{
-		ft_interactive(&shell);
-		rl_catch_signals = 0;
 		signal(SIGINT, ft_sigint_handler);
 		signal(SIGQUIT, ft_sigquit_trap);
+		ft_interactive(&shell);
 	}
 }
