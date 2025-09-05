@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 20:31:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/05 15:41:38 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 16:49:54 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,10 @@ void	ft_init_shell(t_shell *shell, char *envp[])
 	ft_clone_env(shell, envp);
 	if (!shell->env)
 		exit(EXIT_FAILURE);
+	ft_clone_exp(shell);
 	ft_shlvl(shell);
 	ft_set_pwd(shell);
-	ft_clone_exp(shell);
+	rl_catch_signals = 0;
 }
 
 void	ft_critical_error(t_shell *shell)
