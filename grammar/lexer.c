@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 13:19:02 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 16:39:17 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:17:02 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 
 	kind = ft_get_token_kind(&(shell->input[c->cur]));
 	len = ft_get_operator_length(kind);
-	data = ft_strndup_safe(shell, &shell->input[c->cur], len);
+	data = fts_strndup(shell, &shell->input[c->cur], len);
 	next = fts_new_token(shell, kind, data);
 	ft_add_token(&(shell->lexer->tokens), next);
 	c->cur += len;
@@ -32,7 +32,7 @@ void	ft_tokenize_nl(t_shell *shell)
 	t_token	*next;
 	char	*data;
 
-	data = ft_strdup_safe(shell, "newline");
+	data = fts_strdup(shell, "newline");
 	next = fts_new_token(shell, NL, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }
@@ -44,7 +44,7 @@ void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 	char	*data;
 
 	input = shell->input;
-	data = ft_strndup_safe(shell, &input[c->start], c->cur - c->start);
+	data = fts_strndup(shell, &input[c->start], c->cur - c->start);
 	next = fts_new_token(shell, WORD, data);
 	ft_add_token(&shell->lexer->tokens, next);
 }

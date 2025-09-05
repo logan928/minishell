@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 17:33:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 17:33:14 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:08:17 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	ft_alloc_propmt(t_shell *shell, size_t u_len, size_t p_len)
 		prompt_len = p_len;
 	prompt_len += u_len;
 	prompt_len += 36;
-	shell->prompt = ft_malloc_safe(shell, prompt_len);
+	shell->prompt = fts_malloc(shell, prompt_len);
 	return (ret);
 }
 

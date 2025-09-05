@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:38:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/31 20:22:48 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:26:49 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*ft_get_env_var(t_shell *shell, char *s)
 	char	*var;
 
 	var = ft_strvec_getval(shell->env, s);
-	return (ft_strdup_safe(shell, var));
+	return (fts_strdup(shell, var));
 }
 
 void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
@@ -50,10 +50,10 @@ void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 			&& t[c->cur + 1] == '?')
 			ft_app_exit(s, c, res);
 		else if (c->quote != '\'' && t[c->cur] == '$'
-         && t[c->cur + 1] == '\'')
+			&& t[c->cur + 1] == '\'')
 			c->cur++;
 		else if (c->quote != '"' && t[c->cur] == '$'
-         && t[c->cur + 1] == '"')
+			&& t[c->cur + 1] == '"')
 			c->cur++;
 		else
 			ft_app_char(s, c, t, res);

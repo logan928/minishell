@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 10:38:49 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/31 20:23:44 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:45:30 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*ft_built_exp_var(t_shell *shell, char *s, char *eq)
 	size_t	offset;
 
 	len = ft_strlen(s);
-	res = ft_malloc_safe(shell, sizeof(char) * (len + 16));
+	res = fts_malloc(shell, sizeof(char) * (len + 16));
 	offset = 0;
 	ft_memcpy(res, "declare -x ", 11);
 	offset += 11;
@@ -68,7 +68,7 @@ static void	ft_print_exp(t_shell *shell)
 
 	ft_sort_exp(shell);
 	i = 0;
-	res = ft_strdup_safe(shell, "");
+	res = fts_strdup(shell, "");
 	while (shell->exp->data[i] != NULL)
 	{
 		eq = ft_strchr(shell->exp->data[i], '=');
@@ -76,43 +76,43 @@ static void	ft_print_exp(t_shell *shell)
 		{
 			var = fts_strjoin3cpy(shell,
 					"declare -x ", shell->exp->data[i], "\n");
-			res = ft_strjoin_free_safe(shell, res, var);
+			res = fts_strjoin_free(shell, res, var);
 		}
 		else
-			res = ft_strjoin_free_safe(shell, res,
+			res = fts_strjoin_free(shell, res,
 					ft_built_exp_var(shell, shell->exp->data[i], eq));
 		i++;
 	}
-	ft_write_safe(shell, res, STDOUT_FILENO);
+	fts_write(shell, res, STDOUT_FILENO);
 }
 
-void	ft_set_val(t_shell *shell, char *eq, char *s)
+void	ft_set_val(t_shell *sh, char *eq, char *s)
 {
-	char	*var;
-	char	*val;
-	char	*prev;
+	char	*vr;
+	char	*vl;
+	char	*pr;
 
-	val = ft_strdup_safe(shell, eq + 1);
+	vl = fts_strdup(sh, eq + 1);
 	if (*(eq - 1) == '+')
 	{
-		var = ft_strndup_safe(shell, s, eq - s - 1);
-		prev = ft_strjoin_free_safe(shell, ft_strdup_safe(shell, "="), ft_get_env_var(shell, var));
-		shell->exp = ft_strvec_update(shell->exp,
-				var, fts_strjoin3cpy(shell, var, prev, val));
-		shell->env = ft_strvec_update(shell->env,
-				var, fts_strjoin3cpy(shell, var, prev, val));
-		free(prev);
+		vr = fts_strndup(sh, s, eq - s - 1);
+		pr = fts_strjoin_free(sh, fts_strdup(sh, "="), ft_get_env_var(sh, vr));
+		sh->exp = ft_strvec_update(sh->exp,
+				vr, fts_strjoin3cpy(sh, vr, pr, vl));
+		sh->env = ft_strvec_update(sh->env,
+				vr, fts_strjoin3cpy(sh, vr, pr, vl));
+		free(pr);
 	}
 	else
 	{
-		var = ft_strndup_safe(shell, s, eq - s);
-		shell->exp = ft_strvec_update(shell->exp,
-				var, fts_strjoin3cpy(shell, var, "=", val));
-		shell->env = ft_strvec_update(shell->env,
-				var, fts_strjoin3cpy(shell, var, "=", val));
+		vr = fts_strndup(sh, s, eq - s);
+		sh->exp = ft_strvec_update(sh->exp,
+				vr, fts_strjoin3cpy(sh, vr, "=", vl));
+		sh->env = ft_strvec_update(sh->env,
+				vr, fts_strjoin3cpy(sh, vr, "=", vl));
 	}
-	free(val);
-	free(var);
+	free(vl);
+	free(vr);
 }
 
 void	ft_export(t_shell *shell, char **args)
@@ -135,7 +135,7 @@ void	ft_export(t_shell *shell, char **args)
 			eq = ft_strchr(args[i], '=');
 			if (eq == NULL)
 				shell->exp = ft_strvec_update(shell->exp,
-						args[i], ft_strdup_safe(shell, args[i]));
+						args[i], fts_strdup(shell, args[i]));
 			else
 				ft_set_val(shell, eq, args[i]);
 		}

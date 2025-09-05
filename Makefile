@@ -27,6 +27,7 @@ SRCS := minishell.c \
 		$(BUILTINS_DIR)/utils.c \
 		$(BUILTINS_DIR)/pwd.c \
 		$(BUILTINS_DIR)/cd.c \
+		$(BUILTINS_DIR)/cd_error.c \
 		$(BUILTINS_DIR)/canonical_path.c \
 		$(BUILTINS_DIR)/reconstruct_path.c \
 		$(BUILTINS_DIR)/unset.c \
@@ -39,10 +40,12 @@ SRCS := minishell.c \
 		$(EXPANSION_DIR)/quote_removal.c \
 		$(EXPANSION_DIR)/variable_expansion_append.c \
 		$(EXPANSION_DIR)/pattern_match.c \
+		$(EXPANSION_DIR)/pattern_match_utils.c \
 		$(EXPANSION_DIR)/split_helpers.c \
 		$(GRAMMAR_DIR)/token.c \
 		$(GRAMMAR_DIR)/lexer.c \
 		$(GRAMMAR_DIR)/validator.c \
+		$(GRAMMAR_DIR)/validator_utils.c \
 		$(GRAMMAR_DIR)/command_formatter.c \
 		$(GRAMMAR_DIR)/parser.c \
 		$(GRAMMAR_DIR)/lexer_helpers.c \

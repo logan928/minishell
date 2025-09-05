@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 13:36:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/31 19:50:03 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:11:28 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit)
 
 	shell->exit_status = exit;
 	err = fts_strjoin3cpy(shell, "minishell: ", cmd, ETMARGS);
-	ft_write_safe(shell, err, STDERR_FILENO);
+	fts_write(shell, err, STDERR_FILENO);
 }
 
 void	ft_not_set(t_shell *shell, char *var)
@@ -68,7 +68,7 @@ void	ft_not_set(t_shell *shell, char *var)
 
 	shell->exit_status = (unsigned char) 1;
 	err = fts_strjoin3cpy(shell, "minishell: cd: ", var, " not set\n");
-	ft_write_safe(shell, err, STDERR_FILENO);
+	fts_write(shell, err, STDERR_FILENO);
 }
 
 void	ft_not_valid_identifier(t_shell *shell, char *arg)
@@ -78,5 +78,5 @@ void	ft_not_valid_identifier(t_shell *shell, char *arg)
 	err = fts_strjoin3cpy(shell, "minishell: export: `",
 			arg, "': not a valid identifier\n");
 	shell->exit_status = 1;
-	ft_write_safe(shell, err, STDERR_FILENO);
+	fts_write(shell, err, STDERR_FILENO);
 }

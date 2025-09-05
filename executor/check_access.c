@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 17:44:24 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/03 17:44:35 by uwettasi         ###   ########.fr       */
+/*   Updated: 2025/09/05 15:40:32 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,16 @@ static int write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 {
 	char			*cmd_name;
 
-	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
+	cmd_name = fts_strdup(shell, cmd->args[0]);
 	if (acc_para.is_access_exists)
 	{
-		ft_write_safe(shell,
+		fts_write(shell,
 			fts_strjoin3cpy(shell, "minishell: ", cmd->args[0], \
 			acc_para.msg), STDERR_FILENO);
 	}
 	else
 	{
-		ft_write_safe(shell,
+		fts_write(shell,
 			fts_strjoin3cpy(shell, cmd->args[0], \
 			acc_para.msg, ""), STDERR_FILENO);
 	}
@@ -57,7 +57,7 @@ int	ft_check_access(t_shell *shell, t_command *cmd)
 	t_cmd_access		access;
 	t_cehck_access_msgs	acc_para;
 
-	cmd_name = ft_strdup_safe(shell, cmd->args[0]);
+	cmd_name = fts_strdup(shell, cmd->args[0]);
 	access = ft_get_cmd_path(shell, cmd->args);
 	acc_para = (t_cehck_access_msgs){NULL, true};
 	if (!access.exist || (access.is_dir && ft_strchr(cmd->args[0], '/') == NULL && access.path))

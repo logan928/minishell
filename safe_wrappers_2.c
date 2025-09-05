@@ -6,13 +6,13 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:37:37 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:11:26 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:03:16 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*ft_malloc_safe(t_shell *shell, size_t size)
+void	*fts_malloc(t_shell *shell, size_t size)
 {
 	void	*ptr;
 
@@ -35,7 +35,7 @@ char	*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3)
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
 	len3 = ft_strlen(s3);
-	res = ft_malloc_safe(shell, len1 + len2 + len3 + 1);
+	res = fts_malloc(shell, len1 + len2 + len3 + 1);
 	ft_memcpy(res, s1, len1);
 	ft_memcpy(res + len1, s2, len2);
 	ft_memcpy(res + len1 + len2, s3, len3);
@@ -43,7 +43,7 @@ char	*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3)
 	return (res);
 }
 
-void	ft_write_safe(t_shell *shell, char *s, int fd)
+void	fts_write(t_shell *shell, char *s, int fd)
 {
 	if (write(fd, s, ft_strlen(s)) != (ssize_t)ft_strlen(s))
 	{

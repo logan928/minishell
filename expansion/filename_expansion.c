@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:39:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 16:37:08 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:14:05 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ static void	ft_add_match_token(t_shell *shell, int prefix_len,
 
 	if (prefix_len > 0)
 	{
-		prefix = ft_strndup_safe(shell, pattern, prefix_len);
-		base = ft_strdup_safe(shell, filename);
+		prefix = fts_strndup(shell, pattern, prefix_len);
+		base = fts_strdup(shell, filename);
 		new = fts_new_token(shell, WORD,
-				ft_strjoin_free_safe(shell, prefix, base));
+				fts_strjoin_free(shell, prefix, base));
 	}
 	else
 	{
-		base = ft_strdup_safe(shell, filename);
+		base = fts_strdup(shell, filename);
 		new = fts_new_token(shell, WORD, base);
 	}
 	ft_add_token_sorted(&shell->lexer->tmp, new);
@@ -82,7 +82,7 @@ void	ft_copy_single_item(t_shell *sh, char *s)
 	char	*copy;
 	t_token	*t;
 
-	copy = ft_strdup_safe(sh, s);
+	copy = fts_strdup(sh, s);
 	t = fts_new_token(sh, WORD, copy);
 	ft_add_token(&sh->lexer->tmp, t);
 }

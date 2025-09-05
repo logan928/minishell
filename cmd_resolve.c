@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 12:31:19 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/03 23:46:28 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:08:00 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 
 	len_base = ft_strlen(base);
 	len_cmd = ft_strlen(cmd);
-	new = ft_malloc_safe(shell, sizeof(char) * (len_base + len_cmd + 2));
+	new = fts_malloc(shell, sizeof(char) * (len_base + len_cmd + 2));
 	ft_memcpy(new, base, len_base);
 	ft_memcpy(new + len_base, "/", 1);
 	ft_memcpy(new + len_base + 1, cmd, len_cmd);
@@ -54,7 +54,7 @@ bool	ft_try_paths(t_shell *sh, char **paths, char **args, t_cmd_access *acc)
 		full_path = ft_combine_path(sh, paths[i], args[0]);
 		if (stat(full_path, &st) == 0)
 		{
-			args[0] = ft_strdup_safe(sh, full_path);
+			args[0] = fts_strdup(sh, full_path);
 			acc->exist = true;
 			if (S_ISDIR(st.st_mode))
 				acc->is_dir = true;

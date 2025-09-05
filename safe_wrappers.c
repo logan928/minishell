@@ -6,13 +6,13 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/20 12:24:41 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 17:33:34 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 14:58:17 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_strdup_safe(t_shell *shell, const char *s)
+char	*fts_strdup(t_shell *shell, const char *s)
 {
 	char	*copy;
 
@@ -25,7 +25,7 @@ char	*ft_strdup_safe(t_shell *shell, const char *s)
 	return (copy);
 }
 
-char	*ft_strndup_safe(t_shell *shell, const char *s, size_t n)
+char	*fts_strndup(t_shell *shell, const char *s, size_t n)
 {
 	char	*copy;
 
@@ -51,7 +51,7 @@ t_token	*fts_new_token(t_shell *shell, t_token_kind kind, char *data)
 	return (new);
 }
 
-char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2)
+char	*fts_strjoin_free(t_shell *shell, char *s1, char *s2)
 {
 	char	*new;
 
@@ -64,7 +64,7 @@ char	*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2)
 	return (new);
 }
 
-char	*ft_itoa_safe(t_shell *shell, long n)
+char	*fts_itoa(t_shell *shell, long n)
 {
 	char	*new;
 

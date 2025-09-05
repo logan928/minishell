@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 15:58:32 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 17:05:14 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:20:14 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_get_cwd(t_shell *shell)
 	buf_size = 1024;
 	while (1)
 	{
-		buf = ft_malloc_safe(shell, buf_size);
+		buf = fts_malloc(shell, buf_size);
 		res = getcwd(buf, buf_size);
 		if (res != NULL)
 			return (buf);
@@ -55,14 +55,9 @@ void	ft_set_pwd(t_shell *shell)
 	else
 		shell->pwd = pwd;
 	shell->env = ft_strvec_update(shell->env,
-				"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
+			"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
 	shell->exp = ft_strvec_update(shell->exp,
-				"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
-}
-
-char	*ft_get_pwd(t_shell *shell)
-{
-	return (ft_strdup_safe(shell, shell->pwd));
+			"PWD", fts_strjoin3cpy(shell, "PWD", "=", shell->pwd));
 }
 
 void	ft_pwd(t_shell *shell, char **args)

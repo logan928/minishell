@@ -6,41 +6,20 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 17:50:27 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/09 15:03:13 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:37:23 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h>
-
-static int	ft_isoperator(t_token_kind kind)
-{
-	return (kind == PIPE || kind == OR_IF || kind == AND_IF || kind == NL);
-}
-
-static int	ft_isredirection(t_token_kind kind)
-{
-	return (kind == LESS || kind == DLESS || kind == GREAT || kind == DGREAT);
-}
-
-static int	ft_syntax_error(t_shell *shell, char *token)
-{
-	char	*err;
-
-	err = fts_strjoin3cpy(shell, EUNEXPTKN, token, "'\n");
-	ft_write_safe(shell, err, STDERR_FILENO);
-	shell->exit_status = 2;
-	return (0);
-}
 
 static int	ft_check_last_quote(t_shell *shell, t_token *t)
 {
 	char	q;
 	size_t	i;
-	
+
 	q = '\0';
 	i = 0;
-	while(t->data[i])
+	while (t->data[i])
 	{
 		if (!q && ft_isquote(t->data[i]))
 			q = t->data[i];
@@ -52,11 +31,11 @@ static int	ft_check_last_quote(t_shell *shell, t_token *t)
 	{
 		shell->exit_status = 2;
 		if (q == '"')
-			ft_write_safe(shell, fts_strjoin3cpy(shell,
-			"minishell: unexpected EOF while looking for matching`\"'\n", "", ""), STDERR_FILENO);
+			fts_write(shell, fts_strjoin3cpy(shell,
+					UNEXPQOUT, "\"", "'\n"), STDERR_FILENO);
 		else
-			ft_write_safe(shell, fts_strjoin3cpy(shell,
-			"minishell: unexpected EOF while looking for matching`\''\n", "", ""), STDERR_FILENO);
+			fts_write(shell, fts_strjoin3cpy(shell,
+					UNEXPQOUT, "'", "'\n"), STDERR_FILENO);
 		return (0);
 	}
 	return (1);
@@ -77,12 +56,12 @@ int	ft_check_next_token(t_token *c, t_token *n)
 	return (0);
 }
 
-int ft_check_parens(t_shell *shell)
+int	ft_check_parens(t_shell *shell)
 {
 	t_token			*token;
 	t_token			*next;
 	int				p_depth;
-	
+
 	p_depth = 0;
 	token = shell->lexer->tokens;
 	while (token && token->token_kind != NL)

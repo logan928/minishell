@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:02:54 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/25 13:53:18 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:10:28 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	ft_echo(t_shell *shell, char **args)
 	int		newline;
 	char	*res;
 
-	res = ft_strdup_safe(shell, "");
+	res = fts_strdup(shell, "");
 	first = 1;
 	i = 1;
 	newline = 1;
@@ -57,13 +57,13 @@ void	ft_echo(t_shell *shell, char **args)
 	while (args[i])
 	{
 		if (!first)
-			res = ft_strjoin_free_safe(shell, res, ft_strdup_safe(shell, " "));
+			res = fts_strjoin_free(shell, res, fts_strdup(shell, " "));
 		first = 0;
-		res = ft_strjoin_free_safe(shell, res, ft_strdup_safe(shell, args[i]));
+		res = fts_strjoin_free(shell, res, fts_strdup(shell, args[i]));
 		i++;
 	}
 	if (newline)
-		res = ft_strjoin_free_safe(shell, res, ft_strdup_safe(shell, "\n"));
-	ft_write_safe(shell, res, STDOUT_FILENO);
+		res = fts_strjoin_free(shell, res, fts_strdup(shell, "\n"));
+	fts_write(shell, res, STDOUT_FILENO);
 	shell->exit_status = (unsigned char) 0;
 }

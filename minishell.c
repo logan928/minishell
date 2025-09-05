@@ -6,24 +6,21 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 20:10:54 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:46:54 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
 
 extern volatile sig_atomic_t	g_abort;
 
 void	ft_run_lex(t_shell *shell)
 {
 	lex(shell, shell->input);
-	//ft_skip_empty_vars(shell);
 	if (ft_check_syntax(shell))
 	{
 		shell->parse_err = 0;
-		if (isatty(STDIN_FILENO))
-			ft_here(shell);
+		ft_here(shell);
 		if (g_abort != HEREDOC_INT)
 		{
 			shell->ast = parse(shell, &shell->lexer->tokens);
@@ -92,5 +89,10 @@ int	main(int argc, char *argv[], char *envp[])
 	if (argc == 3 && ft_strcmp(argv[1], "-c", 0) == 0 && argv[2])
 		ft_non_interactive(&shell, argv);
 	else
+	{
 		ft_interactive(&shell);
+		rl_catch_signals = 0;
+		signal(SIGINT, ft_sigint_handler);
+		signal(SIGQUIT, ft_sigquit_trap);
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 14:59:48 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 20:19:11 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:11:43 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
 
 	shell->exit_status = (unsigned char) 2;
 	err = fts_strjoin3cpy(shell, cmd, arg, ENUMREQ);
-	ft_write_safe(shell, err, STDERR_FILENO);
+	fts_write(shell, err, STDERR_FILENO);
 	ft_free_exit(shell);
 }
 

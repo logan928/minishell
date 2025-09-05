@@ -6,33 +6,13 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 13:43:32 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 13:43:33 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:25:58 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 static int	ft_match(const char *pattern, const char *filename, int in_quotes);
-
-int	ft_first_unquoted_char(const char *pattern)
-{
-	int	i;
-	int	quote;
-
-	i = 0;
-	quote = 0;
-	while (pattern[i])
-	{
-		if (ft_isquote(pattern[i]) && !quote)
-			quote = pattern[i];
-		else if (ft_isquote(pattern[i]) && quote)
-			quote = 0;
-		else
-			return (pattern[i]);
-		i++;
-	}
-	return (0);
-}
 
 static int	ft_quote(const char **p, int *in_q)
 {
@@ -60,7 +40,7 @@ static int	ft_star_in_qoute(const char **p, const char **f)
 	return (1);
 }
 
-static int ft_star_meta(const char **p, const char **f, int *in_q)
+static int	ft_star_meta(const char **p, const char **f, int *in_q)
 {
 	(*p)++;
 	while (**f)
@@ -86,7 +66,7 @@ static int	ft_match(const char *pattern, const char *filename, int in_quotes)
 		{
 			if (!ft_star_in_qoute(&pattern, &filename))
 				return (0);
-			continue;
+			continue ;
 		}
 		if (*pattern == '*')
 			return (ft_star_meta(&pattern, &filename, &in_quotes));
@@ -101,8 +81,8 @@ static int	ft_match(const char *pattern, const char *filename, int in_quotes)
 int	ft_pattern_match(const char *pattern, const char *filename)
 {
 	if (!ft_strcmp(filename, ".", 0) || !ft_strcmp(filename, "..", 0))
-		return 0;
+		return (0);
 	if (filename[0] == '.' && ft_first_unquoted_char(pattern) != '.')
-		return 0;
-	return ft_match(pattern, filename, 0);
+		return (0);
+	return (ft_match(pattern, filename, 0));
 }

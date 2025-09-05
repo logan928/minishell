@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 14:15:51 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 17:42:34 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:03:07 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	ft_here_eof_warning(t_shell *shell, char *limiter)
 delimited by end-of-file (wanted `",
 				limiter,
 				"')\n");
-		ft_write_safe(shell, err, STDERR_FILENO);
+		fts_write(shell, err, STDERR_FILENO);
 	}
 }
 
@@ -67,7 +67,7 @@ void	ft_read_line(t_shell *shell, char **res, char *limiter)
 			free(line);
 			break ;
 		}
-		*res = ft_strjoin_free_safe(shell, *res, line);
+		*res = fts_strjoin_free(shell, *res, line);
 	}
 }
 
@@ -87,11 +87,11 @@ void	ft_here_doc(t_shell *shell, t_token *t)
 		return ;
 	}
 	if (!res)
-		res = ft_strdup_safe(shell, "");
+		res = fts_strdup(shell, "");
 	if (is_quoted)
 	{
-		res = ft_strjoin_free_safe(shell, ft_strdup_safe(shell, "'"), res);
-		res = ft_strjoin_free_safe(shell, res, ft_strdup_safe(shell, "'"));
+		res = fts_strjoin_free(shell, fts_strdup(shell, "'"), res);
+		res = fts_strjoin_free(shell, res, fts_strdup(shell, "'"));
 	}
 	free(t->data);
 	t->data = res;

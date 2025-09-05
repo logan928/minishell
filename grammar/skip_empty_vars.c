@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:10:49 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 01:26:15 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:27:10 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	ft_skip_empty_vars(t_shell *shell, char **args)
 	i = 0;
 	while (args[i])
 	{
-		if (ft_is_valid_plain_var_name(args[i]) && ft_strvec_find(shell->env, args[i] + 1) == -1)
+		if (ft_is_valid_plain_var_name(args[i])
+			&& ft_strvec_find(shell->env, args[i] + 1) == -1)
 		{
 			free(args[i]);
 			j = i;

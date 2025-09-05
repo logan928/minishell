@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/04 01:08:31 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:41:09 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # define EUNEXPTKN		"minishell: syntax error near unexpected token `"
 # define ETMARGS		": too many arguments\n"
 # define ENUMREQ		": numeric argument required\n"
+# define UNEXPQOUT		"minishell: unexpected EOF while looking for matching`"
 
 # define MAIN_SHELL		1
 # define CHILD_SHELL	0
@@ -201,13 +202,13 @@ typedef struct s_check_access_msgs
 typedef struct s_pipe_parameters
 {
 	int		count;
-	int 	status;
-	int  	last_status;
+	int		status;
+	int		last_status;
 	bool	new_line;
 	bool	core_dump;
 	int		sig;
 	int		**pipefd;
-}t_pipe_parameters;
+}	t_pipe_parameters;
 
 char			*ft_set_prompt(t_shell *shell);
 void			ft_init_shell(t_shell *shell, char *envp[]);
@@ -240,12 +241,12 @@ void			ft_set_pwd(t_shell *shell);
 void			ft_sigint_handler(int sig);
 void			ft_sigquit_trap(int sig);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
-char			*ft_strdup_safe(t_shell *shell, const char *s);
-char			*ft_strndup_safe(t_shell *shell, const char *s, size_t n);
+char			*fts_strdup(t_shell *shell, const char *s);
+char			*fts_strndup(t_shell *shell, const char *s, size_t n);
 t_token			*fts_new_token(t_shell *shell, t_token_kind kind, char *data);
-char			*ft_strjoin_free_safe(t_shell *shell, char *s1, char *s2);
-char			*ft_itoa_safe(t_shell *shell, long n);
-void			*ft_malloc_safe(t_shell *shell, size_t size);
+char			*fts_strjoin_free(t_shell *shell, char *s1, char *s2);
+char			*fts_itoa(t_shell *shell, long n);
+void			*fts_malloc(t_shell *shell, size_t size);
 bool			ft_is_valid_number(char *s);
 void			ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void			ft_not_set(t_shell *shell, char *var);
@@ -269,7 +270,7 @@ t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 void			print_ast(t_shell *shell, t_ast *node, int depth);
 char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
-void			ft_write_safe(t_shell *shell, char *s, int fd);
+void			fts_write(t_shell *shell, char *s, int fd);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
 char			*ft_canonicalize(t_shell *shell, char *curpath);
@@ -304,5 +305,10 @@ int				handle_redir(t_redir *redir, int shell_type, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
 int				ft_check_access(t_shell *shell, t_command *cmd);
+void			ft_chdir_err(t_shell *shell, char *dir);
+int				ft_first_unquoted_char(const char *pattern);
+int				ft_isoperator(t_token_kind kind);
+int				ft_isredirection(t_token_kind kind);
+int				ft_syntax_error(t_shell *shell, char *token);
 
 #endif

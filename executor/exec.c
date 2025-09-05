@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 17:50:29 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/04 11:14:35 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:04:08 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 
 	while (redir)
 	{
-		tmp = ft_strdup_safe(shell, redir->file[0]);
+		tmp = fts_strdup(shell, redir->file[0]);
 		ft_skip_empty_vars(shell, redir->file);
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_file_exp(shell, &redir->file, 0, 0);
@@ -50,7 +50,7 @@ static	int	apply_redirs(t_shell *shell, t_redir *redir, \
 		{
 			err = fts_strjoin3cpy(shell, "minishell: ", \
 				tmp, ": ambiguous redirect\n");
-			ft_write_safe(shell, err, STDERR_FILENO);
+			fts_write(shell, err, STDERR_FILENO);
 			shell->exit_status = 1;
 			shell->parse_err = 1;
 			return (1);

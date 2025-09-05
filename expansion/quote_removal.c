@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 10:38:46 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/20 17:46:12 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:15:02 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ void	ft_append_before(t_shell *shell, t_cursor *c, char *s, char **clean)
 	c->quote = s[c->cur];
 	if (c->cur - c->start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &s[c->start], c->cur - c->start);
-		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
+		tmp = fts_strndup(shell, &s[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(shell, *clean, tmp);
 	}
 	c->cur++;
 	c->start = c->cur;
@@ -33,8 +33,8 @@ void	ft_append_between(t_shell *shell, t_cursor *c, char *s, char **clean)
 	c->quote = 0;
 	if (c->cur - c->start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &s[c->start], c->cur - c->start);
-		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
+		tmp = fts_strndup(shell, &s[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(shell, *clean, tmp);
 	}
 	c->cur++;
 	c->start = c->cur;
@@ -46,13 +46,13 @@ void	ft_append_rest(t_shell *shell, t_cursor *c, char **s, char **clean)
 
 	if (c->cur - c->start > 0)
 	{
-		tmp = ft_strndup_safe(shell, &(*s)[c->start], c->cur - c->start);
-		*clean = ft_strjoin_free_safe(shell, *clean, tmp);
+		tmp = fts_strndup(shell, &(*s)[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(shell, *clean, tmp);
 	}
 	if (*s)
 		free(*s);
 	if (!*clean)
-		*s = ft_strdup_safe(shell, "");
+		*s = fts_strdup(shell, "");
 	else
 		*s = *clean;
 }

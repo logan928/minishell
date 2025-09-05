@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 20:31:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/01 18:22:13 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:41:38 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	ft_clone_exp(t_shell *shell)
 			i++;
 			continue ;
 		}
-		new = ft_strvec_push(&new, ft_strdup_safe(shell, shell->env->data[i]));
+		new = ft_strvec_push(&new, fts_strdup(shell, shell->env->data[i]));
 		if (new == NULL)
 			ft_critical_error(shell);
 		i++;
@@ -44,9 +44,6 @@ void	ft_init_shell(t_shell *shell, char *envp[])
 	ft_shlvl(shell);
 	ft_set_pwd(shell);
 	ft_clone_exp(shell);
-	rl_catch_signals = 0;
-	signal(SIGINT, ft_sigint_handler);
-	signal(SIGQUIT, ft_sigquit_trap);
 }
 
 void	ft_critical_error(t_shell *shell)

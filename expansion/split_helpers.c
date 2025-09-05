@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 13:43:22 by mkugan            #+#    #+#             */
-/*   Updated: 2025/08/22 13:44:01 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/05 15:16:34 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,15 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size, int is_cmd)
 	t_token	*tmp;
 
 	tmp = shell->lexer->tmp;
-	new_arr = ft_malloc_safe(shell, sizeof(char *) * (lst_size + 1 + is_cmd));
+	new_arr = fts_malloc(shell, sizeof(char *) * (lst_size + 1 + is_cmd));
 	if (!new_arr)
 		ft_critical_error(shell);
 	i = 0;
 	if (is_cmd)
-		new_arr[0] = ft_strdup_safe(shell, (*arr)[i++]);
+		new_arr[0] = fts_strdup(shell, (*arr)[i++]);
 	while (tmp)
 	{
-		new_arr[i++] = ft_strdup_safe(shell, tmp->data);
+		new_arr[i++] = fts_strdup(shell, tmp->data);
 		tmp = tmp->next;
 	}
 	if (is_cmd)
