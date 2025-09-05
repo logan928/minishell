@@ -205,6 +205,7 @@ typedef struct s_pipe_parameters
 	bool	new_line;
 	bool	core_dump;
 	int		sig;
+	int		**pipefd;
 }t_pipe_parameters;
 
 char			*ft_set_prompt(t_shell *shell);
