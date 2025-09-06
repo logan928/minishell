@@ -310,5 +310,10 @@ int				ft_first_unquoted_char(const char *pattern);
 int				ft_isoperator(t_token_kind kind);
 int				ft_isredirection(t_token_kind kind);
 int				ft_syntax_error(t_shell *shell, char *token);
+int				apply_redirs(t_shell *shell, t_redir *redir, \
+				t_command_kind kind, int shell_type);
+// int				exec_command_builtins(t_shell *shell, t_command *cmd);
+int				exec_command_externals(t_shell *shell, t_command *cmd);
+void			exec_command_expansions(t_shell *shell, t_command *cmd);
 
 #endif

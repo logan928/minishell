@@ -32,43 +32,13 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-static	int	apply_redirs(t_shell *shell, t_redir *redir, \
-	t_command_kind kind, int shell_type)
-{
-	char	*tmp;
-	char	*err;
-
-	while (redir)
-	{
-		tmp = fts_strdup(shell, redir->file[0]);
-		ft_skip_empty_vars(shell, redir->file);
-		ft_variable_expansion(shell, redir->file, 0);
-		ft_file_exp(shell, &redir->file, 0, 0);
-		ft_quote_removal(shell, redir->file, 0);
-		if (redir->kind != R_HDOC
-			&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
-		{
-			err = fts_strjoin3cpy(shell, "minishell: ", \
-				tmp, ": ambiguous redirect\n");
-			fts_write(shell, err, STDERR_FILENO);
-			shell->exit_status = 1;
-			shell->parse_err = 1;
-			return (1);
-		}
-		if (handle_redir(redir, shell_type, kind))
-			return (1);
-		redir = redir->next;
-	}
-	return (0);
-}
-
-static void exec_command_expansions(t_shell *shell, t_command *cmd)
-{
-	ft_variable_expansion(shell, cmd->args, 0);
-	ft_field_splitting(shell, &cmd->args, 0);
-	ft_file_exp(shell, &cmd->args, 1, 1);
-	ft_quote_removal(shell, cmd->args, 0);	
-}
+// static void exec_command_expansions(t_shell *shell, t_command *cmd)
+// {
+// 	ft_variable_expansion(shell, cmd->args, 0);
+// 	ft_field_splitting(shell, &cmd->args, 0);
+// 	ft_file_exp(shell, &cmd->args, 1, 1);
+// 	ft_quote_removal(shell, cmd->args, 0);	
+// }
 
 static int exec_command_builtins(t_shell *shell, t_command *cmd)
 {
@@ -83,82 +53,71 @@ static int exec_command_builtins(t_shell *shell, t_command *cmd)
 	return (shell->exit_status);
 }
 
-static void exec_command_in_child(t_shell *shell, t_command *cmd)
-{	
-	int		access_err;
+// static void exec_command_in_child(t_shell *shell, t_command *cmd)
+// {	
+// 	int		access_err;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-		exit (1);
-	if (cmd->args)
-	{	
-		access_err = ft_check_access(shell, cmd);
-		if (access_err)
-			exit (access_err);
-	}
-	if (shell->parse_err == 5)
-		exit (1);
-	if (!cmd->args)
-		exit(0);
-	execve((cmd->args)[0], cmd->args, shell->env->data);
-	perror("execve");
-	exit(127);
-}
+// 	signal(SIGINT, SIG_DFL);
+// 	signal(SIGQUIT, SIG_DFL);
+// 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
+// 		exit (1);
+// 	if (cmd->args)
+// 	{	
+// 		access_err = ft_check_access(shell, cmd);
+// 		if (access_err)
+// 			exit (access_err);
+// 	}
+// 	if (shell->parse_err == 5)
+// 		exit (1);
+// 	if (!cmd->args)
+// 		exit(0);
+// 	execve((cmd->args)[0], cmd->args, shell->env->data);
+// 	perror("execve");
+// 	exit(127);
+// }
 
-static int exec_command_signal_handle (int *status)
-{
-	int sig;
+// static int exec_command_signal_handle (int *status)
+// {
+// 	int sig;
 
-	sig = -1;
-	if (WIFSIGNALED(*status))
-	{
-		sig = WTERMSIG(*status);
-		if (sig == SIGINT)
-			write(STDOUT_FILENO, "\n", 1);
-		else if (sig == SIGQUIT)
-			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-		return (128 + sig);
-	}
-	if (WIFEXITED(*status))
-		return (WEXITSTATUS(*status));
-	return (sig);
-}
+// 	sig = -1;
+// 	if (WIFSIGNALED(*status))
+// 	{
+// 		sig = WTERMSIG(*status);
+// 		if (sig == SIGINT)
+// 			write(STDOUT_FILENO, "\n", 1);
+// 		else if (sig == SIGQUIT)
+// 			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+// 		return (128 + sig);
+// 	}
+// 	if (WIFEXITED(*status))
+// 		return (WEXITSTATUS(*status));
+// 	return (sig);
+// }
 
-static int	exec_command_externals(t_shell *shell, t_command *cmd)
-{
-	pid_t			pid;
-	int				status;
-	int				exitcode;
+// static int	exec_command_externals(t_shell *shell, t_command *cmd)
+// {
+// 	pid_t			pid;
+// 	int				status;
+// 	int				exitcode;
 
-	pid = -1;
-	status = -1;
-	exitcode = -1;
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	pid = fork();
-	if (pid == 0)
-		exec_command_in_child(shell, cmd);
-	waitpid(pid, &status, 0);
-	signal(SIGINT, ft_sigint_handler);
-	signal(SIGQUIT, ft_sigquit_trap);
+// 	pid = -1;
+// 	status = -1;
+// 	exitcode = -1;
+// 	signal(SIGINT, SIG_IGN);
+// 	signal(SIGQUIT, SIG_IGN);
+// 	pid = fork();
+// 	if (pid == 0)
+// 		exec_command_in_child(shell, cmd);
+// 	waitpid(pid, &status, 0);
+// 	signal(SIGINT, ft_sigint_handler);
+// 	signal(SIGQUIT, ft_sigquit_trap);
 	
-	// if (WIFSIGNALED(status))
-	// {
-	// 	int sig = WTERMSIG(status);
-	// 	if (sig == SIGINT)
-	// 		write(STDOUT_FILENO, "\n", 1);
-	// 	else if (sig == SIGQUIT)
-	// 		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-	// 	return (128 + sig);
-	// }
-	// if (WIFEXITED(status))
-	// 	return (WEXITSTATUS(status));
-	exitcode = exec_command_signal_handle(&status);
-	if (exitcode != -1)
-		return (exitcode);
-	return (1);
-}
+// 	exitcode = exec_command_signal_handle(&status);
+// 	if (exitcode != -1)
+// 		return (exitcode);
+// 	return (1);
+// }
 
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
