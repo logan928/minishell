@@ -322,5 +322,11 @@ int				exec_pipeline_core (t_shell *shell, int ***pipefd, \
 				t_ast ***commands, t_pipe_parameters *tpp);
 int				run_builtin(t_shell *shell, t_command *cmd, int shell_type);
 pid_t			*get_pid_ts(t_pipe_parameters *tpp);
+int 			exec_command_builtins(t_shell *shell, t_command *cmd);
+int				exec_command(t_shell *shell, t_command *cmd);
+int				exec_pipeline(t_shell *shell, t_ast *ast);
+int				exec_subshell(t_shell *shell, t_ast *ast);
+int				handle_and(t_shell *shell, t_ast *ast);
+int				handle_or(t_shell *shell, t_ast *ast);
 
 #endif

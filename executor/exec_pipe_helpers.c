@@ -110,12 +110,6 @@ int	exec_pipeline_core(t_shell *shell, int ***pipefd, t_ast ***commands, \
 	pid_t	*pids;
 	int		j;
 
-	// pids = malloc((tpp->count) * sizeof(pid_t));
-	// if (pids == NULL) 
-	// {
-	// 	perror("malloc failed");
-	// 	exit(EXIT_FAILURE);
-	// }
 	pids = get_pid_ts(tpp);
 	if (create_pipe_forks(shell, commands, pids, tpp))
 		return (1);

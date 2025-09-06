@@ -41,4 +41,3 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 	}
 	return (0);
 }
-

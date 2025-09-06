@@ -13,39 +13,7 @@
 #include "../minishell.h"
 #include <fcntl.h>
 
-int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
-{
-	if (ft_strcmp(cmd->args[0], "exit", 0) == 0)
-		ft_exit(shell, cmd->args, shell_type);
-	if (ft_strcmp(cmd->args[0], "echo", 0) == 0)
-		ft_echo(shell, cmd->args);
-	if (ft_strcmp(cmd->args[0], "env", 0) == 0)
-		ft_env(shell, cmd->args);
-	if (ft_strcmp(cmd->args[0], "pwd", 0) == 0)
-		ft_pwd(shell, cmd->args);
-	if (ft_strcmp(cmd->args[0], "cd", 0) == 0)
-		ft_cd(shell, cmd->args);
-	if (ft_strcmp(cmd->args[0], "unset", 0) == 0)
-		ft_unset(shell, cmd->args);
-	if (ft_strcmp(cmd->args[0], "export", 0) == 0)
-		ft_export(shell, cmd->args);
-	return (0);
-}
-
-static int exec_command_builtins(t_shell *shell, t_command *cmd)
-{
-	pid_t saved;
-
-	saved = dup(STDOUT_FILENO);
-	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, MAIN_SHELL))
-		return (1);
-	run_builtin(shell, cmd, MAIN_SHELL);
-	dup2(saved, STDOUT_FILENO);
-	close(saved);
-	return (shell->exit_status);
-}
-
-static	int	exec_command(t_shell *shell, t_command *cmd)
+int	exec_command(t_shell *shell, t_command *cmd)
 {
 	if (cmd->args)
 	{
@@ -60,120 +28,7 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
-// static int	exec_command_child(t_shell *shell, t_command *cmd)
-// {
-// 	int	access_err;
-
-// 	if (cmd->args)
-// 	{
-// 		ft_skip_empty_vars(shell, cmd->args);
-// 		if (!cmd->args[0])
-// 			exit(0);
-// 		handle_expansion_cmd_child(shell, cmd);
-// 	}
-// 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-// 		exit(shell->exit_status);
-// 	if (cmd->command_kind == BUILTIN)
-// 	{
-// 		run_builtin(shell, cmd, CHILD_SHELL); 
-// 		exit(shell->exit_status);
-// 	}
-// 	access_err = ft_check_access(shell, cmd);
-// 	if (access_err)
-// 		exit(access_err);
-// 	execve((cmd->args)[0], cmd->args, shell->env->data);
-// 	perror("execve");
-// 	exit(127);
-// }
-
-// static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, t_pipe_parameters *tpp, int j)
-// {
-// 	int	k;
-
-// 	k = 0;
-// 	signal(SIGINT, SIG_DFL);
-// 	signal(SIGQUIT, SIG_DFL);
-// 	if (j > 0)
-// 		dup2((tpp->pipefd)[j-1][0], STDIN_FILENO);
-// 	if (j < tpp->count - 1)		
-// 		dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
-// 	while ( k < tpp->count - 1)
-// 	{
-// 		close((tpp->pipefd)[k][0]);
-// 		close((tpp->pipefd)[k][1]);
-// 		k++;
-// 	}
-// 	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-// 		exec_command_child(shell, (*commands)[j]->cmd);
-// 	exit(exec_ast(shell, (*commands)[j]));
-// }
-
-// static int	create_pipe_forks(t_shell *shell, t_ast ***commands, pid_t *pids, t_pipe_parameters *tpp)
-// {
-// 	int		j;
-
-// 	j = 0;
-// 	while (j < tpp->count)
-// 	{
-// 		pids[j] = fork();
-// 		if (pids[j] == -1)
-// 			return (perror("fork"), 1);
-// 		if (pids[j] == 0) 
-// 			exec_command_child_wrapper(shell, commands, tpp, j);
-// 		j++;
-// 	}
-// 	return (0);
-// }
-
-// static void	wait_child_exit(t_pipe_parameters *tpp, pid_t *pids)
-// {
-// 	int	j;
-
-// 	j = 0;
-// 	while  (j < tpp->count)
-// 	{
-// 		if (waitpid(pids[j], &(tpp->status), 0) > 0)
-// 		{
-// 			tpp->sig = 0;
-// 			if (WIFSIGNALED(tpp->status))
-// 			{
-// 				tpp->sig = WTERMSIG(tpp->status);
-// 				if (tpp->sig == SIGINT)
-// 					tpp->new_line = true;
-// 				else if (tpp->sig == SIGQUIT)
-// 					tpp->core_dump = true;
-// 			}
-// 			if (WIFEXITED(tpp->status))
-// 				tpp->last_status = WEXITSTATUS(tpp->status);
-// 		}
-// 		j++;
-// 	}
-// }
-
-// static int	exec_pipeline_core (t_shell *shell, int ***pipefd, t_ast ***commands, t_pipe_parameters *tpp)
-// {
-// 	pid_t	pids[(tpp)->count];
-// 	int		j;
-
-// 	if (create_pipe_forks(shell, commands, pids, tpp))
-// 		return (1);
-// 	j = 0;
-// 	while ( j < tpp->count - 1)
-// 	{
-// 		close((*pipefd)[j][0]);
-// 		close((*pipefd)[j][1]);
-// 		j++;
-// 	}
-// 	j =0;
-// 	wait_child_exit(tpp, pids);
-// 	if (tpp->new_line)
-// 		write(STDOUT_FILENO, "\n", 1);
-// 	else if (tpp->core_dump)
-// 		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-// 	return (0);
-// }
-
-static int	exec_pipeline(t_shell *shell, t_ast *ast)
+int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
 	t_ast				**commands;
@@ -190,7 +45,7 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	tpp->count = count;
-	if (exec_pipeline_core(shell,  &tpp->pipefd, &commands, tpp))
+	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
 		return (1);
 	signal(SIGINT, ft_sigint_handler);
 	signal(SIGQUIT, ft_sigquit_trap);
@@ -199,11 +54,11 @@ static int	exec_pipeline(t_shell *shell, t_ast *ast)
 	return (tpp->last_status);
 }
 
-static int	exec_subshell(t_shell *shell, t_ast *ast)
+int	exec_subshell(t_shell *shell, t_ast *ast)
 {
 	pid_t	pid;
 	int		status;
-	
+
 	pid = fork();
 	if (!ast || !ast->left) 
 		return (printf("no left\n"), 0);
@@ -212,52 +67,53 @@ static int	exec_subshell(t_shell *shell, t_ast *ast)
 	if (pid == 0)
 	{
 		if (ast->cmd && ast->cmd->redirs)
-			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, CHILD_SHELL);
+			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, \
+			CHILD_SHELL);
 		exit(exec_ast(shell, ast->left));
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
-		return WEXITSTATUS(status);
+		return (WEXITSTATUS(status));
 	return (1);
 }
 
-static int	handle_and(t_shell *shell, t_ast *ast)
+int	handle_and(t_shell *shell, t_ast *ast)
 {
 	int	left;
 
 	left = exec_ast(shell, ast->left);
-	if(left == 0)
-		return(exec_ast(shell, ast->right));
+	if (left == 0)
+		return (exec_ast(shell, ast->right));
 	return (left);
 }
 
-static int	handle_or(t_shell *shell, t_ast *ast)
+int	handle_or(t_shell *shell, t_ast *ast)
 {
 	int	left;
 
 	left = exec_ast(shell, ast->left);
-	if(left != 0)
-		return(exec_ast(shell, ast->right));
+	if (left != 0)
+		return (exec_ast(shell, ast->right));
 	return (left);
 }
 
-int	exec_ast(t_shell *shell, t_ast *ast)
-{
-	if (!ast)
-		return (0);
-	if (ast -> type == AST_CMD)
-		return (exec_command(shell, ast->cmd));
-	else if (ast->type == AST_PIPE)
-		return (exec_pipeline(shell, ast));
-	else if (ast->type == AST_AND)
-		return (handle_and(shell, ast));
-	else if (ast->type == AST_OR)
-		return (handle_or(shell, ast));
-	else if (ast->type == AST_SUBSHELL)
-		return (exec_subshell(shell, ast));
-	else
-	{
-		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
-		return (1);
-	}
-}
+// int	exec_ast(t_shell *shell, t_ast *ast)
+// {
+// 	if (!ast)
+// 		return (0);
+// 	if (ast -> type == AST_CMD)
+// 		return (exec_command(shell, ast->cmd));
+// 	else if (ast->type == AST_PIPE)
+// 		return (exec_pipeline(shell, ast));
+// 	else if (ast->type == AST_AND)
+// 		return (handle_and(shell, ast));
+// 	else if (ast->type == AST_OR)
+// 		return (handle_or(shell, ast));
+// 	else if (ast->type == AST_SUBSHELL)
+// 		return (exec_subshell(shell, ast));
+// 	else
+// 	{
+// 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
+// 		return (1);
+// 	}
+// }
