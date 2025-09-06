@@ -318,5 +318,9 @@ void			exec_command_expansions(t_shell *shell, t_command *cmd);
 void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
 int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
 				int ***pipefd);
+int				exec_pipeline_core (t_shell *shell, int ***pipefd, \
+				t_ast ***commands, t_pipe_parameters *tpp);
+int				run_builtin(t_shell *shell, t_command *cmd, int shell_type);
+pid_t			*get_pid_ts(t_pipe_parameters *tpp);
 
 #endif

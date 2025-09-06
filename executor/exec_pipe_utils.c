@@ -81,3 +81,16 @@ int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
 	}
 	return (0);
 }
+
+pid_t	*get_pid_ts(t_pipe_parameters *tpp)
+{
+	pid_t	*pids;
+
+	pids = malloc((tpp->count) * sizeof(pid_t));
+	if (pids == NULL) 
+	{
+		perror("malloc failed");
+		exit(EXIT_FAILURE);
+	}
+	return (pids);
+}
