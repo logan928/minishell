@@ -15,9 +15,6 @@
 static int	write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 	t_cehck_access_msgs acc_para, int exit_condition)
 {
-	char			*cmd_name;
-
-	cmd_name = fts_strdup(shell, cmd->args[0]);
 	if (acc_para.is_access_exists)
 	{
 		fts_write(shell,
@@ -30,7 +27,6 @@ static int	write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 			fts_strjoin3cpy(shell, cmd->args[0], \
 			acc_para.msg, ""), STDERR_FILENO);
 	}
-	free(cmd_name);
 	return (exit_condition);
 }
 
@@ -54,12 +50,10 @@ static int	handle_access_exist(t_shell *shell, t_command *cmd, \
 
 int	ft_check_access(t_shell *shell, t_command *cmd)
 {
-	char				*cmd_name;
 	t_cmd_access		access;
 	t_cehck_access_msgs	acc_para;
 
-	cmd_name = fts_strdup(shell, cmd->args[0]);
-	access = ft_get_cmd_path(shell, cmd->args);
+	access = ft_get_cmd_path(shell, cmd);
 	acc_para = (t_cehck_access_msgs){NULL, true};
 	if (!access.exist || (access.is_dir && ft_strchr(cmd->args[0], '/') \
 		== NULL && access.path))
@@ -76,6 +70,5 @@ int	ft_check_access(t_shell *shell, t_command *cmd)
 		acc_para.is_access_exists = true;
 		return (write_safe_return_wrapper(shell, cmd, acc_para, CMD_NOT_EXEC));
 	}
-	free(cmd_name);
 	return (0);
 }

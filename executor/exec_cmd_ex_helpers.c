@@ -38,7 +38,7 @@ static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 		exit (1);
 	if (!cmd->args)
 		exit(0);
-	execve((cmd->args)[0], cmd->args, shell->env->data);
+	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
 	exit(127);
 }

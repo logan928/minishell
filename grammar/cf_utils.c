@@ -56,6 +56,7 @@ t_command	*command_new(void)
 	if (!cmd)
 		return (NULL);
 	cmd->command_kind = EXTERNAL;
+	cmd->path = NULL;
 	cmd->args = NULL;
 	return (cmd);
 }

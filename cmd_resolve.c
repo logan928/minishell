@@ -28,21 +28,22 @@ char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 	return (new);
 }
 
-void	ft_check_cmd(char *cmd, t_cmd_access *cmd_access)
+void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
 {
 	struct stat	st;
 
-	if (stat(cmd, &st) == 0)
+	if (stat(cmd->args[0], &st) == 0)
 	{
+		cmd->path = fts_strdup(sh, cmd->args[0]);
 		cmd_access->exist = true;
 		if (S_ISDIR(st.st_mode))
 			cmd_access->is_dir = true;
-		else if (access(cmd, X_OK) == 0)
+		else if (access(cmd->args[0], X_OK) == 0)
 			cmd_access->executable = true;
 	}
 }
 
-bool	ft_try_paths(t_shell *sh, char **paths, char **args, t_cmd_access *acc)
+bool	ft_try_paths(t_shell *sh, char **paths, t_command *cmd, t_cmd_access *acc)
 {
 	int			i;
 	char		*full_path;
@@ -51,10 +52,10 @@ bool	ft_try_paths(t_shell *sh, char **paths, char **args, t_cmd_access *acc)
 	i = 0;
 	while (paths[i])
 	{
-		full_path = ft_combine_path(sh, paths[i], args[0]);
+		full_path = ft_combine_path(sh, paths[i], cmd->args[0]);
 		if (stat(full_path, &st) == 0)
 		{
-			args[0] = fts_strdup(sh, full_path);
+			cmd->path = fts_strdup(sh, full_path);
 			acc->exist = true;
 			if (S_ISDIR(st.st_mode))
 				acc->is_dir = true;
@@ -69,7 +70,7 @@ bool	ft_try_paths(t_shell *sh, char **paths, char **args, t_cmd_access *acc)
 	return (false);
 }
 
-void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
+void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
 {
 	char	**paths;
 	char	*path;
@@ -84,7 +85,7 @@ void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
 	paths = ft_split(path, ':');
 	if (paths)
 	{
-		if (ft_try_paths(shell, paths, args, cmd_access))
+		if (ft_try_paths(shell, paths, cmd, cmd_access))
 		{
 			free(path);
 			ft_free_arr(paths);
@@ -110,26 +111,31 @@ void	ft_build_paths(t_shell *shell, char **args, t_cmd_access *cmd_access)
  * Note: executable and is_dir are mutually exclusive.
 */
 
-t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args)
+t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd)
 {
 	t_cmd_access	cmd_access;
 	struct stat		st;
 
 	cmd_access = (t_cmd_access){false, false, false, true};
 	ft_init_access(shell, &cmd_access);
-	if (!args || !args[0] || args[0][0] == '\0')
-		return (cmd_access);
-	else if (ft_strchr(args[0], '/'))
+	if (!cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
 	{
-		ft_check_cmd(args[0], &cmd_access);
+		if (cmd->args[0])
+			free(cmd->args[0]);
+		cmd->args[0] = fts_strdup(shell, "''");
 		return (cmd_access);
 	}
-	else if (stat(args[0], &st) == 0 && S_ISDIR(st.st_mode))
+	else if (ft_strchr(cmd->args[0], '/'))
+	{
+		ft_check_cmd(shell, cmd, &cmd_access);
+		return (cmd_access);
+	}
+	else if (stat(cmd->args[0], &st) == 0 && S_ISDIR(st.st_mode))
 	{
 		cmd_access.exist = true;
 		cmd_access.is_dir = true;
 		return (cmd_access);
 	}
-	ft_build_paths(shell, args, &cmd_access);
+	ft_build_paths(shell, cmd, &cmd_access);
 	return (cmd_access);
 }
