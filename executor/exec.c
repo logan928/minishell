@@ -32,14 +32,6 @@ int	run_builtin(t_shell *shell, t_command *cmd, int shell_type)
 	return (0);
 }
 
-// static void exec_command_expansions(t_shell *shell, t_command *cmd)
-// {
-// 	ft_variable_expansion(shell, cmd->args, 0);
-// 	ft_field_splitting(shell, &cmd->args, 0);
-// 	ft_file_exp(shell, &cmd->args, 1, 1);
-// 	ft_quote_removal(shell, cmd->args, 0);	
-// }
-
 static int exec_command_builtins(t_shell *shell, t_command *cmd)
 {
 	pid_t saved;
@@ -52,72 +44,6 @@ static int exec_command_builtins(t_shell *shell, t_command *cmd)
 	close(saved);
 	return (shell->exit_status);
 }
-
-// static void exec_command_in_child(t_shell *shell, t_command *cmd)
-// {	
-// 	int		access_err;
-
-// 	signal(SIGINT, SIG_DFL);
-// 	signal(SIGQUIT, SIG_DFL);
-// 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-// 		exit (1);
-// 	if (cmd->args)
-// 	{	
-// 		access_err = ft_check_access(shell, cmd);
-// 		if (access_err)
-// 			exit (access_err);
-// 	}
-// 	if (shell->parse_err == 5)
-// 		exit (1);
-// 	if (!cmd->args)
-// 		exit(0);
-// 	execve((cmd->args)[0], cmd->args, shell->env->data);
-// 	perror("execve");
-// 	exit(127);
-// }
-
-// static int exec_command_signal_handle (int *status)
-// {
-// 	int sig;
-
-// 	sig = -1;
-// 	if (WIFSIGNALED(*status))
-// 	{
-// 		sig = WTERMSIG(*status);
-// 		if (sig == SIGINT)
-// 			write(STDOUT_FILENO, "\n", 1);
-// 		else if (sig == SIGQUIT)
-// 			write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
-// 		return (128 + sig);
-// 	}
-// 	if (WIFEXITED(*status))
-// 		return (WEXITSTATUS(*status));
-// 	return (sig);
-// }
-
-// static int	exec_command_externals(t_shell *shell, t_command *cmd)
-// {
-// 	pid_t			pid;
-// 	int				status;
-// 	int				exitcode;
-
-// 	pid = -1;
-// 	status = -1;
-// 	exitcode = -1;
-// 	signal(SIGINT, SIG_IGN);
-// 	signal(SIGQUIT, SIG_IGN);
-// 	pid = fork();
-// 	if (pid == 0)
-// 		exec_command_in_child(shell, cmd);
-// 	waitpid(pid, &status, 0);
-// 	signal(SIGINT, ft_sigint_handler);
-// 	signal(SIGQUIT, ft_sigquit_trap);
-	
-// 	exitcode = exec_command_signal_handle(&status);
-// 	if (exitcode != -1)
-// 		return (exitcode);
-// 	return (1);
-// }
 
 static	int	exec_command(t_shell *shell, t_command *cmd)
 {
@@ -134,13 +60,13 @@ static	int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
-static void	handle_expansion_cmd_child(t_shell *shell, t_command *cmd)
-{
-	ft_variable_expansion(shell, cmd->args, 0);
-	ft_field_splitting(shell, &cmd->args, 0);
-	ft_file_exp(shell, &cmd->args, 1, 1);
-	ft_quote_removal(shell, cmd->args, 0);
-}
+// static void	handle_expansion_cmd_child(t_shell *shell, t_command *cmd)
+// {
+// 	ft_variable_expansion(shell, cmd->args, 0);
+// 	ft_field_splitting(shell, &cmd->args, 0);
+// 	ft_file_exp(shell, &cmd->args, 1, 1);
+// 	ft_quote_removal(shell, cmd->args, 0);
+// }
 
 static int	exec_command_child(t_shell *shell, t_command *cmd)
 {
@@ -168,67 +94,67 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	exit(127);
 }
 
-static void	search_commands(t_ast **node, t_ast **commands, int *i)
-{
-	while (*node && (*node)->type == AST_PIPE)
-	{
-		commands[*i] = (*node)->right;
-		(*node) = (*node)->left;
-		(*i)--;
-	}
-}
+// static void	search_commands(t_ast **node, t_ast **commands, int *i)
+// {
+// 	while (*node && (*node)->type == AST_PIPE)
+// 	{
+// 		commands[*i] = (*node)->right;
+// 		(*node) = (*node)->left;
+// 		(*i)--;
+// 	}
+// }
 
-static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
-{
-	t_ast	*node;
-	int		i;
-	int		count;
-	t_ast	**commands;
+// static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
+// {
+// 	t_ast	*node;
+// 	int		i;
+// 	int		count;
+// 	t_ast	**commands;
 
-	node = n;
-	count = 0;
-	while (node && node->type == AST_PIPE)
-	{
-		count++;
-		node = node->left;
-	}
-	count++; 
-	node = n;
-	commands = malloc(sizeof(t_ast *) * count);
-	if (!commands)
-		return (NULL);
-	i = count-1;
-	search_commands(&node, commands, &i);
-	commands[i] = node;
-	*pipe_count = count;
-	return (commands);
-}
+// 	node = n;
+// 	count = 0;
+// 	while (node && node->type == AST_PIPE)
+// 	{
+// 		count++;
+// 		node = node->left;
+// 	}
+// 	count++; 
+// 	node = n;
+// 	commands = malloc(sizeof(t_ast *) * count);
+// 	if (!commands)
+// 		return (NULL);
+// 	i = count-1;
+// 	search_commands(&node, commands, &i);
+// 	commands[i] = node;
+// 	*pipe_count = count;
+// 	return (commands);
+// }
 
-static int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
-{
-	int	j;
-	int	pipe_count;
+// static int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
+// {
+// 	int	j;
+// 	int	pipe_count;
 
-	j = 0;
-	pipe_count = 0;
-	*commands = get_leaf_commmands(ast, &pipe_count);
-	if (!*commands)
-		return (1);
-	*count = pipe_count;
-	*pipefd = malloc(sizeof(int *) * (pipe_count - 1));
-	if (!*pipefd)
-		return (1);
-	while ( j < pipe_count - 1)
-	{
-		(*pipefd)[j] = malloc(sizeof(int) * 2);
-		if (!(*pipefd)[j])
-			return (1);
-		if (pipe((*pipefd)[j]) == -1)
-			return (perror("pipe"), 1);
-		j++;
-	}
-	return (0);
-}
+// 	j = 0;
+// 	pipe_count = 0;
+// 	*commands = get_leaf_commmands(ast, &pipe_count);
+// 	if (!*commands)
+// 		return (1);
+// 	*count = pipe_count;
+// 	*pipefd = malloc(sizeof(int *) * (pipe_count - 1));
+// 	if (!*pipefd)
+// 		return (1);
+// 	while ( j < pipe_count - 1)
+// 	{
+// 		(*pipefd)[j] = malloc(sizeof(int) * 2);
+// 		if (!(*pipefd)[j])
+// 			return (1);
+// 		if (pipe((*pipefd)[j]) == -1)
+// 			return (perror("pipe"), 1);
+// 		j++;
+// 	}
+// 	return (0);
+// }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, t_pipe_parameters *tpp, int j)
 {

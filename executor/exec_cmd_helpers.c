@@ -20,19 +20,6 @@ void	exec_command_expansions(t_shell *shell, t_command *cmd)
 	ft_quote_removal(shell, cmd->args, 0);
 }
 
-// int	exec_command_builtins(t_shell *shell, t_command *cmd)
-// {
-// 	pid_t	saved;
-
-// 	saved = dup(STDOUT_FILENO);
-// 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, MAIN_SHELL))
-// 		return (1);
-// 	run_builtin(shell, cmd, MAIN_SHELL);
-// 	dup2(saved, STDOUT_FILENO);
-// 	close(saved);
-// 	return (shell->exit_status);
-// }
-
 static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 {
 	int		access_err;

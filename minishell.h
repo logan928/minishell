@@ -315,5 +315,8 @@ int				apply_redirs(t_shell *shell, t_redir *redir, \
 // int				exec_command_builtins(t_shell *shell, t_command *cmd);
 int				exec_command_externals(t_shell *shell, t_command *cmd);
 void			exec_command_expansions(t_shell *shell, t_command *cmd);
+void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
+int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
+				int ***pipefd);
 
 #endif
