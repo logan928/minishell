@@ -61,5 +61,7 @@ void	ft_critical_error(t_shell *shell)
 		free(shell->pwd);
 	if (shell->prompt)
 		free(shell->prompt);
+	if (shell->ast)
+		free_ast(shell->ast);
 	exit(EXIT_FAILURE);
 }
