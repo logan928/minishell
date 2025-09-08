@@ -259,7 +259,7 @@ void			ft_free_arr(char **arr);
 void			ft_merge(t_shell *sh, char ***arr, size_t lst_size, int is_cmd);
 void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
 void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
-t_cmd_access	ft_get_cmd_path(t_shell *shell, char **args);
+t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd);
 void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
 void			ft_here(t_shell *shell);

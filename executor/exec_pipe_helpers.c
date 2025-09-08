@@ -33,7 +33,7 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	access_err = ft_check_access(shell, cmd);
 	if (access_err)
 		exit(access_err);
-	execve((cmd->args)[0], cmd->args, shell->env->data);
+	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
 	exit(127);
 }
