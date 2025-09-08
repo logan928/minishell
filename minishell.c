@@ -56,6 +56,7 @@ void	ft_interactive(t_shell *shell)
 		g_abort = 0;
 		shell->parse_err = 0;
 		ft_run_lex(shell);
+		free_ast(shell->ast);
 	}
 }
 
