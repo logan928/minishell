@@ -28,11 +28,28 @@ int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
+// static void	free_commands(t_ast **commands, int count)
+// {
+// 	int	i;
+
+// 	if (!commands)
+// 		return;
+// 	i = 0;
+// 	while (i < (count) && commands[i])
+// 	{
+// 		printf("%d", i);
+// 		free_ast(commands[i]);
+// 		i++;
+// 	}
+// 	free(commands);
+// }
+
 int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
 	t_ast				**commands;
 	t_pipe_parameters	*tpp;
+	int					last_s;
 
 	tpp = malloc(sizeof(t_pipe_parameters));
 	if (!tpp)
@@ -47,11 +64,16 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	tpp->count = count;
 	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
 		return (1);
+	printf("%d\n", tpp->count);
+	// free_commands(commands, tpp->count);//todo
+	
 	signal(SIGINT, ft_sigint_handler);
 	signal(SIGQUIT, ft_sigquit_trap);
-	if (tpp->sig)
+	if (tpp->sig)	
 		return (128 + tpp->sig);
-	return (tpp->last_status);
+	last_s = tpp->last_status;
+	free(tpp);
+	return (last_s);
 }
 
 int	exec_subshell(t_shell *shell, t_ast *ast)

@@ -125,5 +125,6 @@ int	exec_pipeline_core(t_shell *shell, int ***pipefd, t_ast ***commands, \
 		write(STDOUT_FILENO, "\n", 1);
 	else if (tpp->core_dump)
 		write(STDOUT_FILENO, "Quit (core dumped)\n", 19);
+	free(pids);
 	return (0);
 }

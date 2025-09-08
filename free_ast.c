@@ -63,6 +63,7 @@ void	free_ast(t_ast *node)
 		return;
 	free_ast(node->left);
 	free_ast(node->right);
-	free_command(node->cmd);
+    if(node->cmd)
+	    free_command(node->cmd);
 	free(node);
 }
