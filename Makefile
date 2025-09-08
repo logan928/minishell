@@ -59,7 +59,8 @@ SRCS := minishell.c \
 		$(EXECUTOR_DIR)/exec_pipe_utils.c	\
 		$(EXECUTOR_DIR)/exec_pipe_helpers.c	\
 		$(EXECUTOR_DIR)/exec_cmd_bi_helpers.c	\
-		$(EXECUTOR_DIR)/exec_entry.c
+		$(EXECUTOR_DIR)/exec_entry.c	\
+		minishell.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

@@ -96,24 +96,3 @@ int	handle_or(t_shell *shell, t_ast *ast)
 		return (exec_ast(shell, ast->right));
 	return (left);
 }
-
-// int	exec_ast(t_shell *shell, t_ast *ast)
-// {
-// 	if (!ast)
-// 		return (0);
-// 	if (ast -> type == AST_CMD)
-// 		return (exec_command(shell, ast->cmd));
-// 	else if (ast->type == AST_PIPE)
-// 		return (exec_pipeline(shell, ast));
-// 	else if (ast->type == AST_AND)
-// 		return (handle_and(shell, ast));
-// 	else if (ast->type == AST_OR)
-// 		return (handle_or(shell, ast));
-// 	else if (ast->type == AST_SUBSHELL)
-// 		return (exec_subshell(shell, ast));
-// 	else
-// 	{
-// 		printf("Non-defined AST type %s \n", ast->cmd->args[0]);
-// 		return (1);
-// 	}
-// }

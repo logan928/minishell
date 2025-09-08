@@ -328,5 +328,6 @@ int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
 int				handle_and(t_shell *shell, t_ast *ast);
 int				handle_or(t_shell *shell, t_ast *ast);
+void			free_ast(t_ast *node);
 
 #endif
