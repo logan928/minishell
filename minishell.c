@@ -31,8 +31,6 @@ void	ft_run_lex(t_shell *shell)
 		}
 	}
 	free(shell->input);
-	if (g_abort == HEREDOC_INT)
-		shell->exit_status = 130;
 	ft_free_lexer(shell->lexer);
 }
 
@@ -40,7 +38,14 @@ void	ft_interactive(t_shell *shell)
 {
 	while (1)
 	{
+		if (g_abort == HEREDOC_INT)
+		{
+			shell->exit_status = 130;
+			g_abort = 0;
+		}
+		ft_set_signals_main_pre();
 		shell->input = readline(ft_set_prompt(shell));
+		ft_set_signals_post();
 		if (!shell->input)
 			ft_exit(shell, NULL, MAIN_SHELL);
 		if (shell->input)
@@ -91,8 +96,8 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_non_interactive(&shell, argv);
 	else
 	{
-		signal(SIGINT, ft_sigint_handler);
-		signal(SIGQUIT, ft_sigquit_trap);
+		//signal(SIGINT, ft_sigint_handler);
+		//signal(SIGQUIT, ft_sigquit_trap);
 		ft_interactive(&shell);
 	}
 }

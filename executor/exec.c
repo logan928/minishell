@@ -67,8 +67,7 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	//printf("%d\n", tpp->count);
 	// free_commands(commands, tpp->count);//todo
 	
-	signal(SIGINT, ft_sigint_handler);
-	signal(SIGQUIT, ft_sigquit_trap);
+	ft_set_signals_main_pre();
 	if (tpp->sig)	
 		return (128 + tpp->sig);
 	last_s = tpp->last_status;

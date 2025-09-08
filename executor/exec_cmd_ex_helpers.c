@@ -24,8 +24,8 @@ static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 {
 	int		access_err;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	//signal(SIGINT, SIG_DFL);
+	//signal(SIGQUIT, SIG_DFL);
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 		exit (1);
 	if (cmd->args)
@@ -77,8 +77,7 @@ int	exec_command_externals(t_shell *shell, t_command *cmd)
 	if (pid == 0)
 		exec_command_in_child(shell, cmd);
 	waitpid(pid, &status, 0);
-	signal(SIGINT, ft_sigint_handler);
-	signal(SIGQUIT, ft_sigquit_trap);
+	ft_set_signals_main_pre();
 	exitcode = exec_command_signal_handle(&status);
 	if (exitcode != -1)
 		return (exitcode);

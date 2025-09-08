@@ -36,7 +36,7 @@ void	ft_here_eof_warning(t_shell *shell, char *limiter)
 	{
 		g_abort = HEREDOC_EOF;
 		err = fts_strjoin3cpy(shell,
-				"\nminishell: warning: here-document \
+				"minishell: warning: here-document \
 delimited by end-of-file (wanted `",
 				limiter,
 				"')\n");
@@ -49,25 +49,26 @@ void	ft_read_line(t_shell *shell, char **res, char *limiter)
 	char	*line;
 	size_t	limiter_len;
 
-	ft_set_here_sigint();
 	limiter_len = ft_strlen(limiter);
 	while (1)
 	{
-		if (write(1, "> ", 2) != 2)
-			ft_critical_error(shell);
-		line = ft_get_next_line(STDIN_FILENO);
+		ft_set_signals_hd_pre();
+		line = readline("> ");
+		ft_set_signals_post();
+		if (g_abort == HEREDOC_INT)
+			break ;
 		if (!line)
 		{
 			ft_here_eof_warning(shell, limiter);
 			break ;
 		}
-		if (ft_strncmp(line, limiter, limiter_len) == 0
-			&& line[limiter_len] == '\n')
+		if (ft_strncmp(line, limiter, limiter_len) == 0)
 		{
 			free(line);
 			break ;
 		}
 		*res = fts_strjoin_free(shell, *res, line);
+		*res = fts_strjoin_free(shell, *res, fts_strdup(shell, "\n"));
 	}
 }
 

@@ -36,6 +36,11 @@ void	ft_clone_exp(t_shell *shell)
 	shell->exp = new;
 }
 
+int ft_rl_eventloop(void)
+{
+	return (0);
+}
+
 void	ft_init_shell(t_shell *shell, char *envp[])
 {
 	ft_clone_env(shell, envp);
@@ -44,7 +49,7 @@ void	ft_init_shell(t_shell *shell, char *envp[])
 	ft_clone_exp(shell);
 	ft_shlvl(shell);
 	ft_set_pwd(shell);
-	rl_catch_signals = 0;
+	rl_event_hook = ft_rl_eventloop;
 }
 
 void	ft_critical_error(t_shell *shell)
