@@ -64,7 +64,7 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	tpp->count = count;
 	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
 		return (1);
-	printf("%d\n", tpp->count);
+	//printf("%d\n", tpp->count);
 	// free_commands(commands, tpp->count);//todo
 	
 	signal(SIGINT, ft_sigint_handler);
