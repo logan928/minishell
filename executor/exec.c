@@ -56,11 +56,10 @@ static void free_tpp(t_pipe_parameters *tpp, int fd_count)
 	while (i < fd_count)
 	{
 		j = 0;
-		free(tpp[i].pipefd[0]);
-		free(tpp[i].pipefd[1]);
-		free(tpp[i].pipefd);
+		free(tpp->pipefd[i]);
 		i++;
 	}
+	free(tpp->pipefd);
 	free(tpp);
 	
 }
