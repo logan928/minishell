@@ -328,9 +328,9 @@ int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
 int				handle_and(t_shell *shell, t_ast *ast);
 int				handle_or(t_shell *shell, t_ast *ast);
-void			free_ast(t_ast *node);
 void	ft_set_signals_main_pre(void);
 void	ft_set_signals_hd_pre(void);
 void	ft_set_signals_post(void);
+void	ft_free_exit(t_shell *shell);
 
 #endif

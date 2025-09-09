@@ -32,19 +32,19 @@ static int	ft_str_append_mem(char **s1, char *s2, size_t size2)
 	return (1);
 }
 
-static char	*ft_append_return(char **tmp, char **ret, char *b)
+static char	*ft_append_return(char *tmp, char **ret, char *b)
 {
 	size_t	line_len;
 	size_t	leftover_len;
 
-	line_len = *tmp - b + 1;
+	line_len = tmp - b + 1;
 	if (!ft_str_append_mem(ret, b, line_len))
 	{
 		free(*ret);
 		return (NULL);
 	}
-	leftover_len = ft_strlen(*tmp + 1);
-	ft_memmove(b, *tmp + 1, leftover_len + 1);
+	leftover_len = ft_strlen(tmp + 1);
+	ft_memmove(b, tmp + 1, leftover_len + 1);
 	return (*ret);
 }
 
@@ -79,7 +79,7 @@ char	*ft_get_next_line(int fd)
 	{
 		tmp = ft_strchr(b, '\n');
 		if (tmp)
-			return (ft_append_return(&tmp, &ret, b));
+			return (ft_append_return(tmp, &ret, b));
 		if (!ft_str_append_mem(&ret, b, ft_strlen(b)))
 			return (ft_free_ret(&ret, -1));
 		read_ret = read(fd, b, BUFFER_SIZE);
