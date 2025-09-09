@@ -38,9 +38,9 @@ void	ft_interactive(t_shell *shell)
 {
 	while (1)
 	{
-		if (g_abort == HEREDOC_INT)
+		if (g_abort)
 		{
-			shell->exit_status = 130;
+			shell->exit_status = g_abort;
 			g_abort = 0;
 		}
 		ft_set_signals_main_pre();
@@ -58,8 +58,6 @@ void	ft_interactive(t_shell *shell)
 				continue ;
 			}
 		}
-		g_abort = 0;
-		shell->parse_err = 0;
 		ft_run_lex(shell);
 		free_ast(shell->ast);
 	}
@@ -94,10 +92,12 @@ int	main(int argc, char *argv[], char *envp[])
 	shell.lexer = &lexer;
 	if (argc == 3 && ft_strcmp(argv[1], "-c", 0) == 0 && argv[2])
 		ft_non_interactive(&shell, argv);
+	else if (isatty(STDIN_FILENO))
+		ft_interactive(&shell);
 	else
 	{
-		//signal(SIGINT, ft_sigint_handler);
-		//signal(SIGQUIT, ft_sigquit_trap);
-		ft_interactive(&shell);
+		shell.input = ft_get_next_line(STDIN_FILENO);
+		ft_run_lex(&shell);
+		exit(shell.exit_status);
 	}
 }

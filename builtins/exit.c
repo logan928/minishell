@@ -58,7 +58,7 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 
 void	ft_exit(t_shell *shell, char **args, int shell_type)
 {
-	if (isatty(STDOUT_FILENO) && shell_type == MAIN_SHELL)
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && shell_type == MAIN_SHELL)
 		write(2, "exit\n", 6);
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);
