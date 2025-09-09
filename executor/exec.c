@@ -44,6 +44,27 @@ int	exec_command(t_shell *shell, t_command *cmd)
 // 	free(commands);
 // }
 
+static void free_tpp(t_pipe_parameters *tpp, int fd_count)
+{
+	int	i;
+	int	j;
+
+	if(!tpp)
+		return;
+	i = 0;
+	j = 0;
+	while (i < fd_count)
+	{
+		j = 0;
+		free(tpp[i].pipefd[0]);
+		free(tpp[i].pipefd[1]);
+		free(tpp[i].pipefd);
+		i++;
+	}
+	free(tpp);
+	
+}
+
 int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
@@ -71,7 +92,7 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	if (tpp->sig)	
 		return (128 + tpp->sig);
 	last_s = tpp->last_status;
-	free(tpp);
+	free_tpp(tpp, count - 1);
 	return (last_s);
 }
 
