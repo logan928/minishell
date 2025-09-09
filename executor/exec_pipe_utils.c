@@ -46,13 +46,13 @@ static t_ast	**get_leaf_commmands( t_ast *n, int *pipe_count)
 	}
 	count++; 
 	node = n;
-	commands = malloc(sizeof(t_ast *) * count);
+	commands = malloc(sizeof(t_ast *) * count); // increase to count + 1
 	if (!commands)
 		return (NULL);
 	i = count - 1;
 	search_commands(&node, commands, &i);
-	commands[i] = node;
-	*pipe_count = count;
+	commands[i] = node; //check this gdb; commands count == NULL
+	*pipe_count = count;//check
 	return (commands);
 }
 
@@ -66,7 +66,7 @@ int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
 	*commands = get_leaf_commmands(ast, &pipe_count);
 	if (!*commands)
 		return (1);
-	*count = pipe_count;
+	*count = pipe_count;//gdb
 	*pipefd = malloc(sizeof(int *) * (pipe_count - 1));
 	if (!*pipefd)
 		return (1);
