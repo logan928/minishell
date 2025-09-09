@@ -49,15 +49,12 @@ static void	free_commands(t_ast **commands, int count)
 static void free_tpp(t_pipe_parameters *tpp, int fd_count)
 {
 	int	i;
-	int	j;
 
 	if(!tpp)
 		return;
 	i = 0;
-	j = 0;
 	while (i < fd_count)
 	{
-		j = 0;
 		free(tpp->pipefd[i]);
 		i++;
 	}
