@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+# define DEFAULTPATH	"/usr/sbin:/usr/bin:/sbin:/bin"
+
 char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 {
 	char	*new;
@@ -80,8 +82,7 @@ void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
 	{
 		cmd_access->path = false;
 		free(path);
-		//return ;
-		path = shell->pwd;
+		path = fts_strjoin3cpy(shell, DEFAULTPATH, ":", shell->pwd);
 	}
 	paths = ft_split(path, ':');
 	if (paths)
