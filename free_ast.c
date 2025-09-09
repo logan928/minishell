@@ -43,12 +43,13 @@ static void	free_redirs(t_redir *redir)
 	}
 }
 
-static void	free_command(t_command *cmd)
+void	free_command(t_command *cmd)
 {   
     //printf("inside_command\n");
 	if (!cmd)
 		return;
-	free(cmd->path);
+	if(cmd->path)
+		free(cmd->path);
 	free_str_array(cmd->args);
 	free_str_array(cmd->env);
 	free_redirs(cmd->redirs);
