@@ -44,8 +44,6 @@ int ft_rl_eventloop(void)
 void	ft_init_shell(t_shell *shell, char *envp[])
 {
 	ft_clone_env(shell, envp);
-	if (!shell->env)
-		exit(EXIT_FAILURE);
 	ft_clone_exp(shell);
 	ft_shlvl(shell);
 	ft_set_pwd(shell);

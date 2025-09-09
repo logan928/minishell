@@ -20,6 +20,8 @@ void	ft_clone_env(t_shell *shell, char *envp[])
 	if (envp == NULL || envp[0] == NULL)
 	{
 		shell->env = ft_strvec_init(10);
+		if (!shell->env)
+			ft_critical_error(shell);
 		return ;
 	}
 	len = 0;

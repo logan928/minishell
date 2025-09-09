@@ -15,10 +15,12 @@
 void	ft_free_exit(t_shell *shell)
 {
 	ft_free_lexer(shell->lexer);
-	free(shell->prompt);
+	if (shell->prompt)
+		free(shell->prompt);
 	ft_strvec_free(shell->exp);
 	ft_strvec_free(shell->env);
-	free(shell->pwd);
+	if (shell->pwd)
+		free(shell->pwd);
 	rl_clear_history();
 	exit(shell->exit_status);
 }
@@ -58,7 +60,7 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 
 void	ft_exit(t_shell *shell, char **args, int shell_type)
 {
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && shell_type == MAIN_SHELL)
+	if (isatty(STDOUT_FILENO) && shell_type == MAIN_SHELL)
 		write(2, "exit\n", 6);
 	if (args && args[1] != NULL)
 		ft_check_arg(shell, args[1]);

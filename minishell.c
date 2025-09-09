@@ -32,6 +32,7 @@ void	ft_run_lex(t_shell *shell)
 	}
 	free(shell->input);
 	ft_free_lexer(shell->lexer);
+	free_ast(shell->ast);
 }
 
 void	ft_interactive(t_shell *shell)
@@ -59,7 +60,6 @@ void	ft_interactive(t_shell *shell)
 			}
 		}
 		ft_run_lex(shell);
-		free_ast(shell->ast);
 	}
 }
 
@@ -78,7 +78,7 @@ void	ft_non_interactive(t_shell *shell, char **argv)
 		ft_run_lex(shell);
 		i++;
 	}
-	exit(shell->exit_status);
+	ft_free_exit(shell);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -96,8 +96,16 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_interactive(&shell);
 	else
 	{
-		shell.input = ft_get_next_line(STDIN_FILENO);
-		ft_run_lex(&shell);
-		exit(shell.exit_status);
+		while (1)
+		{
+			char *line = ft_get_next_line(STDIN_FILENO);
+			if (line == NULL)
+				break ;
+			if (line[ft_strlen(line) - 1] == '\n')
+				line[ft_strlen(line) - 1] = '\0';
+			shell.input = line;
+			ft_run_lex(&shell);
+		}
+		ft_free_exit(&shell);
 	}
 }
