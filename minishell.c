@@ -16,14 +16,17 @@ extern volatile sig_atomic_t	g_abort;
 
 void	ft_run_lex(t_shell *shell)
 {
+	t_token	*tok;
+	
 	lex(shell, shell->input);
+	tok = shell->lexer->tokens;
 	if (ft_check_syntax(shell))
 	{
 		shell->parse_err = 0;
 		ft_here(shell);
 		if (g_abort != HEREDOC_INT)
 		{
-			shell->ast = parse(shell, &shell->lexer->tokens);
+			shell->ast = parse(shell, &tok);
 			if (shell->parse_err != 0)
 				shell->parse_err = 0;
 			else
