@@ -80,7 +80,8 @@ void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
 	{
 		cmd_access->path = false;
 		free(path);
-		return ;
+		//return ;
+		path = shell->pwd;
 	}
 	paths = ft_split(path, ':');
 	if (paths)
