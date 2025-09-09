@@ -52,11 +52,12 @@ void	ft_read_line(t_shell *shell, char **res, char *limiter)
 	limiter_len = ft_strlen(limiter);
 	while (1)
 	{
-		ft_set_signals_hd_pre();
 		line = readline("> ");
-		ft_set_signals_post();
 		if (g_abort == HEREDOC_INT)
+		{
+			free(line);
 			break ;
+		}
 		if (!line)
 		{
 			ft_here_eof_warning(shell, limiter);
@@ -111,7 +112,9 @@ void	ft_here(t_shell *shell)
 			shell->lexer->io_here = true;
 		else if (shell->lexer->io_here)
 		{
+			ft_set_signals_hd_pre();
 			ft_here_doc(shell, tmp);
+			ft_set_signals_post();
 			shell->lexer->io_here = false;
 		}
 		tmp = tmp->next;

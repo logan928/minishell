@@ -24,8 +24,8 @@ static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 {
 	int		access_err;
 
-	//signal(SIGINT, SIG_DFL);
-	//signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 		exit (1);
 	if (cmd->args)
