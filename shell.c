@@ -66,3 +66,21 @@ void	ft_critical_error(t_shell *shell)
 		free_ast(shell->ast);
 	exit(EXIT_FAILURE);
 }
+
+void	ft_critical_with_code(t_shell *shell, int code)
+{
+	shell->exit_status = code;
+	rl_clear_history();
+	if (shell->input)
+		free(shell->input);
+	ft_strvec_free(shell->env);
+	ft_strvec_free(shell->exp);
+	ft_free_lexer(shell->lexer);
+	if (shell->pwd)
+		free(shell->pwd);
+	if (shell->prompt)
+		free(shell->prompt);
+	if (shell->ast)
+		free_ast(shell->ast);
+	exit(shell->exit_status);
+}

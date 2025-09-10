@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/10 17:04:13 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/10 17:05:54 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,6 +333,7 @@ void			ft_set_signals_hd_pre(void);
 void			ft_set_signals_post(void);
 void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
+void			ft_critical_with_code(t_shell *shell, int code);
 int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
 
 #endif
