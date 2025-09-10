@@ -27,20 +27,20 @@ static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-		exit (1);
+		ft_critical_with_code(shell, 1);
 	if (cmd->args)
 	{
 		access_err = ft_check_access(shell, cmd);
 		if (access_err)
-			exit (access_err);
+			ft_critical_with_code(shell, access_err);
 	}
 	if (shell->parse_err == 5)
-		exit (1);
+		ft_critical_with_code(shell, 1);
 	if (!cmd->args)
-		exit(0);
+		ft_critical_with_code(shell, 0);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
-	exit(127);
+	ft_critical_with_code(shell, 127);
 }
 
 static int	exec_command_signal_handle(int *status)

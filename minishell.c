@@ -31,10 +31,9 @@ void	ft_run_lex(t_shell *shell)
 				shell->parse_err = 0;
 			else
 				shell->exit_status = exec_ast(shell, shell->ast);
-			//free_ast(shell->ast);
+			free_ast(shell->ast);
 		}
 	}
-	free_ast(shell->ast);
 	free(shell->input);
 	ft_free_lexer(shell->lexer);
 }
