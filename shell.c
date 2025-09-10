@@ -55,10 +55,8 @@ void	ft_critical_error(t_shell *shell)
 	rl_clear_history();
 	if (shell->input)
 		free(shell->input);
-	if (shell->env)
-		ft_strvec_free(shell->env);
-	if (shell->exp)
-		ft_strvec_free(shell->exp);
+	ft_strvec_free(shell->env);
+	ft_strvec_free(shell->exp);
 	ft_free_lexer(shell->lexer);
 	if (shell->pwd)
 		free(shell->pwd);
