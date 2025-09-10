@@ -81,6 +81,24 @@ void	ft_non_interactive(t_shell *shell, char **argv)
 		ft_run_lex(shell);
 		i++;
 	}
+	free(input);
+	ft_free_exit(shell);
+}
+
+void	ft_non_interactive_piped(t_shell *shell)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = ft_get_next_line(STDIN_FILENO);
+		if (line == NULL)
+			break ;
+		if (line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
+		shell->input = line;
+		ft_run_lex(shell);
+	}
 	ft_free_exit(shell);
 }
 
@@ -98,17 +116,5 @@ int	main(int argc, char *argv[], char *envp[])
 	else if (isatty(STDIN_FILENO))
 		ft_interactive(&shell);
 	else
-	{
-		while (1)
-		{
-			char *line = ft_get_next_line(STDIN_FILENO);
-			if (line == NULL)
-				break ;
-			if (line[ft_strlen(line) - 1] == '\n')
-				line[ft_strlen(line) - 1] = '\0';
-			shell.input = line;
-			ft_run_lex(&shell);
-		}
-		ft_free_exit(&shell);
-	}
+		ft_non_interactive_piped(&shell);
 }
