@@ -13,7 +13,6 @@
 #include "../minishell.h"
 #include <fcntl.h>
 
-//TODO: SHELL
 int	open_file(t_redir *redir, int shell_type, int flags)
 {
 	int	fd;

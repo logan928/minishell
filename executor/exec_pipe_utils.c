@@ -82,8 +82,7 @@ int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
 	return (0);
 }
 
-//TODO: SHELL
-pid_t	*get_pid_ts(t_pipe_parameters *tpp)
+pid_t	*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp)
 {
 	pid_t	*pids;
 
@@ -91,7 +90,7 @@ pid_t	*get_pid_ts(t_pipe_parameters *tpp)
 	if (pids == NULL) 
 	{
 		perror("malloc failed");
-		exit(EXIT_FAILURE);
+		ft_critical_with_code(shell, EXIT_FAILURE);
 	}
 	return (pids);
 }

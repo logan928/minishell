@@ -47,7 +47,7 @@ static void	free_commands(t_ast **commands)
 	free(commands);
 }
 
-static void free_tpp(t_pipe_parameters *tpp, int fd_count)
+void free_tpp(t_pipe_parameters *tpp, int fd_count)
 {
 	int	i;
 

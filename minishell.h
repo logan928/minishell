@@ -321,7 +321,7 @@ int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
 int				exec_pipeline_core (t_shell *shell, int ***pipefd, \
 				t_ast ***commands, t_pipe_parameters *tpp);
 int				run_builtin(t_shell *shell, t_command *cmd, int shell_type);
-pid_t			*get_pid_ts(t_pipe_parameters *tpp);
+pid_t			*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp);
 int 			exec_command_builtins(t_shell *shell, t_command *cmd);
 int				exec_command(t_shell *shell, t_command *cmd);
 int				exec_pipeline(t_shell *shell, t_ast *ast);
@@ -335,5 +335,6 @@ void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
 void			ft_critical_with_code(t_shell *shell, int code);
 int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
+void 			free_tpp(t_pipe_parameters *tpp, int fd_count);
 
 #endif

@@ -58,6 +58,7 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 	}
 	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
 		exec_command_child(shell, (*commands)[j]->cmd);
+	free_tpp(tpp, tpp->count - 1);
 	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]));
 }
 
@@ -110,7 +111,7 @@ int	exec_pipeline_core(t_shell *shell, int ***pipefd, t_ast ***commands, \
 	pid_t	*pids;
 	int		j;
 
-	pids = get_pid_ts(tpp);
+	pids = get_pid_ts(shell, tpp);
 	if (create_pipe_forks(shell, commands, pids, tpp))
 		return (1);
 	j = 0;
