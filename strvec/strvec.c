@@ -36,11 +36,14 @@ void	ft_strvec_free(t_strvec *sv)
 {
 	size_t	i;
 
+	if (sv == NULL)
+		return ;
 	i = 0;
 	while (i < sv->len)
 		free(sv->data[i++]);
 	free(sv->data);
 	free(sv);
+	sv = NULL;
 }
 
 t_strvec	*ft_strvec_realloc(t_strvec *sv)
