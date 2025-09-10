@@ -63,7 +63,7 @@ static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 	{
 		perror("pipe");
 		if (shell_type == CHILD_SHELL)
-			exit(1); 
+			ft_critical_with_code(shell, 1); 
 		else
 			return (1);
 	}
@@ -73,7 +73,7 @@ static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 		if (heredoc_fd == -1)
 		{
 			if (shell_type == CHILD_SHELL)
-				exit(1); 
+				ft_critical_with_code(shell, 1); 
 			else
 				return (1);
 		}
@@ -83,7 +83,7 @@ static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 		{
 			perror("dup2");
 			if (shell_type == CHILD_SHELL)
-				exit(1); 
+				ft_critical_with_code(shell, 1); 
 			else
 				return (1);
 		}

@@ -82,6 +82,7 @@ int	get_fd_array(t_ast *ast, t_ast ***commands, int *count, int ***pipefd)
 	return (0);
 }
 
+//TODO: SHELL
 pid_t	*get_pid_ts(t_pipe_parameters *tpp)
 {
 	pid_t	*pids;

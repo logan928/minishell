@@ -110,7 +110,7 @@ int	exec_subshell(t_shell *shell, t_ast *ast)
 		if (ast->cmd && ast->cmd->redirs)
 			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, \
 			CHILD_SHELL);
-		exit(exec_ast(shell, ast->left));
+		ft_critical_with_code(shell, exec_ast(shell, ast->left));
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))

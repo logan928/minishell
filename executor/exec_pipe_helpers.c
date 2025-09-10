@@ -6,13 +6,13 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 14:58:41 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/06 14:58:44 by uwettasi         ###   ########.fr       */
+/*   Updated: 2025/09/10 17:25:58 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int	exec_command_child(t_shell *shell, t_command *cmd)
+static void	exec_command_child(t_shell *shell, t_command *cmd)
 {
 	int	access_err;
 
@@ -20,22 +20,22 @@ static int	exec_command_child(t_shell *shell, t_command *cmd)
 	{
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
-			exit(0);
+			ft_critical_with_code(shell, 0);
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-		exit(shell->exit_status);
+		ft_critical_with_code(shell, shell->exit_status);
 	if (cmd->command_kind == BUILTIN)
 	{
 		run_builtin(shell, cmd, CHILD_SHELL); 
-		exit(shell->exit_status);
+		ft_critical_with_code(shell, shell->exit_status);
 	}
 	access_err = ft_check_access(shell, cmd);
 	if (access_err)
-		exit(access_err);
+		ft_critical_with_code(shell, access_err);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
-	exit(127);
+	ft_critical_with_code(shell, 127);
 }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
@@ -58,7 +58,7 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 	}
 	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
 		exec_command_child(shell, (*commands)[j]->cmd);
-	exit(exec_ast(shell, (*commands)[j]));
+	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]));
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
