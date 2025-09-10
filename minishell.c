@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 12:05:13 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/05 16:50:07 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/10 13:45:22 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ void	ft_run_lex(t_shell *shell)
 				shell->parse_err = 0;
 			else
 				shell->exit_status = exec_ast(shell, shell->ast);
+			free_ast(shell->ast);
 		}
 	}
 	free(shell->input);
 	ft_free_lexer(shell->lexer);
-	free_ast(shell->ast);
 }
 
 void	ft_interactive(t_shell *shell)
