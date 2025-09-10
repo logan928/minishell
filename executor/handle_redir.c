@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 17:20:06 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/03 17:20:09 by uwettasi         ###   ########.fr       */
+/*   Updated: 2025/09/10 13:19:42 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,11 @@ static int	handle_r_app(t_redir *redir, int shell_type, int flags)
 	return (0);
 }
 
-static int	handle_r_heredoc(t_redir *redir, int shell_type, \
+static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 	t_command_kind kind)
 {
 	int	pipefd[2];
+	int	heredoc_fd;
 
 	if (pipe(pipefd) == -1) 
 	{
@@ -68,15 +69,31 @@ static int	handle_r_heredoc(t_redir *redir, int shell_type, \
 	}
 	if (kind != BUILTIN)
 	{
-		write(pipefd[1], redir->file[0], strlen(redir->file[0]));
-		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
+		heredoc_fd = ft_heredoc_file(shell, pipefd[1], pipefd[0], redir->file[0]);
+		if (heredoc_fd == -1)
+		{
+			if (shell_type == CHILD_SHELL)
+				exit(1); 
+			else
+				return (1);
+		}
+		if (pipefd[1] != -1)
+			close(pipefd[1]);
+		if (dup2(heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2");
+			if (shell_type == CHILD_SHELL)
+				exit(1); 
+			else
+				return (1);
+		}
+		close(heredoc_fd);
 		close(pipefd[0]);
 	}
 	return (0);
 }
 
-int	handle_redir(t_redir *redir, int shell_type, \
+int	handle_redir(t_shell *shell, t_redir *redir, int shell_type, \
 	t_command_kind kind )
 {
 	if (redir->kind == R_IN)
@@ -86,6 +103,6 @@ int	handle_redir(t_redir *redir, int shell_type, \
 	else if (redir->kind == R_APP)
 		return (handle_r_app(redir, shell_type, O_WRONLY | O_CREAT | O_APPEND));
 	else if (redir->kind == R_HDOC)
-		return (handle_r_heredoc(redir, shell_type, kind));
+		return (handle_r_heredoc(shell, redir, shell_type, kind));
 	return (0);
 }

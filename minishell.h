@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/05 15:41:09 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/10 17:04:13 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,7 +301,7 @@ void			ft_shlvl(t_shell *shell);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
 int				open_file(t_redir *redir, int shell_type, int flags);
-int				handle_redir(t_redir *redir, int shell_type, \
+int				handle_redir(t_shell *shell, t_redir *redir, int shell_type, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
 int				ft_check_access(t_shell *shell, t_command *cmd);
@@ -328,10 +328,11 @@ int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
 int				handle_and(t_shell *shell, t_ast *ast);
 int				handle_or(t_shell *shell, t_ast *ast);
-void	ft_set_signals_main_pre(void);
-void	ft_set_signals_hd_pre(void);
-void	ft_set_signals_post(void);
-void	ft_free_exit(t_shell *shell);
-void	free_command(t_command *cmd);
+void			ft_set_signals_main_pre(void);
+void			ft_set_signals_hd_pre(void);
+void			ft_set_signals_post(void);
+void			ft_free_exit(t_shell *shell);
+void			free_command(t_command *cmd);
+int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
 
 #endif

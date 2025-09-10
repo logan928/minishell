@@ -6,7 +6,7 @@
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:40:45 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/06 13:40:59 by uwettasi         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:50:59 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 			shell->parse_err = 1;
 			return (1);
 		}
-		if (handle_redir(redir, shell_type, kind))
+		if (handle_redir(shell, redir, shell_type, kind))
 			return (1);
 		redir = redir->next;
 	}
