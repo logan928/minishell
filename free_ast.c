@@ -55,6 +55,7 @@ void	free_command(t_command *cmd)
 	free_redirs(cmd->redirs);
     //printf("outside_command\n");
 	free(cmd);
+	cmd = NULL;
 }
 
 void	free_ast(t_ast *node)
