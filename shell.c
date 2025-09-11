@@ -67,8 +67,10 @@ void	ft_critical_error(t_shell *shell)
 	exit(EXIT_FAILURE);
 }
 
-void	ft_critical_with_code(t_shell *shell, int code)
+void	ft_critical_with_code(t_shell *shell, int code, t_ast **commands)
 {
+	if (commands != NULL)
+		free_commands(commands);
 	shell->exit_status = code;
 	rl_clear_history();
 	if (shell->input)

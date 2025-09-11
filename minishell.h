@@ -333,8 +333,9 @@ void			ft_set_signals_hd_pre(void);
 void			ft_set_signals_post(void);
 void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
-void			ft_critical_with_code(t_shell *shell, int code);
+void			ft_critical_with_code(t_shell *shell, int code, t_ast **commands);
 int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
 void 			free_tpp(t_pipe_parameters *tpp, int fd_count);
+void			free_commands(t_ast **commands);
 
 #endif

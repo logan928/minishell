@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp)
+static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp, t_ast **commands)
 {
 	int	access_err;
 
@@ -20,23 +20,23 @@ static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters
 	{
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
-			ft_critical_with_code(shell, 0);
+			ft_critical_with_code(shell, 0, commands);
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-		ft_critical_with_code(shell, shell->exit_status);
+		ft_critical_with_code(shell, shell->exit_status, commands);
 	if (cmd->command_kind == BUILTIN)
 	{
 		free_tpp(tpp, tpp->count - 1);
 		run_builtin(shell, cmd, CHILD_SHELL); 
-		ft_critical_with_code(shell, shell->exit_status);
+		ft_critical_with_code(shell, shell->exit_status, commands);
 	}
 	access_err = ft_check_access(shell, cmd);
 	if (access_err)
-		ft_critical_with_code(shell, access_err);
+		ft_critical_with_code(shell, access_err, commands);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
-	ft_critical_with_code(shell, 127);
+	ft_critical_with_code(shell, 127, commands);
 }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
@@ -58,9 +58,9 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 		k++;
 	}
 	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-		exec_command_child(shell, (*commands)[j]->cmd, tpp);
+		exec_command_child(shell, (*commands)[j]->cmd, tpp, *commands);
 	free_tpp(tpp, tpp->count - 1);
-	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]));
+	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]), *commands);
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
