@@ -43,8 +43,6 @@ void	ft_merge(t_shell *shell, char ***arr, size_t lst_size, int is_cmd)
 
 	tmp = shell->lexer->tmp;
 	new_arr = fts_malloc(shell, sizeof(char *) * (lst_size + 1 + is_cmd));
-	if (!new_arr)
-		ft_critical_error(shell);
 	i = 0;
 	if (is_cmd)
 		new_arr[0] = fts_strdup(shell, (*arr)[i++]);

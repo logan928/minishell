@@ -14,6 +14,7 @@
 
 void	ft_free_exit(t_shell *shell)
 {
+	free_ast(shell->ast);
 	ft_free_lexer(shell->lexer);
 	if (shell->prompt)
 		free(shell->prompt);

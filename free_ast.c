@@ -67,4 +67,5 @@ void	free_ast(t_ast *node)
     if(node->cmd)
 	    free_command(node->cmd);
 	free(node);
+	node = NULL;
 }

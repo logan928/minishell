@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-static void	exec_command_child(t_shell *shell, t_command *cmd)
+static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp)
 {
 	int	access_err;
 
@@ -27,6 +27,7 @@ static void	exec_command_child(t_shell *shell, t_command *cmd)
 		ft_critical_with_code(shell, shell->exit_status);
 	if (cmd->command_kind == BUILTIN)
 	{
+		free_tpp(tpp, tpp->count - 1);
 		run_builtin(shell, cmd, CHILD_SHELL); 
 		ft_critical_with_code(shell, shell->exit_status);
 	}
@@ -57,7 +58,7 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 		k++;
 	}
 	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-		exec_command_child(shell, (*commands)[j]->cmd);
+		exec_command_child(shell, (*commands)[j]->cmd, tpp);
 	free_tpp(tpp, tpp->count - 1);
 	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]));
 }

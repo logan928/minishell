@@ -110,4 +110,6 @@ void	ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd)
 	sh->lexer->tmp = sh->lexer->tmp2;
 	ft_merge(sh, arr, lst_size, is_cmd);
 	sh->lexer->tmp2 = NULL;
+	ft_free_tokens(sh->lexer->tmp);
+	sh->lexer->tmp = NULL;
 }
