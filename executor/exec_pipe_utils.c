@@ -90,7 +90,7 @@ pid_t	*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp)
 	if (pids == NULL) 
 	{
 		perror("malloc failed");
-		ft_critical_with_code(shell, EXIT_FAILURE, NULL);
+		ft_critical_with_code(shell, EXIT_FAILURE, NULL, pids);
 	}
 	return (pids);
 }
