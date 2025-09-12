@@ -38,7 +38,7 @@ char	*ft_pseudo_random_filename(t_shell *shell)
 
 	id = fts_itoa(shell, (long)ft_get_rnd(shell));
 	id_len = ft_strlen(id);
-	fn = fts_malloc(shell,  (id_len + 16));
+	fn = fts_malloc(shell, (id_len + 16));
 	offset = 0;
 	ft_memcpy(fn, "/tmp/minishell-", 15);
 	offset += 15;
@@ -62,10 +62,32 @@ static int	ft_clean_err(char *msg, char *to_free, char *to_unlink, int fd)
 	return (-1);
 }
 
-int	ft_heredoc_file(t_shell *shell, int w, int r, char *input)
+static int	ft_heredoc_file(t_shell *shell, char *input, size_t input_len)
 {
 	int		fd;
 	char	*path;
+
+	path = ft_pseudo_random_filename(shell);
+	fd = open(path, O_CREAT | O_EXCL | O_WRONLY, 0600);
+	if (fd < 0)
+		return (ft_clean_err("open temp heredoc file for write", \
+				path, NULL, fd));
+	if (write(fd, input, input_len) != (ssize_t)input_len)
+		return (ft_clean_err("write temp heredoc file", \
+				path, path, fd));
+	close(fd);
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (ft_clean_err("open temp heredoc file for read", \
+				path, path, fd));
+	if (unlink(path) < 0)
+		return (ft_clean_err("unlink", NULL, path, fd));
+	free(path);
+	return (fd);
+}
+
+int	ft_heredoc_pipe(t_shell *shell, int w, int r, char *input)
+{
 	size_t	input_len;
 
 	input_len = ft_strlen(input);
@@ -76,18 +98,5 @@ int	ft_heredoc_file(t_shell *shell, int w, int r, char *input)
 	}
 	close(w);
 	close(r);
-	path = ft_pseudo_random_filename(shell);
-	fd = open(path, O_CREAT | O_EXCL | O_WRONLY, 0600);
-	if (fd < 0)
-		return (ft_clean_err("open temp heredoc file for write", path, NULL, fd));
-	if (write(fd, input, input_len) != (ssize_t)input_len)
-		return (ft_clean_err("write temp heredoc file", path, path, fd));
-	close(fd);
-	fd = open(path, O_RDONLY);
-	if (fd < 0)
-		return (ft_clean_err("open temp heredoc file for read", path, path, fd));
-	if (unlink(path) < 0)
-		return (ft_clean_err("unlink", NULL, path, fd));
-	free(path);
-	return (fd);
+	return (ft_heredoc_file(shell, input, input_len));
 }
