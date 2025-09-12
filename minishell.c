@@ -51,7 +51,7 @@ void	ft_interactive(t_shell *shell)
 		shell->input = readline(ft_set_prompt(shell));
 		ft_set_signals_post();
 		if (!shell->input)
-			ft_exit(shell, NULL, MAIN_SHELL);
+			ft_exit(shell, NULL, MAIN_SHELL, -1);
 		if (shell->input)
 		{
 			if (*shell->input)

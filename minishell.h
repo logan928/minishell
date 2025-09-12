@@ -233,7 +233,7 @@ void			ft_add_token_sorted(t_token **head, t_token *token);
 void			ft_clone_env(t_shell *shell, char *envp[]);
 void			ft_env(t_shell *shell, char *env[]);
 void			ft_free_env(char *envp[]);
-void			ft_exit(t_shell *shell, char **args, int shell_type);
+void			ft_exit(t_shell *shell, char **args, int shell_type, pid_t fd);
 void			ft_echo(t_shell *shell, char **args);
 char			*ft_get_cwd(t_shell *shell);
 void			ft_pwd(t_shell *shell, char **args);
@@ -321,7 +321,7 @@ int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
 				int ***pipefd);
 int				exec_pipeline_core (t_shell *shell, int ***pipefd, \
 				t_ast ***commands, t_pipe_parameters *tpp);
-int				run_builtin(t_shell *shell, t_command *cmd, int shell_type);
+int				run_builtin(t_shell *shell, t_command *cmd, int shell_type, pid_t fd);
 pid_t			*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp);
 int 			exec_command_builtins(t_shell *shell, t_command *cmd);
 int				exec_command(t_shell *shell, t_command *cmd);
