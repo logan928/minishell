@@ -208,6 +208,7 @@ typedef struct s_pipe_parameters
 	bool	core_dump;
 	int		sig;
 	int		**pipefd;
+	int		temp_counter;
 }	t_pipe_parameters;
 
 char			*ft_set_prompt(t_shell *shell);

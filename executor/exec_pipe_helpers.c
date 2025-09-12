@@ -12,10 +12,13 @@
 
 #include "../minishell.h"
 
-static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp, t_ast **commands)
+//static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp, t_ast **commands)
+static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, t_ast **commands, pid_t *pids)
 {
 	int	access_err;
+	t_command	*cmd;
 
+	cmd = commands[tpp->temp_counter]->cmd;
 	if (cmd->args)
 	{
 		ft_skip_empty_vars(shell, cmd->args);
@@ -40,27 +43,30 @@ static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters
 }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
-			t_pipe_parameters *tpp, int j)
+			t_pipe_parameters *tpp, pid_t *pids)
 {
 	int	k;
+	//int	j;
 
 	k = 0;
+	//j = tpp->temp_counter;
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	if (j > 0)
-		dup2((tpp->pipefd)[j - 1][0], STDIN_FILENO);
-	if (j < tpp->count - 1)
-		dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
+	if (tpp->temp_counter > 0)
+		dup2((tpp->pipefd)[tpp->temp_counter - 1][0], STDIN_FILENO);
+	if (tpp->temp_counter < tpp->count - 1)
+		dup2((tpp->pipefd)[tpp->temp_counter][1], STDOUT_FILENO);
 	while (k < tpp->count - 1)
 	{
 		close((tpp->pipefd)[k][0]);
 		close((tpp->pipefd)[k][1]);
 		k++;
 	}
-	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-		exec_command_child(shell, (*commands)[j]->cmd, tpp, *commands);
+	if ((*commands)[tpp->temp_counter]->type == AST_CMD && (*commands)[tpp->temp_counter]->cmd)
+		//exec_command_child(shell, (*commands)[tpp->temp_counter]->cmd, tpp, *commands);
+		exec_command_child(shell, tpp, *commands);
 	free_tpp(tpp, tpp->count - 1);
-	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]), *commands);
+	ft_critical_with_code(shell, exec_ast(shell, (*commands)[tpp->temp_counter]), *commands);
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
@@ -69,14 +75,15 @@ static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
 	int		j;
 
 	j = 0;
-	while (j < tpp->count)
+	tpp->temp_counter = j;
+	while (tpp->temp_counter < tpp->count)
 	{
-		pids[j] = fork();
-		if (pids[j] == -1)
+		pids[tpp->temp_counter] = fork();
+		if (pids[tpp->temp_counter] == -1)
 			return (perror("fork"), 1);
-		if (pids[j] == 0) 
-			exec_command_child_wrapper(shell, commands, tpp, j);
-		j++;
+		if (pids[tpp->temp_counter] == 0) 
+			exec_command_child_wrapper(shell, commands, tpp, pids);
+		tpp->temp_counter++;
 	}
 	return (0);
 }

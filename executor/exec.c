@@ -73,7 +73,7 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	tpp = malloc(sizeof(t_pipe_parameters));
 	if (!tpp)
 		return (1);
-	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL};
+	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL, 0};
 	count = 0;
 	commands = NULL;
 	if (get_fd_array(ast, &commands, &count, &tpp->pipefd))
