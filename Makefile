@@ -64,7 +64,8 @@ SRCS := minishell.c \
 		$(EXECUTOR_DIR)/heredoc_file.c \
 		$(EXECUTOR_DIR)/io_error.c \
 		free_ast.c \
-		$(EXECUTOR_DIR)/exec_pipe_utils2.c 
+		$(EXECUTOR_DIR)/exec_pipe_utils2.c	\
+		$(EXECUTOR_DIR)/exec_utils.c 
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)
 LDFLAGS := -L$(LIBFT_DIR) -lft -lreadline

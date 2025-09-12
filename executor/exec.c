@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <fcntl.h>
 
 int	exec_command(t_shell *shell, t_command *cmd)
 {
@@ -28,40 +27,28 @@ int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
-void	free_commands(t_ast **commands)
-{
-	// int	i;
-	// int	j;
+// void	free_commands(t_ast **commands)
+// {
+// 	if (!commands)
+// 		return ;
+// 	free(commands);
+// }
 
-	if (!commands)
-		return;
-	// i = 0;
-	// while (i < count)
-	// {
-	// 	j = 0;
-	// 	// free_command(commands[i]->cmd);
-	// 	free(commands[i]);
-	// 	//free_ast(commands[i]);
-	// 	i++;
-	// }
-	free(commands);
-}
+// void	free_tpp(t_pipe_parameters *tpp, int fd_count)
+// {
+// 	int	i;
 
-void free_tpp(t_pipe_parameters *tpp, int fd_count)
-{
-	int	i;
-
-	if(!tpp)
-		return;
-	i = 0;
-	while (i < fd_count)
-	{
-		free(tpp->pipefd[i]);
-		i++;
-	}
-	free(tpp->pipefd);
-	free(tpp);
-}
+// 	if (!tpp)
+// 		return ;
+// 	i = 0;
+// 	while (i < fd_count)
+// 	{
+// 		free(tpp->pipefd[i]);
+// 		i++;
+// 	}
+// 	free(tpp->pipefd);
+// 	free(tpp);
+// }
 
 int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
@@ -83,11 +70,9 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	tpp->count = count;
 	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
 		return (1);
-	//printf("%d\n", tpp->count);
-	free_commands(commands);//todo
-	
+	free_commands(commands);
 	ft_set_signals_main_pre();
-	if (tpp->sig)	
+	if (tpp->sig)
 		return (128 + tpp->sig);
 	last_s = tpp->last_status;
 	free_tpp(tpp, count - 1);

@@ -12,10 +12,9 @@
 
 #include "../minishell.h"
 
-//static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp, t_ast **commands)
-static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, t_ast **commands, pid_t *pids)
+static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
+			t_ast **commands, pid_t *pids)
 {
-	// int	access_err;
 	t_command	*cmd;
 
 	cmd = commands[tpp->temp_counter]->cmd;
@@ -34,9 +33,6 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, t_ast **c
 		run_builtin(shell, cmd, CHILD_SHELL, -1); 
 		ft_critical_with_code(shell, shell->exit_status, commands, pids);
 	}
-	// access_err = ft_check_access(shell, cmd);
-	// if (access_err)
-	// 	ft_critical_with_code(shell, access_err, commands, pids);
 	handle_check_access(shell, cmd, commands, pids);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
@@ -47,10 +43,8 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 			t_pipe_parameters *tpp, pid_t *pids)
 {
 	int	k;
-	//int	j;
 
 	k = 0;
-	//j = tpp->temp_counter;
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (tpp->temp_counter > 0)
@@ -63,11 +57,12 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 		close((tpp->pipefd)[k][1]);
 		k++;
 	}
-	if ((*commands)[tpp->temp_counter]->type == AST_CMD && (*commands)[tpp->temp_counter]->cmd)
-		//exec_command_child(shell, (*commands)[tpp->temp_counter]->cmd, tpp, *commands);
+	if ((*commands)[tpp->temp_counter]->type == AST_CMD \
+			&& (*commands)[tpp->temp_counter]->cmd)
 		exec_command_child(shell, tpp, *commands, pids);
 	free_tpp(tpp, tpp->count - 1);
-	ft_critical_with_code(shell, exec_ast(shell, (*commands)[tpp->temp_counter]), *commands, pids);
+	ft_critical_with_code(shell, exec_ast(\
+	shell, (*commands)[tpp->temp_counter]), *commands, pids);
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \

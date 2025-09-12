@@ -1,23 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_pipe_utils2.c                                 :+:      :+:    :+:   */
+/*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: uwettasi <uwettasi@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/12 16:24:28 by uwettasi          #+#    #+#             */
-/*   Updated: 2025/09/12 16:24:33 by uwettasi         ###   ########.fr       */
+/*   Created: 2025/09/12 18:48:58 by uwettasi          #+#    #+#             */
+/*   Updated: 2025/09/12 18:49:03 by uwettasi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	handle_check_access(t_shell *shell, t_command *cmd, \
-			t_ast **commands, pid_t *pids)
+void	free_commands(t_ast **commands)
 {
-	int	access_err;
+	if (!commands)
+		return ;
+	free(commands);
+}
 
-	access_err = ft_check_access(shell, cmd);
-	if (access_err)
-		ft_critical_with_code(shell, access_err, commands, pids);
+void	free_tpp(t_pipe_parameters *tpp, int fd_count)
+{
+	int	i;
+
+	if (!tpp)
+		return ;
+	i = 0;
+	while (i < fd_count)
+	{
+		free(tpp->pipefd[i]);
+		i++;
+	}
+	free(tpp->pipefd);
+	free(tpp);
 }
