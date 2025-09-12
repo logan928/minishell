@@ -67,7 +67,11 @@ void	ft_critical_error(t_shell *shell)
 	exit(EXIT_FAILURE);
 }
 
+<<<<<<< HEAD
 void	ft_critical_with_code(t_shell *shell, int code)
+=======
+void	ft_critical_with_code(t_shell *shell, int code, t_ast **commands, pid_t *pids)
+>>>>>>> parent of b678f11 (some norm, add tester)
 {
 	shell->exit_status = code;
 	rl_clear_history();
