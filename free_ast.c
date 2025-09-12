@@ -10,16 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
-
-#include <stdlib.h>
+#include "minishell.h"
 
 static void	free_str_array(char **arr)
 {
 	int	i;
 
 	if (!arr)
-		return;
+		return ;
 	i = 0;
 	while (arr[i])
 	{
@@ -44,29 +42,26 @@ static void	free_redirs(t_redir *redir)
 }
 
 void	free_command(t_command *cmd)
-{   
-    //printf("inside_command\n");
+{
 	if (!cmd)
-		return;
-	if(cmd->path)
+		return ;
+	if (cmd->path)
 		free(cmd->path);
 	free_str_array(cmd->args);
 	free_str_array(cmd->env);
 	free_redirs(cmd->redirs);
-    //printf("outside_command\n");
 	free(cmd);
 	cmd = NULL;
 }
 
 void	free_ast(t_ast *node)
 {
-    //printf("inside\n");
 	if (!node)
-		return;
+		return ;
 	free_ast(node->left);
 	free_ast(node->right);
-    if(node->cmd)
-	    free_command(node->cmd);
+	if (node->cmd)
+		free_command(node->cmd);
 	free(node);
 	node = NULL;
 }

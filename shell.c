@@ -36,7 +36,7 @@ void	ft_clone_exp(t_shell *shell)
 	shell->exp = new;
 }
 
-int ft_rl_eventloop(void)
+int	ft_rl_eventloop(void)
 {
 	return (0);
 }
@@ -67,12 +67,13 @@ void	ft_critical_error(t_shell *shell)
 	exit(EXIT_FAILURE);
 }
 
-<<<<<<< HEAD
-void	ft_critical_with_code(t_shell *shell, int code)
-=======
-void	ft_critical_with_code(t_shell *shell, int code, t_ast **commands, pid_t *pids)
->>>>>>> parent of b678f11 (some norm, add tester)
+void	ft_critical_with_code(t_shell *shell, int code, \
+		t_ast **commands, pid_t *pids)
 {
+	if (commands != NULL)
+		free_commands(commands);
+	if (pids != NULL)
+		free(pids);
 	shell->exit_status = code;
 	rl_clear_history();
 	if (shell->input)

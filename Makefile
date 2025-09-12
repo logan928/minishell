@@ -12,6 +12,7 @@ STRVEC_DIR := ./strvec
 NAME := minishell
 SRCS := minishell.c \
 		signals.c \
+		signals2.c \
 		shell.c \
 		safe_wrappers.c \
 		safe_wrappers_2.c \
@@ -61,9 +62,7 @@ SRCS := minishell.c \
 		$(EXECUTOR_DIR)/exec_cmd_bi_helpers.c	\
 		$(EXECUTOR_DIR)/exec_entry.c	\
 		$(EXECUTOR_DIR)/heredoc_file.c \
-		$(EXECUTOR_DIR)/exec_pipe_utils2.c \
 		$(EXECUTOR_DIR)/io_error.c \
-		$(EXECUTOR_DIR)/exec_pipe_utils2.c \
 		free_ast.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)

@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-# define DEFAULTPATH	"/usr/sbin:/usr/bin:/sbin:/bin"
-
 char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 {
 	char	*new;
@@ -45,16 +43,16 @@ void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
 	}
 }
 
-bool	ft_try_paths(t_shell *sh, char **paths, t_command *cmd, t_cmd_access *acc)
+bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *acc)
 {
 	int			i;
 	char		*full_path;
 	struct stat	st;
 
 	i = 0;
-	while (paths[i])
+	while (p[i])
 	{
-		full_path = ft_combine_path(sh, paths[i], cmd->args[0]);
+		full_path = ft_combine_path(sh, p[i], cmd->args[0]);
 		if (stat(full_path, &st) == 0)
 		{
 			cmd->path = fts_strdup(sh, full_path);

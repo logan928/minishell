@@ -14,7 +14,6 @@
 
 void	ft_free_exit(t_shell *shell)
 {
-	free_ast(shell->ast);
 	ft_free_lexer(shell->lexer);
 	if (shell->prompt)
 		free(shell->prompt);
@@ -59,7 +58,7 @@ static void	ft_check_arg(t_shell *shell, char *arg)
 	}
 }
 
-void	ft_exit(t_shell *shell, char **args, int shell_type)
+void	ft_exit(t_shell *shell, char **args, int shell_type, pid_t fd)
 {
 	if (isatty(STDIN_FILENO) && shell_type == MAIN_SHELL)
 		write(2, "exit\n", 5);
@@ -67,5 +66,21 @@ void	ft_exit(t_shell *shell, char **args, int shell_type)
 		ft_check_arg(shell, args[1]);
 	if (args && args[1] != NULL && args[2] != NULL)
 		return (ft_too_many_args(shell, "exit", 1));
+	if (fd > 0)
+		close(fd);
+	free_ast(shell->ast);
+	ft_free_exit(shell);
+}
+
+void	ft_exit_ctrl_d(t_shell *shell, char **args, int shell_type, pid_t fd)
+{
+	if (isatty(STDIN_FILENO) && shell_type == MAIN_SHELL)
+		write(2, "exit\n", 5);
+	if (args && args[1] != NULL)
+		ft_check_arg(shell, args[1]);
+	if (args && args[1] != NULL && args[2] != NULL)
+		return (ft_too_many_args(shell, "exit", 1));
+	if (fd > 0)
+		close(fd);
 	ft_free_exit(shell);
 }
