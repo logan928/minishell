@@ -13,7 +13,7 @@
 #include "../minishell.h"
 #include <fcntl.h>
 
-int	open_file(t_redir *redir, int shell_type, int flags)
+int	open_file(t_shell *shell, t_redir *redir, int shell_type, int flags)
 {
 	int	fd;
 
@@ -22,7 +22,7 @@ int	open_file(t_redir *redir, int shell_type, int flags)
 	{
 		perror("open");
 		if (shell_type == CHILD_SHELL)
-			exit(1);
+			ft_critical_with_code(shell, 1, NULL, NULL);
 		else
 			return (-1);
 	}
