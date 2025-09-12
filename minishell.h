@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/12 15:41:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/12 17:16:09 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 
-# define DEFAULTPATH "/usr/sbin:/usr/bin:/sbin:/bin"
 # define EUNEXPTKN		"minishell: syntax error near unexpected token `"
 # define ETMARGS		": too many arguments\n"
 # define ENUMREQ		": numeric argument required\n"
@@ -314,17 +313,17 @@ int				ft_isredirection(t_token_kind kind);
 int				ft_syntax_error(t_shell *shell, char *token);
 int				apply_redirs(t_shell *shell, t_redir *redir, \
 				t_command_kind kind, int shell_type);
+// int				exec_command_builtins(t_shell *shell, t_command *cmd);
 int				exec_command_externals(t_shell *shell, t_command *cmd);
 void			exec_command_expansions(t_shell *shell, t_command *cmd);
 void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
 int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
 				int ***pipefd);
-int				exec_pipeline_core(t_shell *shell, int ***pipefd, \
+int				exec_pipeline_core (t_shell *shell, int ***pipefd, \
 				t_ast ***commands, t_pipe_parameters *tpp);
-int				run_builtin(t_shell *shell, t_command *cmd, \
-				int shell_type, pid_t fd);
+int				run_builtin(t_shell *shell, t_command *cmd, int shell_type, pid_t fd);
 pid_t			*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp);
-int				exec_command_builtins(t_shell *shell, t_command *cmd);
+int 			exec_command_builtins(t_shell *shell, t_command *cmd);
 int				exec_command(t_shell *shell, t_command *cmd);
 int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
@@ -335,10 +334,9 @@ void			ft_set_signals_hd_pre(void);
 void			ft_set_signals_post(void);
 void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
-void			ft_critical_with_code(t_shell *shell, int code, \
-				t_ast **commands, pid_t *pids);
+void			ft_critical_with_code(t_shell *shell, int code, t_ast **commands, pid_t *pids);
 int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
-void			free_tpp(t_pipe_parameters *tpp, int fd_count);
+void 			free_tpp(t_pipe_parameters *tpp, int fd_count);
 void			free_commands(t_ast **commands);
 void			ft_exit_ctrl_d(t_shell *shell, char **args, \
 				int shell_type, pid_t fd);
@@ -349,4 +347,5 @@ void			ft_sigint_hd_pre(int sig);
 int				ft_io_error(t_shell *shell, int shell_type, char *msg);
 void    		handle_check_access(t_shell *shell, t_command *cmd, \
             	t_ast **commands, pid_t *pids);
+
 #endif

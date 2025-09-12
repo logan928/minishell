@@ -12,7 +12,6 @@
 
 #include "../minishell.h"
 
-//static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp, t_ast **commands)
 static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, t_ast **commands, pid_t *pids)
 {
 	t_command	*cmd;
