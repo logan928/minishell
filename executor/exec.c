@@ -28,7 +28,7 @@ int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
-static void	free_commands(t_ast **commands)
+void	free_commands(t_ast **commands)
 {
 	// int	i;
 	// int	j;
@@ -61,7 +61,6 @@ void free_tpp(t_pipe_parameters *tpp, int fd_count)
 	}
 	free(tpp->pipefd);
 	free(tpp);
-	
 }
 
 int	exec_pipeline(t_shell *shell, t_ast *ast)
@@ -74,7 +73,7 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	tpp = malloc(sizeof(t_pipe_parameters));
 	if (!tpp)
 		return (1);
-	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL};
+	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL, 0};
 	count = 0;
 	commands = NULL;
 	if (get_fd_array(ast, &commands, &count, &tpp->pipefd))
@@ -110,7 +109,7 @@ int	exec_subshell(t_shell *shell, t_ast *ast)
 		if (ast->cmd && ast->cmd->redirs)
 			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, \
 			CHILD_SHELL);
-		ft_critical_with_code(shell, exec_ast(shell, ast->left));
+		ft_critical_with_code(shell, exec_ast(shell, ast->left), NULL, NULL);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))

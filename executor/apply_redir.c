@@ -33,8 +33,10 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 			fts_write(shell, err, STDERR_FILENO);
 			shell->exit_status = 1;
 			shell->parse_err = 1;
+			free(tmp);
 			return (1);
 		}
+		free(tmp);
 		if (handle_redir(shell, redir, shell_type, kind))
 			return (1);
 		redir = redir->next;

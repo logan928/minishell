@@ -12,55 +12,61 @@
 
 #include "../minishell.h"
 
-static void	exec_command_child(t_shell *shell, t_command *cmd, t_pipe_parameters *tpp)
+static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, t_ast **commands, pid_t *pids)
 {
-	int	access_err;
+	// int	access_err;
+	t_command	*cmd;
 
+	cmd = commands[tpp->temp_counter]->cmd;
 	if (cmd->args)
 	{
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
-			ft_critical_with_code(shell, 0);
+			ft_critical_with_code(shell, 0, commands, pids);
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
-		ft_critical_with_code(shell, shell->exit_status);
+		ft_critical_with_code(shell, shell->exit_status, commands, pids);
 	if (cmd->command_kind == BUILTIN)
 	{
 		free_tpp(tpp, tpp->count - 1);
-		run_builtin(shell, cmd, CHILD_SHELL); 
-		ft_critical_with_code(shell, shell->exit_status);
+		run_builtin(shell, cmd, CHILD_SHELL, -1); 
+		ft_critical_with_code(shell, shell->exit_status, commands, pids);
 	}
-	access_err = ft_check_access(shell, cmd);
-	if (access_err)
-		ft_critical_with_code(shell, access_err);
+	// access_err = ft_check_access(shell, cmd);
+	// if (access_err)
+	// 	ft_critical_with_code(shell, access_err, commands, pids);
+	handle_check_access(shell, cmd, commands, pids);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
-	ft_critical_with_code(shell, 127);
+	ft_critical_with_code(shell, 127, commands, pids);
 }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
-			t_pipe_parameters *tpp, int j)
+			t_pipe_parameters *tpp, pid_t *pids)
 {
 	int	k;
+	//int	j;
 
 	k = 0;
+	//j = tpp->temp_counter;
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	if (j > 0)
-		dup2((tpp->pipefd)[j - 1][0], STDIN_FILENO);
-	if (j < tpp->count - 1)
-		dup2((tpp->pipefd)[j][1], STDOUT_FILENO);
+	if (tpp->temp_counter > 0)
+		dup2((tpp->pipefd)[tpp->temp_counter - 1][0], STDIN_FILENO);
+	if (tpp->temp_counter < tpp->count - 1)
+		dup2((tpp->pipefd)[tpp->temp_counter][1], STDOUT_FILENO);
 	while (k < tpp->count - 1)
 	{
 		close((tpp->pipefd)[k][0]);
 		close((tpp->pipefd)[k][1]);
 		k++;
 	}
-	if ((*commands)[j]->type == AST_CMD && (*commands)[j]->cmd)
-		exec_command_child(shell, (*commands)[j]->cmd, tpp);
+	if ((*commands)[tpp->temp_counter]->type == AST_CMD && (*commands)[tpp->temp_counter]->cmd)
+		//exec_command_child(shell, (*commands)[tpp->temp_counter]->cmd, tpp, *commands);
+		exec_command_child(shell, tpp, *commands, pids);
 	free_tpp(tpp, tpp->count - 1);
-	ft_critical_with_code(shell, exec_ast(shell, (*commands)[j]));
+	ft_critical_with_code(shell, exec_ast(shell, (*commands)[tpp->temp_counter]), *commands, pids);
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
@@ -69,14 +75,15 @@ static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \
 	int		j;
 
 	j = 0;
-	while (j < tpp->count)
+	tpp->temp_counter = j;
+	while (tpp->temp_counter < tpp->count)
 	{
-		pids[j] = fork();
-		if (pids[j] == -1)
+		pids[tpp->temp_counter] = fork();
+		if (pids[tpp->temp_counter] == -1)
 			return (perror("fork"), 1);
-		if (pids[j] == 0) 
-			exec_command_child_wrapper(shell, commands, tpp, j);
-		j++;
+		if (pids[tpp->temp_counter] == 0) 
+			exec_command_child_wrapper(shell, commands, tpp, pids);
+		tpp->temp_counter++;
 	}
 	return (0);
 }
