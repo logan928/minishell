@@ -63,7 +63,7 @@ static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 		return (ft_io_error(shell, shell_type, "pipe"));
 	if (kind != BUILTIN)
 	{
-		heredoc_fd = ft_heredoc_file(shell, pipefd[1], pipefd[0], redir->file[0]);
+		heredoc_fd = ft_heredoc_pipe(shell, pipefd[1], pipefd[0], redir->file[0]);
 		if (heredoc_fd == -1)
 			return (ft_io_error(shell, shell_type, NULL));
 		if (pipefd[1] != -1)

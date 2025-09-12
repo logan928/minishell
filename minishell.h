@@ -337,7 +337,7 @@ void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
 void			ft_critical_with_code(t_shell *shell, int code, \
 				t_ast **commands, pid_t *pids);
-int				ft_heredoc_file(t_shell *shell, int w, int r, char *input);
+int				ft_heredoc_pipe(t_shell *shell, int w, int r, char *input);
 void			free_tpp(t_pipe_parameters *tpp, int fd_count);
 void			free_commands(t_ast **commands);
 void			ft_exit_ctrl_d(t_shell *shell, char **args, \
