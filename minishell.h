@@ -302,7 +302,7 @@ t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
-int				open_file(t_redir *redir, int shell_type, int flags);
+int				open_file(t_shell *shell, t_redir *redir, int shell_type, int flags);
 int				handle_redir(t_shell *shell, t_redir *redir, int shell_type, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
