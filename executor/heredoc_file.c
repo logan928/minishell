@@ -96,7 +96,5 @@ int	ft_heredoc_pipe(t_shell *shell, int w, int r, char *input)
 		write(w, input, input_len);
 		return (r);
 	}
-	close(w);
-	close(r);
 	return (ft_heredoc_file(shell, input, input_len));
 }
