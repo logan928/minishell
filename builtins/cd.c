@@ -26,6 +26,7 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 				fts_strjoin3cpy(shell, "OLDPWD=", shell->pwd, ""));
 		shell->exp = ft_strvec_update(shell->exp, "PWD",
 				fts_strjoin3cpy(shell, "PWD=", path, ""));
+		free(path);
 		free(shell->pwd);
 		shell->pwd = ft_get_env_var(shell, "PWD");
 		if (dir && dir[0] == '-' && dir[1] == '\0')
@@ -35,7 +36,10 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 		}
 	}
 	else
+	{
+		free(path);
 		ft_chdir_err(shell, dir);
+	}
 }
 
 void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)

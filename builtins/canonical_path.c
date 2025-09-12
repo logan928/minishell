@@ -73,6 +73,6 @@ char	*ft_canonicalize(t_shell *shell, char *curpath)
 	res = ft_reconstruct_path(st);
 	free(curpath);
 	ft_stack_free(st);
-	free(segments);
+	ft_free_arr(segments);
 	return (res);
 }

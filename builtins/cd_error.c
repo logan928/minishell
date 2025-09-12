@@ -14,6 +14,8 @@
 
 void	ft_chdir_err(t_shell *shell, char *dir)
 {
+	char *msg;
+
 	if (chdir(shell->pwd) != 0)
 	{
 		shell->env = ft_strvec_update(shell->env, "OLDPWD",
@@ -35,7 +37,9 @@ void	ft_chdir_err(t_shell *shell, char *dir)
 	}
 	else
 	{
-		perror(fts_strjoin3cpy(shell, "minishell: cd: ", dir, ""));
+		msg = fts_strjoin3cpy(shell, "minishell: cd: ", dir, "");
+		perror(msg);
+		free(msg);
 		shell->exit_status = (unsigned char) 1;
 	}
 }
