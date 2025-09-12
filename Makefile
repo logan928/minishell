@@ -63,6 +63,7 @@ SRCS := minishell.c \
 		$(EXECUTOR_DIR)/exec_entry.c	\
 		$(EXECUTOR_DIR)/heredoc_file.c \
 		$(EXECUTOR_DIR)/io_error.c \
+		$(EXECUTOR_DIR)/exec_pipe_utils2.c \
 		free_ast.c
 
 CFLAGS := -Wall -Wextra -Werror -g -I$(INCLUDES) -I$(LIBFT_DIR)

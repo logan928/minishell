@@ -347,5 +347,6 @@ void			ft_sigint_main_post(int sig);
 void			ft_sigquit_post(int sig);
 void			ft_sigint_hd_pre(int sig);
 int				ft_io_error(t_shell *shell, int shell_type, char *msg);
-
+void    		handle_check_access(t_shell *shell, t_command *cmd, \
+            	t_ast **commands, pid_t *pids);
 #endif
