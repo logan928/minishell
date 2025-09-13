@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 20:31:12 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/05 16:49:54 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/13 16:37:36 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	ft_init_shell(t_shell *shell, char *envp[])
 	ft_clone_exp(shell);
 	ft_shlvl(shell);
 	ft_set_pwd(shell);
+	ft_set_default_path(shell);
 	rl_event_hook = ft_rl_eventloop;
 }
 
