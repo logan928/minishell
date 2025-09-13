@@ -6,7 +6,7 @@
 /*   By: mkugan <mkugan@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 16:22:35 by mkugan            #+#    #+#             */
-/*   Updated: 2025/09/12 15:41:25 by mkugan           ###   ########.fr       */
+/*   Updated: 2025/09/13 15:39:40 by mkugan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -350,5 +350,6 @@ void			ft_sigint_hd_pre(int sig);
 int				ft_io_error(t_shell *shell, int shell_type, char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_ast **commands, pid_t *pids, t_pipe_parameters *tpp);
+void			ft_set_default_path(t_shell *shell);
 
 #endif

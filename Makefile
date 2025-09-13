@@ -34,6 +34,7 @@ SRCS := minishell.c \
 		$(BUILTINS_DIR)/unset.c \
 		$(BUILTINS_DIR)/export.c \
 		$(BUILTINS_DIR)/exit.c \
+		$(BUILTINS_DIR)/default_path.c \
 		$(EXECUTOR_DIR)/exec.c \
 		$(EXPANSION_DIR)/variable_expansion.c \
 		$(EXPANSION_DIR)/field_splitting.c \
