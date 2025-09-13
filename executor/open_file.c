@@ -15,14 +15,17 @@
 
 int	open_file(t_shell *shell, t_redir *redir, int shell_type, int flags)
 {
-	int	fd;
-
-	(void)shell;
+	int		fd;
+	char	*msg;
+	
+	//(void)shell;
 	(void)shell_type;
 	fd = open(redir->file[0], flags, 0644);
 	if (fd < 0)
 	{
-		perror("open");
+		msg = fts_strjoin3cpy(shell, "minishell: ", redir->file[0], "");
+		perror(msg);
+		free(msg);
 		shell->exit_status = 1;
 		return (-1);
 	}
