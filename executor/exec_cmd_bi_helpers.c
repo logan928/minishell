@@ -42,7 +42,11 @@ int	exec_command_builtins(t_shell *shell, t_command *cmd)
 		return (1);
 	}
 	run_builtin(shell, cmd, MAIN_SHELL, saved);
-	dup2(saved, STDOUT_FILENO);
+	if (dup2(saved, STDOUT_FILENO) == -1)
+	{
+		close(saved);
+		return (1);
+	}
 	close(saved);
 	return (shell->exit_status);
 }
