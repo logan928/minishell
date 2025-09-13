@@ -26,7 +26,10 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
+	{
+		free_tpp(tpp, tpp->count - 1);
 		ft_critical_with_code(shell, shell->exit_status, commands, pids);
+	}
 	if (cmd->command_kind == BUILTIN)
 	{
 		free_tpp(tpp, tpp->count - 1);

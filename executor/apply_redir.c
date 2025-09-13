@@ -46,7 +46,7 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 		// if (redir->kind != R_HDOC
 		// 	&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
 		// {
-		// 	err = fts_strjoin3cpy(shell, "minishell: ", \
+		// 	err = fts_strjoin3cpy(shell, "minishell: ", 
 		// 		tmp, ": ambiguous redirect\n");
 		// 	fts_write(shell, err, STDERR_FILENO);
 		// 	shell->exit_status = 1;
