@@ -79,7 +79,7 @@ bool	ft_cd_oldpwd(t_shell *shell, char **cur)
 	tmp = ft_get_env_var(shell, "OLDPWD");
 	if (tmp[0] == '\0')
 		return (false);
-	*cur = fts_strdup(shell, tmp);
+	*cur = tmp;
 	tmp = NULL;
 	return (true);
 }
