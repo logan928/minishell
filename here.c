@@ -89,7 +89,7 @@ void	ft_here_doc(t_shell *shell, t_token *t)
 		return ;
 	}
 	if (!res)
-		res = fts_strdup(shell, "");
+		res = fts_strdup(shell, "\"\"");
 	if (is_quoted)
 	{
 		res = fts_strjoin_free(shell, fts_strdup(shell, "'"), res);

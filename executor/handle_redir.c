@@ -67,12 +67,12 @@ static int	handle_r_heredoc(t_shell *shell, t_redir *redir, int shell_type, \
 			pipefd[1], pipefd[0], redir->file[0]);
 		if (heredoc_fd == -1)
 			return (ft_io_error(shell, shell_type, NULL));
-		if (pipefd[1] != -1)
-			close(pipefd[1]);
+		close(pipefd[1]);
 		if (dup2(heredoc_fd, STDIN_FILENO) == -1)
 			return (ft_io_error(shell, shell_type, "dup2"));
 		close(heredoc_fd);
-		close(pipefd[0]);
+		if (heredoc_fd != pipefd[0])
+			close(pipefd[0]);
 	}
 	return (0);
 }

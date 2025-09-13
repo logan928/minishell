@@ -16,15 +16,14 @@
 int	open_file(t_shell *shell, t_redir *redir, int shell_type, int flags)
 {
 	int	fd;
-
+	(void)shell;
+	(void)shell_type;
 	fd = open(redir->file[0], flags, 0644);
 	if (fd < 0)
 	{
 		perror("open");
-		if (shell_type == CHILD_SHELL)
-			ft_critical_with_code(shell, 1, NULL, NULL);
-		else
-			return (-1);
+		shell->exit_status = 1;
+		return (-1);
 	}
 	return (fd);
 }
