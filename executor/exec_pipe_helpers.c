@@ -23,32 +23,32 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
 		{	
-			free_tpp(tpp, tpp->count - 1);
-			ft_critical_with_code(shell, 0, commands, pids);
+			// free_tpp(tpp, tpp->count - 1);
+			ft_critical_with_code(shell, 0, tpp, pids);
 		}
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
 	{
-		free_tpp(tpp, tpp->count - 1);
-		ft_critical_with_code(shell, shell->exit_status, commands, pids);
+		// free_tpp(tpp, tpp->count - 1);
+		ft_critical_with_code(shell, shell->exit_status, tpp, pids);
 	}
 	if (cmd->command_kind == BUILTIN)
 	{
-		free_tpp(tpp, tpp->count - 1);
+		// free_tpp(tpp, tpp->count - 1);
 		run_builtin(shell, cmd, CHILD_SHELL, -1); 
-		ft_critical_with_code(shell, shell->exit_status, commands, pids);
+		ft_critical_with_code(shell, shell->exit_status, tpp, pids);
 	}
 	if (cmd->args == NULL)
 	{
-		free_tpp(tpp, tpp->count - 1);
-		ft_critical_with_code(shell, 0, commands, pids);
+		// free_tpp(tpp, tpp->count - 1);
+		ft_critical_with_code(shell, 0, tpp, pids);
 	}
-	handle_check_access(shell, cmd, commands, pids, tpp);
+	handle_check_access(shell, cmd, tpp, pids);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
-	free_tpp(tpp, tpp->count - 1);
-	ft_critical_with_code(shell, 127, commands, pids);
+	// free_tpp(tpp, tpp->count - 1);
+	ft_critical_with_code(shell, 127, tpp, pids);
 }
 
 static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
@@ -72,9 +72,9 @@ static void	exec_command_child_wrapper(t_shell *shell, t_ast ***commands, \
 	if ((*commands)[tpp->temp_counter]->type == AST_CMD \
 			&& (*commands)[tpp->temp_counter]->cmd)
 		exec_command_child(shell, tpp, *commands, pids);
-	free_tpp(tpp, tpp->count - 1);
+	// free_tpp(tpp, tpp->count - 1);
 	ft_critical_with_code(shell, exec_ast(\
-	shell, (*commands)[tpp->temp_counter]), *commands, pids);
+	shell, (*commands)[tpp->temp_counter]), tpp, pids);
 }
 
 static int	create_pipe_forks(t_shell *shell, t_ast ***commands, \

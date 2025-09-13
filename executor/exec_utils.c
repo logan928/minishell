@@ -32,6 +32,8 @@ void	free_tpp(t_pipe_parameters *tpp, int fd_count)
 		free(tpp->pipefd[i]);
 		i++;
 	}
+	if ( tpp->cmd_nodes != NULL)
+		free_commands(tpp->cmd_nodes);
 	free(tpp->pipefd);
 	free(tpp);
 	tpp = NULL;

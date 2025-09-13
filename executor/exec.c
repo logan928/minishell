@@ -30,32 +30,30 @@ int	exec_command(t_shell *shell, t_command *cmd)
 int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
-	t_ast				**commands;
 	t_pipe_parameters	*tpp;
 	int					last_s;
 
 	tpp = malloc(sizeof(t_pipe_parameters));
 	if (!tpp)
 		return (1);
-	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL, 0};
+	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL, 0, NULL};
 	count = 0;
-	commands = NULL;
-	if (get_fd_array(ast, &commands, &count, &tpp->pipefd))
+	if (get_fd_array(ast, &(tpp->cmd_nodes), &count, &tpp->pipefd))
 	{
-		free_commands(commands);
+		//free_commands(tpp->cmd_nodes);
 		free_tpp(tpp, count - 1);
 		return (1);
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	tpp->count = count;
-	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
+	if (exec_pipeline_core(shell, &tpp->pipefd, &(tpp->cmd_nodes), tpp))
 	{
-		free_commands(commands);
+		//free_commands(tpp->cmd_nodes);
 		free_tpp(tpp, count - 1);
 		return (1);
 	}
-	free_commands(commands);
+	// free_commands(tpp->cmd_nodes);
 	ft_set_signals_main_pre();
 	if (tpp->sig)
 		return (128 + tpp->sig);
