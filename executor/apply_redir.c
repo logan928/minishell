@@ -17,7 +17,7 @@ static int	handle_errors(t_shell *shell, t_redir *redir, char *tmp)
 	char	*err;
 
 	if (redir->kind != R_HDOC
-	&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
+		&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
 	{
 		err = fts_strjoin3cpy(shell, "minishell: ", \
 			tmp, ": ambiguous redirect\n");
@@ -34,7 +34,6 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 	t_command_kind kind, int shell_type)
 {
 	char	*tmp;
-	//char	*err;
 
 	while (redir)
 	{
@@ -43,17 +42,6 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 		ft_variable_expansion(shell, redir->file, 0);
 		ft_file_exp(shell, &redir->file, 0, 0);
 		ft_quote_removal(shell, redir->file, 0);
-		// if (redir->kind != R_HDOC
-		// 	&& (!redir->file || !redir->file[0] || redir->file[1] != NULL))
-		// {
-		// 	err = fts_strjoin3cpy(shell, "minishell: ", \
-		// 		tmp, ": ambiguous redirect\n");
-		// 	fts_write(shell, err, STDERR_FILENO);
-		// 	shell->exit_status = 1;
-		// 	shell->parse_err = 1;
-		// 	free(tmp);
-		// 	return (1);
-		// }
 		if (handle_errors(shell, redir, tmp))
 			return (1);
 		free(tmp);

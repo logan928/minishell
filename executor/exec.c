@@ -27,29 +27,6 @@ int	exec_command(t_shell *shell, t_command *cmd)
 		return (exec_command_externals(shell, cmd));
 }
 
-// void	free_commands(t_ast **commands)
-// {
-// 	if (!commands)
-// 		return ;
-// 	free(commands);
-// }
-
-// void	free_tpp(t_pipe_parameters *tpp, int fd_count)
-// {
-// 	int	i;
-
-// 	if (!tpp)
-// 		return ;
-// 	i = 0;
-// 	while (i < fd_count)
-// 	{
-// 		free(tpp->pipefd[i]);
-// 		i++;
-// 	}
-// 	free(tpp->pipefd);
-// 	free(tpp);
-// }
-
 int	exec_pipeline(t_shell *shell, t_ast *ast)
 {
 	int					count;
