@@ -41,12 +41,20 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	count = 0;
 	commands = NULL;
 	if (get_fd_array(ast, &commands, &count, &tpp->pipefd))
+	{
+		free_commands(commands);
+		free_tpp(tpp, count - 1);
 		return (1);
+	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	tpp->count = count;
 	if (exec_pipeline_core(shell, &tpp->pipefd, &commands, tpp))
+	{
+		free_commands(commands);
+		free_tpp(tpp, count - 1);
 		return (1);
+	}
 	free_commands(commands);
 	ft_set_signals_main_pre();
 	if (tpp->sig)

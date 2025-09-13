@@ -22,7 +22,10 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
 	{
 		ft_skip_empty_vars(shell, cmd->args);
 		if (!cmd->args[0])
+		{	
+			free_tpp(tpp, tpp->count - 1);
 			ft_critical_with_code(shell, 0, commands, pids);
+		}
 		handle_expansion_cmd_child(shell, cmd);
 	}
 	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
@@ -36,9 +39,10 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
 		run_builtin(shell, cmd, CHILD_SHELL, -1); 
 		ft_critical_with_code(shell, shell->exit_status, commands, pids);
 	}
-	handle_check_access(shell, cmd, commands, pids);
+	handle_check_access(shell, cmd, commands, pids, tpp);
 	execve(cmd->path, cmd->args, shell->env->data);
 	perror("execve");
+	free_tpp(tpp, tpp->count - 1);
 	ft_critical_with_code(shell, 127, commands, pids);
 }
 

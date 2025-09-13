@@ -17,6 +17,7 @@ void	free_commands(t_ast **commands)
 	if (!commands)
 		return ;
 	free(commands);
+	commands = NULL;
 }
 
 void	free_tpp(t_pipe_parameters *tpp, int fd_count)
@@ -33,4 +34,5 @@ void	free_tpp(t_pipe_parameters *tpp, int fd_count)
 	}
 	free(tpp->pipefd);
 	free(tpp);
+	tpp = NULL;
 }
