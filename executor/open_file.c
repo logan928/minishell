@@ -16,6 +16,7 @@
 int	open_file(t_shell *shell, t_redir *redir, int shell_type, int flags)
 {
 	int	fd;
+
 	(void)shell;
 	(void)shell_type;
 	fd = open(redir->file[0], flags, 0644);

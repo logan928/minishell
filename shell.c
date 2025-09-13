@@ -71,8 +71,6 @@ void	ft_critical_error(t_shell *shell)
 void	ft_critical_with_code(t_shell *shell, int code, \
 		t_pipe_parameters *tpp, pid_t *pids)
 {
-	// if (commands != NULL)
-	// 	free_commands(commands);
 	if (tpp != NULL)
 		free_tpp(tpp, tpp->count - 1);
 	if (pids != NULL)

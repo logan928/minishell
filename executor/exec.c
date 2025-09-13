@@ -39,21 +39,12 @@ int	exec_pipeline(t_shell *shell, t_ast *ast)
 	*tpp = (t_pipe_parameters){0, 0, 0, false, false, 0, NULL, 0, NULL};
 	count = 0;
 	if (get_fd_array(ast, &(tpp->cmd_nodes), &count, &tpp->pipefd))
-	{
-		//free_commands(tpp->cmd_nodes);
-		free_tpp(tpp, count - 1);
-		return (1);
-	}
+		return (free_tpp(tpp, count - 1), 1);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	tpp->count = count;
 	if (exec_pipeline_core(shell, &tpp->pipefd, &(tpp->cmd_nodes), tpp))
-	{
-		//free_commands(tpp->cmd_nodes);
-		free_tpp(tpp, count - 1);
-		return (1);
-	}
-	// free_commands(tpp->cmd_nodes);
+		return (free_tpp(tpp, count - 1), 1);
 	ft_set_signals_main_pre();
 	if (tpp->sig)
 		return (128 + tpp->sig);
