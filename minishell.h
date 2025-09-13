@@ -304,8 +304,8 @@ void			ft_shlvl(t_shell *shell);
 void			ft_sigint_handler_here(int sig);
 void			ft_set_here_sigint(void);
 int				open_file(t_shell *shell, t_redir *redir, \
-				int shell_type, int flags);
-int				handle_redir(t_shell *shell, t_redir *redir, int shell_type, \
+				int flags);
+int				handle_redir(t_shell *shell, t_redir *redir, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
 int				ft_check_access(t_shell *shell, t_command *cmd);
@@ -315,7 +315,7 @@ int				ft_isoperator(t_token_kind kind);
 int				ft_isredirection(t_token_kind kind);
 int				ft_syntax_error(t_shell *shell, char *token);
 int				apply_redirs(t_shell *shell, t_redir *redir, \
-				t_command_kind kind, int shell_type);
+				t_command_kind kind);
 int				exec_command_externals(t_shell *shell, t_command *cmd);
 void			exec_command_expansions(t_shell *shell, t_command *cmd);
 void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
@@ -348,7 +348,7 @@ void			ft_sigint_main_pre(int sig);
 void			ft_sigint_main_post(int sig);
 void			ft_sigquit_post(int sig);
 void			ft_sigint_hd_pre(int sig);
-int				ft_io_error(t_shell *shell, int shell_type, char *msg);
+int				ft_io_error(char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_pipe_parameters *tpp, pid_t *pids);
 void			ft_set_default_path(t_shell *shell);

@@ -12,11 +12,9 @@
 
 #include "../minishell.h"
 
-int	ft_io_error(t_shell *shell, int shell_type, char *msg)
+int	ft_io_error(char *msg)
 {
 	if (msg != NULL)
 		perror(msg);
-	if (shell_type == CHILD_SHELL)
-		ft_critical_with_code(shell, 1, NULL, NULL); 
 	return (1);
 }

@@ -25,7 +25,7 @@ static void	exec_command_child(t_shell *shell, t_pipe_parameters *tpp, \
 			ft_critical_with_code(shell, 0, tpp, pids);
 		handle_expansion_cmd_child(shell, cmd);
 	}
-	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
+	if (apply_redirs(shell, cmd->redirs, cmd->command_kind))
 		ft_critical_with_code(shell, shell->exit_status, tpp, pids);
 	if (cmd->command_kind == BUILTIN)
 	{

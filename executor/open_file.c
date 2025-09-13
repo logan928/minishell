@@ -11,15 +11,12 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <fcntl.h>
 
-int	open_file(t_shell *shell, t_redir *redir, int shell_type, int flags)
+int	open_file(t_shell *shell, t_redir *redir, int flags)
 {
 	int		fd;
 	char	*msg;
-	
-	//(void)shell;
-	(void)shell_type;
+
 	fd = open(redir->file[0], flags, 0644);
 	if (fd < 0)
 	{

@@ -21,9 +21,9 @@ void	ft_set_default_path(t_shell *shell)
 	{
 		free(pwd);
 		shell->env = ft_strvec_update(shell->env,
-			"PATH", fts_strjoin3cpy(shell, "PATH", "=", DEFAULTPATH));
+				"PATH", fts_strjoin3cpy(shell, "PATH", "=", DEFAULTPATH));
 		shell->exp = ft_strvec_update(shell->exp,
-			"PATH", fts_strjoin3cpy(shell, "PATH", "=", DEFAULTPATH));
+				"PATH", fts_strjoin3cpy(shell, "PATH", "=", DEFAULTPATH));
 		return ;
 	}
 	free(pwd);

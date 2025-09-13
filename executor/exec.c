@@ -66,8 +66,7 @@ int	exec_subshell(t_shell *shell, t_ast *ast)
 	if (pid == 0)
 	{
 		if (ast->cmd && ast->cmd->redirs)
-			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind, \
-			CHILD_SHELL);
+			apply_redirs(shell, ast->cmd->redirs, ast->cmd->command_kind);
 		ft_critical_with_code(shell, exec_ast(shell, ast->left), NULL, NULL);
 	}
 	waitpid(pid, &status, 0);

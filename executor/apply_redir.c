@@ -31,7 +31,7 @@ static int	handle_errors(t_shell *shell, t_redir *redir, char *tmp)
 }
 
 int	apply_redirs(t_shell *shell, t_redir *redir, \
-	t_command_kind kind, int shell_type)
+	t_command_kind kind)
 {
 	char	*tmp;
 
@@ -45,7 +45,7 @@ int	apply_redirs(t_shell *shell, t_redir *redir, \
 		if (handle_errors(shell, redir, tmp))
 			return (1);
 		free(tmp);
-		if (handle_redir(shell, redir, shell_type, kind))
+		if (handle_redir(shell, redir, kind))
 			return (1);
 		redir = redir->next;
 	}

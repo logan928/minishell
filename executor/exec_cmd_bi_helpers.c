@@ -36,7 +36,7 @@ int	exec_command_builtins(t_shell *shell, t_command *cmd)
 	pid_t	saved;
 
 	saved = dup(STDOUT_FILENO);
-	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, MAIN_SHELL))
+	if (apply_redirs(shell, cmd->redirs, cmd->command_kind))
 	{
 		close(saved);
 		return (1);

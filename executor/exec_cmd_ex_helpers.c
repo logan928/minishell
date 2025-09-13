@@ -26,7 +26,7 @@ static void	exec_command_in_child(t_shell *shell, t_command *cmd)
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	if (apply_redirs(shell, cmd->redirs, cmd->command_kind, CHILD_SHELL))
+	if (apply_redirs(shell, cmd->redirs, cmd->command_kind))
 		ft_critical_with_code(shell, 1, NULL, NULL);
 	if (cmd->args)
 	{
