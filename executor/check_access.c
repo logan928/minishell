@@ -13,7 +13,7 @@
 #include "../minishell.h"
 
 static int	write_safe_return_wrapper(t_shell *shell, t_command *cmd,
-	t_cehck_access_msgs acc_para, int exit_condition)
+	t_check_access_msgs acc_para, int exit_condition)
 {
 	if (acc_para.is_access_exists)
 	{
@@ -31,7 +31,7 @@ static int	write_safe_return_wrapper(t_shell *shell, t_command *cmd,
 }
 
 static int	handle_access_exist(t_shell *shell, t_command *cmd, \
-	t_cehck_access_msgs acc_para, t_cmd_access access)
+	t_check_access_msgs acc_para, t_cmd_access access)
 {
 	if (ft_strchr(cmd->args[0], '/') != NULL || !access.path
 		|| (cmd->args[0][0] && !access.path))
@@ -51,10 +51,10 @@ static int	handle_access_exist(t_shell *shell, t_command *cmd, \
 int	ft_check_access(t_shell *shell, t_command *cmd)
 {
 	t_cmd_access		access;
-	t_cehck_access_msgs	acc_para;
+	t_check_access_msgs	acc_para;
 
 	access = ft_get_cmd_path(shell, cmd);
-	acc_para = (t_cehck_access_msgs){NULL, true};
+	acc_para = (t_check_access_msgs){NULL, true};
 	if (!access.exist || (access.is_dir && ft_strchr(cmd->args[0], '/') \
 		== NULL && access.path))
 		return (handle_access_exist(shell, cmd, acc_para, access));

@@ -192,7 +192,7 @@ typedef struct s_check_access_msgs
 {
 	char	*msg;
 	bool	is_access_exists;
-}	t_cehck_access_msgs;
+}	t_check_access_msgs;
 
 typedef struct s_pipe_parameters
 {
