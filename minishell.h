@@ -238,12 +238,6 @@ void			ft_set_pwd(t_shell *shell);
 void			ft_sigint_handler(int sig);
 void			ft_sigquit_trap(int sig);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
-char			*fts_strdup(t_shell *shell, const char *s);
-char			*fts_strndup(t_shell *shell, const char *s, size_t n);
-t_token			*fts_new_token(t_shell *shell, t_token_kind kind, char *data);
-char			*fts_strjoin_free(t_shell *shell, char *s1, char *s2);
-char			*fts_itoa(t_shell *shell, long n);
-void			*fts_malloc(t_shell *shell, size_t size);
 bool			ft_is_valid_number(char *s);
 void			ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void			ft_not_set(t_shell *shell, char *var);
@@ -261,12 +255,9 @@ void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
 void			ft_here(t_shell *shell);
 t_command		*command_formatter(t_shell *shell, t_token **tokptr);
-void			print_lexem(t_command *cmd);
 t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
-char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
-void			fts_write(t_shell *shell, char *s, int fd);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
 char			*ft_canonicalize(t_shell *shell, char *curpath);
@@ -280,22 +271,12 @@ void			ft_skip_empty_vars(t_shell *shell, char **args);
 int				is_builtin(const char *cmd);
 char			**argv_add(char **argv, int *argc, const char *word);
 t_command		*command_new(void);
-t_strvec		*ft_strvec_init(size_t cap);
-void			ft_strvec_free(t_strvec *sv);
-t_strvec		*ft_strvec_push(t_strvec **sv, char *s);
-t_strvec		*ft_strvec_update(t_strvec *sv, char *s, char *val);
-size_t			ft_strvec_remove(t_strvec *sv, const char *s);
-char			*ft_strvec_getval(const t_strvec *sv, const char *s);
-ssize_t			ft_strvec_find(const t_strvec *sv, const char *s);
 void			ft_not_valid_identifier(t_shell *shell, char *arg);
 t_token_kind	ft_get_token_kind(const char *s);
 int				ft_get_operator_length(t_token_kind kind);
 int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
-t_strvec		*ft_strvec_realloc(t_strvec *sv);
 void			ft_shlvl(t_shell *shell);
-void			ft_sigint_handler_here(int sig);
-void			ft_set_here_sigint(void);
 int				open_file(t_shell *shell, t_redir *redir, \
 				int flags);
 int				handle_redir(t_shell *shell, t_redir *redir, \
@@ -325,9 +306,6 @@ int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
 int				handle_and(t_shell *shell, t_ast *ast);
 int				handle_or(t_shell *shell, t_ast *ast);
-void			ft_set_signals_main_pre(void);
-void			ft_set_signals_hd_pre(void);
-void			ft_set_signals_post(void);
 void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
 void			ft_critical_with_code(t_shell *shell, int code, \
@@ -337,13 +315,47 @@ void			free_tpp(t_pipe_parameters *tpp, int fd_count);
 void			free_commands(t_ast **commands);
 void			ft_exit_ctrl_d(t_shell *shell, char **args, \
 				int shell_type, pid_t fd);
-void			ft_sigint_main_pre(int sig);
-void			ft_sigint_main_post(int sig);
-void			ft_sigquit_post(int sig);
-void			ft_sigint_hd_pre(int sig);
 int				ft_io_error(char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_pipe_parameters *tpp, pid_t *pids);
 void			ft_set_default_path(t_shell *shell);
+
+/*
+			SAFE WRAPPERS
+			We clean memory and exit in a case of OOM error.
+*/
+char			*fts_strdup(t_shell *shell, const char *s);
+char			*fts_strndup(t_shell *shell, const char *s, size_t n);
+t_token			*fts_new_token(t_shell *shell, t_token_kind kind, char *data);
+char			*fts_strjoin_free(t_shell *shell, char *s1, char *s2);
+char			*fts_itoa(t_shell *shell, long n);
+void			*fts_malloc(t_shell *shell, size_t size);
+char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
+void			fts_write(t_shell *shell, char *s, int fd);
+
+/*
+			STRVER FUNCS
+			We store env and export in strvec
+			(capacity, length, data)
+*/
+t_strvec		*ft_strvec_init(size_t cap);
+void			ft_strvec_free(t_strvec *sv);
+t_strvec		*ft_strvec_push(t_strvec **sv, char *s);
+t_strvec		*ft_strvec_update(t_strvec *sv, char *s, char *val);
+size_t			ft_strvec_remove(t_strvec *sv, const char *s);
+char			*ft_strvec_getval(const t_strvec *sv, const char *s);
+ssize_t			ft_strvec_find(const t_strvec *sv, const char *s);
+t_strvec		*ft_strvec_realloc(t_strvec *sv);
+
+/*
+			SIGNALS
+*/
+void			ft_set_signals_main_pre(void);
+void			ft_set_signals_hd_pre(void);
+void			ft_set_signals_post(void);
+void			ft_sigint_main_pre(int sig);
+void			ft_sigint_main_post(int sig);
+void			ft_sigquit_post(int sig);
+void			ft_sigint_hd_pre(int sig);
 
 #endif
