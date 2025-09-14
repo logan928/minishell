@@ -174,14 +174,12 @@ typedef struct s_command
 	t_redir			*redirs;
 }	t_command;
 
-//TODO: Do we need ast_depth?
 typedef struct s_ast
 {
 	t_ast_type		type;
 	t_command		*cmd;
 	struct s_ast	*left;
 	struct s_ast	*right;
-	int				ast_depth;
 }	t_ast;
 
 typedef struct s_glob_state
@@ -271,7 +269,6 @@ void			print_lexem(t_command *cmd);
 t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
-void			print_ast(t_shell *shell, t_ast *node, int depth);
 char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
 void			fts_write(t_shell *shell, char *s, int fd);
 int				exec_ast(t_shell *shell, t_ast *ast);
