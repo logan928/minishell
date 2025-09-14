@@ -147,14 +147,12 @@ typedef enum e_redir_type
  *	before parsing.
  *	After expansion there could be arbitrary number of elements
  *	(except for heredoc). Only 1 is valid.
- *	TODO: content is not used and can be removed.
  */
 
 typedef struct s_redir
 {
 	t_redir_type	kind;
 	char			**file;
-	char			*content;
 	struct s_redir	*next;
 }	t_redir;
 

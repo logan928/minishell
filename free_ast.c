@@ -35,7 +35,6 @@ static void	free_redirs(t_redir *redir)
 	{
 		tmp = redir->next;
 		free_str_array(redir->file);
-		free(redir->content);
 		free(redir);
 		redir = tmp;
 	}
