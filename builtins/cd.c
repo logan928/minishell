@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_chdir(t_shell *shell, char *path, char *dir)
+static void	ft_chdir(t_shell *shell, char *path, char *dir)
 {
 	char	*pwd;
 
@@ -39,7 +39,7 @@ void	ft_chdir(t_shell *shell, char *path, char *dir)
 	free(path);
 }
 
-void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
+static void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 {
 	char	*oldpwd;
 
@@ -57,7 +57,7 @@ void	ft_parse_cd_arg(t_shell *shell, char *arg, char **cur)
 		*cur = fts_strdup(shell, arg);
 }
 
-bool	ft_cd_home(t_shell *shell, char **cur)
+static bool	ft_cd_home(t_shell *shell, char **cur)
 {
 	char	*tmp;
 
@@ -69,7 +69,7 @@ bool	ft_cd_home(t_shell *shell, char **cur)
 	return (true);
 }
 
-bool	ft_cd_oldpwd(t_shell *shell, char **cur)
+static bool	ft_cd_oldpwd(t_shell *shell, char **cur)
 {
 	char	*tmp;
 

@@ -226,14 +226,11 @@ void			ft_add_token(t_token **head, t_token *token);
 void			ft_insert_after(t_token *target, t_token *token);
 void			ft_free_tokens(t_token *head);
 void			ft_add_token_sorted(t_token **head, t_token *token);
-void			ft_clone_env(t_shell *shell, char *envp[]);
-void			ft_env(t_shell *shell, char *env[]);
 void			ft_free_env(char *envp[]);
 void			ft_exit(t_shell *shell, char **args, int shell_type, pid_t fd);
 void			ft_echo(t_shell *shell, char **args);
 char			*ft_get_cwd(t_shell *shell);
 void			ft_pwd(t_shell *shell, char **args);
-void			ft_cd(t_shell *shell, char **args);
 void			ft_set_pwd(t_shell *shell);
 void			ft_sigint_handler(int sig);
 void			ft_sigquit_trap(int sig);
@@ -260,10 +257,7 @@ t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
-char			*ft_canonicalize(t_shell *shell, char *curpath);
-char			*ft_reconstruct_path(t_stack *st);
 void			ft_unset(t_shell *shell, char **args);
-char			**ft_clone_env_and_return(t_shell *shell, char *envp[]);
 int				ft_valid_env_first_char(int c);
 void			ft_export(t_shell *shell, char **args);
 bool			ft_is_valid_var_name(char *s);
@@ -276,14 +270,12 @@ t_token_kind	ft_get_token_kind(const char *s);
 int				ft_get_operator_length(t_token_kind kind);
 int				ft_is_normal_char(char c);
 int				ft_is_operator_char(char c);
-void			ft_shlvl(t_shell *shell);
 int				open_file(t_shell *shell, t_redir *redir, \
 				int flags);
 int				handle_redir(t_shell *shell, t_redir *redir, \
 				t_command_kind kind);
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
 int				ft_check_access(t_shell *shell, t_command *cmd);
-void			ft_chdir_err(t_shell *shell, char *dir);
 int				ft_first_unquoted_char(const char *pattern);
 int				ft_isoperator(t_token_kind kind);
 int				ft_isredirection(t_token_kind kind);
@@ -318,11 +310,21 @@ void			ft_exit_ctrl_d(t_shell *shell, char **args, \
 int				ft_io_error(char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_pipe_parameters *tpp, pid_t *pids);
+
+/*
+			INITIALIZATION
+			Set default path if minishel is invoked
+			without environment.
+			Maintain shlvl.
+			Make deepcopy of envp.
+ */
 void			ft_set_default_path(t_shell *shell);
+void			ft_shlvl(t_shell *shell);
+void			ft_clone_env(t_shell *shell, char *envp[]);
 
 /*
 			SAFE WRAPPERS
-			We clean memory and exit in a case of OOM error.
+			Clean memory and exit in a case of OOM error.
 */
 char			*fts_strdup(t_shell *shell, const char *s);
 char			*fts_strndup(t_shell *shell, const char *s, size_t n);
@@ -334,9 +336,9 @@ char			*fts_strjoin3cpy(t_shell *shell, char *s1, char *s2, char *s3);
 void			fts_write(t_shell *shell, char *s, int fd);
 
 /*
-			STRVER FUNCS
-			We store env and export in strvec
-			(capacity, length, data)
+			STRVER
+			Store env and export in strvec
+			(capacity, length, data).
 */
 t_strvec		*ft_strvec_init(size_t cap);
 void			ft_strvec_free(t_strvec *sv);
@@ -357,5 +359,23 @@ void			ft_sigint_main_pre(int sig);
 void			ft_sigint_main_post(int sig);
 void			ft_sigquit_post(int sig);
 void			ft_sigint_hd_pre(int sig);
+
+/*
+			BUILTIN CD
+*/
+void			ft_cd(t_shell *shell, char **args);
+char			*ft_canonicalize(t_shell *shell, char *curpath);
+char			*ft_reconstruct_path(t_stack *st);
+void			ft_chdir_err(t_shell *shell, char *dir);
+
+/*
+			BUILTIN ECHO
+*/
+void	ft_echo(t_shell *shell, char **args);
+
+/*
+			BUILTIN ENV
+*/
+void			ft_env(t_shell *shell, char *env[]);
 
 #endif

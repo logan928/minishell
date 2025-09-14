@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_split_path(t_shell *shell, t_stack **st, char ***seg, char *cur)
+static void	ft_split_path(t_shell *shell, t_stack **st, char ***seg, char *cur)
 {
 	*st = ft_stack_init();
 	if (*st == NULL)
@@ -29,7 +29,7 @@ void	ft_split_path(t_shell *shell, t_stack **st, char ***seg, char *cur)
 	}
 }
 
-bool	ft_check_dots(char *segment, t_stack **st)
+static bool	ft_check_dots(char *segment, t_stack **st)
 {
 	if (ft_strcmp(segment, ".", 0) == 0)
 		return (true);
@@ -42,7 +42,7 @@ bool	ft_check_dots(char *segment, t_stack **st)
 	return (false);
 }
 
-void	ft_push_err(t_shell *shell, char *curpath, char **segments, t_stack *st)
+static void	ft_push_err(t_shell *shell, char *curpath, char **segments, t_stack *st)
 {
 	free(curpath);
 	ft_stack_free(st);
