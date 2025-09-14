@@ -164,13 +164,11 @@ typedef enum e_command_kind
 	EXTERNAL,
 }	t_command_kind;
 
-//TODO: We don't use env inside this struct
 typedef struct s_command
 {
 	t_command_kind	command_kind;
 	char			*path;
 	char			**args;
-	char			**env;
 	t_redir			*redirs;
 }	t_command;
 

@@ -48,7 +48,6 @@ void	free_command(t_command *cmd)
 	if (cmd->path)
 		free(cmd->path);
 	free_str_array(cmd->args);
-	free_str_array(cmd->env);
 	free_redirs(cmd->redirs);
 	free(cmd);
 	cmd = NULL;
