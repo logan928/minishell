@@ -71,18 +71,27 @@ void	ft_non_interactive(t_shell *shell, char **argv)
 	char	**input;
 	int		i;
 
-	input = ft_split(argv[2], ';');
-	if (!input)
-		exit(0);
 	i = 0;
-	while (input[i])
+	while (1)
 	{
-		shell->input = input[i];
-		ft_run_lex(shell);
+		input = ft_split(argv[2], ';');
+		if (!input)
+			ft_free_exit(shell);
+		if (input[i])
+		{
+			shell->input = ft_strdup(input[i]);
+			ft_free_arr(input);
+			if (!shell->input)
+				ft_free_exit(shell);
+			ft_run_lex(shell);
+		}
+		else
+		{
+			ft_free_arr(input);
+			ft_free_exit(shell);
+		}
 		i++;
 	}
-	free(input);
-	ft_free_exit(shell);
 }
 
 void	ft_non_interactive_piped(t_shell *shell)
