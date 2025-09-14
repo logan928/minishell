@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <fcntl.h>
 
 static int	handle_r_in(t_shell *shell, t_redir *redir, \
 	t_command_kind kind)

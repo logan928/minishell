@@ -11,10 +11,6 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <fcntl.h>
-#include <linux/limits.h>
-#include <stdio.h>
-#include <unistd.h>
 
 uintptr_t	ft_get_rnd(t_shell *shell)
 {
