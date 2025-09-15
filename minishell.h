@@ -207,8 +207,6 @@ typedef struct s_pipe_parameters
 	t_ast	**cmd_nodes;
 }	t_pipe_parameters;
 
-void			lex(t_shell *shell, char *input);
-int				ft_check_syntax(t_shell *shell);
 int				ft_valid_env_char(int c);
 char			*ft_get_env_var(t_shell *shell, char *s);
 void			ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res);
@@ -216,13 +214,7 @@ void			ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res);
 void			ft_app_var(t_shell *s, t_cursor *c, char *t, char **res);
 void			ft_app_exit(t_shell *s, t_cursor *c, char **res);
 void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_free_lexer(t_lexer *lexer);
 int				ft_pattern_match(const char *pattern, const char *filename);
-t_token			*ft_new_token(t_token_kind kind, char *data);
-void			ft_add_token(t_token **head, t_token *token);
-void			ft_insert_after(t_token *target, t_token *token);
-void			ft_free_tokens(t_token *head);
-void			ft_add_token_sorted(t_token **head, t_token *token);
 void			ft_free_env(char *envp[]);
 void			ft_echo(t_shell *shell, char **args);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
@@ -237,25 +229,14 @@ void			ft_merge(t_shell *sh, char ***arr, size_t lst_size, int is_cmd);
 void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
 void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd);
-void			ft_here_doc(t_shell *shell, t_token *t);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
-void			ft_here(t_shell *shell);
-t_command		*command_formatter(t_shell *shell, t_token **tokptr);
-t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
 t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
 int				ft_valid_env_first_char(int c);
 void			ft_skip_empty_vars(t_shell *shell, char **args);
-int				is_builtin(const char *cmd);
-char			**argv_add(char **argv, int *argc, const char *word);
-t_command		*command_new(void);
 void			ft_not_valid_identifier(t_shell *shell, char *arg);
-t_token_kind	ft_get_token_kind(const char *s);
-int				ft_get_operator_length(t_token_kind kind);
-int				ft_is_normal_char(char c);
-int				ft_is_operator_char(char c);
 int				open_file(t_shell *shell, t_redir *redir, \
 				int flags);
 int				handle_redir(t_shell *shell, t_redir *redir, \
@@ -263,9 +244,6 @@ int				handle_redir(t_shell *shell, t_redir *redir, \
 void			ft_init_access(t_shell *shell, t_cmd_access *access);
 int				ft_check_access(t_shell *shell, t_command *cmd);
 int				ft_first_unquoted_char(const char *pattern);
-int				ft_isoperator(t_token_kind kind);
-int				ft_isredirection(t_token_kind kind);
-int				ft_syntax_error(t_shell *shell, char *token);
 int				apply_redirs(t_shell *shell, t_redir *redir, \
 				t_command_kind kind);
 int				exec_command_externals(t_shell *shell, t_command *cmd);
@@ -397,5 +375,29 @@ void			ft_unset(t_shell *shell, char **args);
 */
 bool			ft_is_valid_number(char *s);
 bool			ft_is_valid_var_name(char *s);
+
+/*
+			GRAMMAR
+*/
+void			lex(t_shell *shell, char *input);
+void			ft_free_lexer(t_lexer *lexer);
+int				ft_is_operator_char(char c);
+int				ft_is_normal_char(char c);
+t_token_kind	ft_get_token_kind(const char *s);
+int				ft_get_operator_length(t_token_kind kind);
+t_token			*ft_new_token(t_token_kind kind, char *data);
+void			ft_add_token(t_token **head, t_token *token);
+void			ft_free_tokens(t_token *head);
+void			ft_add_token_sorted(t_token **head, t_token *token);
+int				ft_check_syntax(t_shell *shell);
+int				ft_isoperator(t_token_kind kind);
+int				ft_isredirection(t_token_kind kind);
+int				ft_syntax_error(t_shell *shell, char *token);
+void			ft_here(t_shell *shell);
+t_ast			*parse(t_shell *shell, t_token **tokptr_copy);
+t_command		*command_formatter(t_shell *shell, t_token **tokptr);
+int				is_builtin(const char *cmd);
+char			**argv_add(char **argv, int *argc, const char *word);
+t_command		*command_new(void);
 
 #endif

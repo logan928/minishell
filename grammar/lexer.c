@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_tokenize_op(t_shell *shell, t_cursor *c)
+static void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 {
 	t_token			*next;
 	t_token_kind	kind;
@@ -27,7 +27,7 @@ void	ft_tokenize_op(t_shell *shell, t_cursor *c)
 	c->cur += len;
 }
 
-void	ft_tokenize_nl(t_shell *shell)
+static void	ft_tokenize_nl(t_shell *shell)
 {
 	t_token	*next;
 	char	*data;
@@ -37,7 +37,7 @@ void	ft_tokenize_nl(t_shell *shell)
 	ft_add_token(&shell->lexer->tokens, next);
 }
 
-void	ft_tokenize_word(t_shell *shell, t_cursor *c)
+static void	ft_tokenize_word(t_shell *shell, t_cursor *c)
 {
 	t_token	*next;
 	char	*input;

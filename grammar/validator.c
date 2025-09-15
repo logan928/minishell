@@ -41,7 +41,7 @@ static int	ft_check_last_quote(t_shell *shell, t_token *t)
 	return (1);
 }
 
-int	ft_check_next_token(t_token *c, t_token *n)
+static int	ft_check_next_token(t_token *c, t_token *n)
 {
 	if (ft_isoperator(c->token_kind) && n && ft_isoperator(n->token_kind))
 		return (1);
@@ -56,7 +56,7 @@ int	ft_check_next_token(t_token *c, t_token *n)
 	return (0);
 }
 
-int	ft_check_parens(t_shell *shell)
+static int	ft_check_parens(t_shell *shell)
 {
 	t_token			*token;
 	t_token			*next;

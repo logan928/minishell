@@ -79,9 +79,3 @@ void	ft_free_tokens(t_token *head)
 		cur = next;
 	}
 }
-
-void	ft_insert_after(t_token *target, t_token *token)
-{
-	token->next = target->next;
-	target->next = token;
-}

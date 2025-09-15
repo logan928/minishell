@@ -28,7 +28,7 @@ static bool	ft_is_quoted(char *s)
 	return (false);
 }
 
-void	ft_here_eof_warning(t_shell *shell, char *limiter)
+static void	ft_here_eof_warning(t_shell *shell, char *limiter)
 {
 	char	*err;
 
@@ -44,7 +44,7 @@ delimited by end-of-file (wanted `",
 	}
 }
 
-void	ft_read_line(t_shell *shell, char **res, char *limiter)
+static void	ft_read_line(t_shell *shell, char **res, char *limiter)
 {
 	char	*line;
 	size_t	limiter_len;
@@ -73,7 +73,7 @@ void	ft_read_line(t_shell *shell, char **res, char *limiter)
 	}
 }
 
-void	ft_here_doc(t_shell *shell, t_token *t)
+static void	ft_here_doc(t_shell *shell, t_token *t)
 {
 	bool	is_quoted;
 	char	*res;
