@@ -35,7 +35,7 @@ char	*ft_get_env_var(t_shell *shell, char *s)
 	return (fts_strdup(shell, var));
 }
 
-void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
+static void	ft_find_next_append(t_shell *s, t_cursor *c, char *t, char **res)
 {
 	while (t[c->cur])
 	{

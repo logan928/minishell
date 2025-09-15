@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	free_commands(t_ast **commands)
+static void	free_commands(t_ast **commands)
 {
 	if (!commands)
 		return ;

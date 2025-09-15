@@ -207,7 +207,6 @@ typedef struct s_pipe_parameters
 	t_ast	**cmd_nodes;
 }	t_pipe_parameters;
 
-int				ft_valid_env_char(int c);
 char			*ft_get_env_var(t_shell *shell, char *s);
 void			ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res);
 void			ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res);
@@ -217,10 +216,7 @@ void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
 int				ft_pattern_match(const char *pattern, const char *filename);
 void			ft_free_env(char *envp[]);
 void			ft_echo(t_shell *shell, char **args);
-void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
-void			ft_not_set(t_shell *shell, char *var);
 char			*ft_get_pwd(t_shell *shell);
-void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
 void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
 size_t			ft_arr_size(char **arr);
 size_t			ft_lst_size(t_token *tokens);
@@ -230,13 +226,7 @@ void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
 void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
 t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd);
 void			ft_quote_removal_str(t_shell *shell, t_token *t);
-t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
-int				exec_ast(t_shell *shell, t_ast *ast);
-void			ft_cd_too_many_args(t_shell *shell);
-int				ft_valid_env_first_char(int c);
-void			ft_skip_empty_vars(t_shell *shell, char **args);
-void			ft_not_valid_identifier(t_shell *shell, char *arg);
 int				open_file(t_shell *shell, t_redir *redir, \
 				int flags);
 int				handle_redir(t_shell *shell, t_redir *redir, \
@@ -246,28 +236,7 @@ int				ft_check_access(t_shell *shell, t_command *cmd);
 int				ft_first_unquoted_char(const char *pattern);
 int				apply_redirs(t_shell *shell, t_redir *redir, \
 				t_command_kind kind);
-int				exec_command_externals(t_shell *shell, t_command *cmd);
-void			exec_command_expansions(t_shell *shell, t_command *cmd);
-void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
-int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
-				int ***pipefd);
-int				exec_pipeline_core(t_shell *shell, int ***pipefd, \
-				t_ast ***commands, t_pipe_parameters *tpp);
-int				run_builtin(t_shell *shell, t_command *cmd, \
-				int shell_type, pid_t fd);
-pid_t			*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp);
-int				exec_command_builtins(t_shell *shell, t_command *cmd);
-int				exec_command(t_shell *shell, t_command *cmd);
-int				exec_pipeline(t_shell *shell, t_ast *ast);
-int				exec_subshell(t_shell *shell, t_ast *ast);
-int				handle_and(t_shell *shell, t_ast *ast);
-int				handle_or(t_shell *shell, t_ast *ast);
-void			free_command(t_command *cmd);
-void			ft_critical_with_code(t_shell *shell, int code, \
-				t_pipe_parameters *tpp, pid_t *pids);
 int				ft_heredoc_pipe(t_shell *shell, int w, int r, char *input);
-void			free_tpp(t_pipe_parameters *tpp, int fd_count);
-void			free_commands(t_ast **commands);
 int				ft_io_error(char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_pipe_parameters *tpp, pid_t *pids);
@@ -290,6 +259,8 @@ void			ft_set_pwd(t_shell *shell);
 			TERMINATION
 */
 void			ft_critical_error(t_shell *shell);
+void			ft_critical_with_code(t_shell *shell, int code, \
+				t_pipe_parameters *tpp, pid_t *pids);
 void			ft_free_exit(t_shell *shell);
 
 /*
@@ -375,6 +346,9 @@ void			ft_unset(t_shell *shell, char **args);
 */
 bool			ft_is_valid_number(char *s);
 bool			ft_is_valid_var_name(char *s);
+void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
+void			ft_not_set(t_shell *shell, char *var);
+void			ft_not_valid_identifier(t_shell *shell, char *arg);
 
 /*
 			GRAMMAR
@@ -399,5 +373,31 @@ t_command		*command_formatter(t_shell *shell, t_token **tokptr);
 int				is_builtin(const char *cmd);
 char			**argv_add(char **argv, int *argc, const char *word);
 t_command		*command_new(void);
+
+/*
+			EXECUTION
+*/
+int				exec_ast(t_shell *shell, t_ast *ast);
+int				exec_command(t_shell *shell, t_command *cmd);
+int				exec_pipeline(t_shell *shell, t_ast *ast);
+int				exec_subshell(t_shell *shell, t_ast *ast);
+int				handle_and(t_shell *shell, t_ast *ast);
+int				handle_or(t_shell *shell, t_ast *ast);
+int				exec_command_builtins(t_shell *shell, t_command *cmd);
+int				run_builtin(t_shell *shell, t_command *cmd, \
+				int shell_type, pid_t fd);
+int				exec_command_externals(t_shell *shell, t_command *cmd);
+void			exec_command_expansions(t_shell *shell, t_command *cmd);
+int				exec_pipeline_core(t_shell *shell, int ***pipefd, \
+				t_ast ***commands, t_pipe_parameters *tpp);
+void			handle_expansion_cmd_child(t_shell *shell, t_command *cmd);
+int				get_fd_array(t_ast *ast, t_ast ***commands, int *count, \
+				int ***pipefd);
+pid_t			*get_pid_ts(t_shell *shell, t_pipe_parameters *tpp);
+void			free_tpp(t_pipe_parameters *tpp, int fd_count);
+void			ft_skip_empty_vars(t_shell *shell, char **args);
+void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
+int				ft_valid_env_char(int c);
+int				ft_valid_env_first_char(int c);
 
 #endif

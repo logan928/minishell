@@ -40,7 +40,7 @@ static void	free_redirs(t_redir *redir)
 	}
 }
 
-void	free_command(t_command *cmd)
+static void	free_command(t_command *cmd)
 {
 	if (!cmd)
 		return ;

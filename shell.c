@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	ft_clone_exp(t_shell *shell)
+static void	ft_clone_exp(t_shell *shell)
 {
 	t_strvec	*new;
 	size_t		i;
