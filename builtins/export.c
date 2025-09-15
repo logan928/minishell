@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_sort_exp(t_shell *shell)
+static void	ft_sort_exp(t_shell *shell)
 {
 	size_t	i;
 	size_t	j;
@@ -36,7 +36,7 @@ void	ft_sort_exp(t_shell *shell)
 	}
 }
 
-char	*ft_built_exp_var(t_shell *shell, char *s, char *eq)
+static char	*ft_built_exp_var(t_shell *shell, char *s, char *eq)
 {
 	char	*res;
 	size_t	len;
@@ -86,7 +86,7 @@ static void	ft_print_exp(t_shell *shell)
 	fts_write(shell, res, STDOUT_FILENO);
 }
 
-void	ft_set_val(t_shell *sh, char *eq, char *s)
+static void	ft_set_val(t_shell *sh, char *eq, char *s)
 {
 	char	*vr;
 	char	*vl;

@@ -207,9 +207,6 @@ typedef struct s_pipe_parameters
 	t_ast	**cmd_nodes;
 }	t_pipe_parameters;
 
-char			*ft_set_prompt(t_shell *shell);
-void			ft_init_shell(t_shell *shell, char *envp[]);
-void			ft_critical_error(t_shell *shell);
 void			lex(t_shell *shell, char *input);
 int				ft_check_syntax(t_shell *shell);
 int				ft_valid_env_char(int c);
@@ -227,16 +224,8 @@ void			ft_insert_after(t_token *target, t_token *token);
 void			ft_free_tokens(t_token *head);
 void			ft_add_token_sorted(t_token **head, t_token *token);
 void			ft_free_env(char *envp[]);
-void			ft_exit(t_shell *shell, char **args, int shell_type, pid_t fd);
 void			ft_echo(t_shell *shell, char **args);
-char			*ft_get_cwd(t_shell *shell);
-void			ft_pwd(t_shell *shell, char **args);
-void			ft_set_pwd(t_shell *shell);
-void			ft_sigint_handler(int sig);
-void			ft_sigquit_trap(int sig);
 void			ft_too_many_args(t_shell *shell, char *cmd, unsigned char exit);
-bool			ft_is_valid_number(char *s);
-void			ft_num_arg_req(t_shell *shell, char *cmd, char *arg);
 void			ft_not_set(t_shell *shell, char *var);
 char			*ft_get_pwd(t_shell *shell);
 void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
@@ -257,10 +246,7 @@ t_ast			*parse_tokens(t_token **tokens);
 void			free_ast(t_ast *node);
 int				exec_ast(t_shell *shell, t_ast *ast);
 void			ft_cd_too_many_args(t_shell *shell);
-void			ft_unset(t_shell *shell, char **args);
 int				ft_valid_env_first_char(int c);
-void			ft_export(t_shell *shell, char **args);
-bool			ft_is_valid_var_name(char *s);
 void			ft_skip_empty_vars(t_shell *shell, char **args);
 int				is_builtin(const char *cmd);
 char			**argv_add(char **argv, int *argc, const char *word);
@@ -298,15 +284,12 @@ int				exec_pipeline(t_shell *shell, t_ast *ast);
 int				exec_subshell(t_shell *shell, t_ast *ast);
 int				handle_and(t_shell *shell, t_ast *ast);
 int				handle_or(t_shell *shell, t_ast *ast);
-void			ft_free_exit(t_shell *shell);
 void			free_command(t_command *cmd);
 void			ft_critical_with_code(t_shell *shell, int code, \
 				t_pipe_parameters *tpp, pid_t *pids);
 int				ft_heredoc_pipe(t_shell *shell, int w, int r, char *input);
 void			free_tpp(t_pipe_parameters *tpp, int fd_count);
 void			free_commands(t_ast **commands);
-void			ft_exit_ctrl_d(t_shell *shell, char **args, \
-				int shell_type, pid_t fd);
 int				ft_io_error(char *msg);
 void			handle_check_access(t_shell *shell, t_command *cmd, \
 				t_pipe_parameters *tpp, pid_t *pids);
@@ -317,10 +300,19 @@ void			handle_check_access(t_shell *shell, t_command *cmd, \
 			without environment.
 			Maintain shlvl.
 			Make deepcopy of envp.
- */
+*/
+char			*ft_set_prompt(t_shell *shell);
+void			ft_init_shell(t_shell *shell, char *envp[]);
 void			ft_set_default_path(t_shell *shell);
 void			ft_shlvl(t_shell *shell);
 void			ft_clone_env(t_shell *shell, char *envp[]);
+void			ft_set_pwd(t_shell *shell);
+
+/*
+			TERMINATION
+*/
+void			ft_critical_error(t_shell *shell);
+void			ft_free_exit(t_shell *shell);
 
 /*
 			SAFE WRAPPERS
@@ -371,11 +363,39 @@ void			ft_chdir_err(t_shell *shell, char *dir);
 /*
 			BUILTIN ECHO
 */
-void	ft_echo(t_shell *shell, char **args);
+void			ft_echo(t_shell *shell, char **args);
 
 /*
 			BUILTIN ENV
 */
 void			ft_env(t_shell *shell, char *env[]);
+
+/*
+			BUILTIN EXIT
+*/
+void			ft_exit_ctrl_d(t_shell *shell, char **args, \
+				int shell_type, pid_t fd);
+void			ft_exit(t_shell *shell, char **args, int shell_type, pid_t fd);
+
+/*
+			BUILTIN EXPORT
+*/
+void			ft_export(t_shell *shell, char **args);
+
+/*
+			BUILTIN PWD
+*/
+void			ft_pwd(t_shell *shell, char **args);
+
+/*
+			BUILTIN
+*/
+void			ft_unset(t_shell *shell, char **args);
+
+/*
+			UTILS
+*/
+bool			ft_is_valid_number(char *s);
+bool			ft_is_valid_var_name(char *s);
 
 #endif

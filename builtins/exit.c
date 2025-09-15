@@ -25,7 +25,7 @@ void	ft_free_exit(t_shell *shell)
 	exit(shell->exit_status);
 }
 
-void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
+static void	ft_num_arg_req(t_shell *shell, char *cmd, char *arg)
 {
 	char	*err;
 

@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-char	*ft_get_cwd(t_shell *shell)
+static char	*ft_get_cwd(t_shell *shell)
 {
 	char	*buf;
 	size_t	buf_size;
@@ -32,7 +32,7 @@ char	*ft_get_cwd(t_shell *shell)
 	}
 }
 
-bool	ft_pwd_inode(char *pwd)
+static bool	ft_pwd_inode(char *pwd)
 {
 	struct stat	sb_cwd;
 	struct stat	sb_pwd;
