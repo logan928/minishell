@@ -42,12 +42,12 @@ static bool	ft_check_dots(char *segment, t_stack **st)
 	return (false);
 }
 
-static void	ft_push_err(t_shell *shell, char *curpath, char **segments, t_stack *st)
+static void	ft_push_err(t_shell *sh, char *cur, char **seg, t_stack *st)
 {
-	free(curpath);
+	free(cur);
 	ft_stack_free(st);
-	ft_free_arr(segments);
-	ft_critical_error(shell);
+	ft_free_arr(seg);
+	ft_critical_error(sh);
 }
 
 char	*ft_canonicalize(t_shell *shell, char *curpath)
