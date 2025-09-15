@@ -43,7 +43,8 @@ static void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
 	}
 }
 
-static bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *acc)
+static bool	ft_try_paths(t_shell *sh, char **p, \
+					t_command *cmd, t_cmd_access *acc)
 {
 	int			i;
 	char		*full_path;
@@ -70,7 +71,7 @@ static bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *ac
 	return (false);
 }
 
-static void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
+static void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *acc)
 {
 	char	**paths;
 	char	*path;
@@ -78,14 +79,14 @@ static void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_acc
 	path = ft_get_env_var(shell, "PATH");
 	if (path == NULL || path[0] == '\0')
 	{
-		cmd_access->path = false;
+		acc->path = false;
 		free(path);
 		return ;
 	}
 	paths = ft_split(path, ':');
 	if (paths)
 	{
-		if (ft_try_paths(shell, paths, cmd, cmd_access))
+		if (ft_try_paths(shell, paths, cmd, acc))
 		{
 			free(path);
 			ft_free_arr(paths);

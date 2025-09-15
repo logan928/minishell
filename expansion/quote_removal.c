@@ -12,47 +12,47 @@
 
 #include "../minishell.h"
 
-static void	ft_append_before(t_shell *shell, t_cursor *c, char *s, char **clean)
+static void	ft_append_before(t_shell *sh, t_cursor *c, char *s, char **clean)
 {
 	char	*tmp;
 
 	c->quote = s[c->cur];
 	if (c->cur - c->start > 0)
 	{
-		tmp = fts_strndup(shell, &s[c->start], c->cur - c->start);
-		*clean = fts_strjoin_free(shell, *clean, tmp);
+		tmp = fts_strndup(sh, &s[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(sh, *clean, tmp);
 	}
 	c->cur++;
 	c->start = c->cur;
 }
 
-static void	ft_append_between(t_shell *shell, t_cursor *c, char *s, char **clean)
+static void	ft_append_between(t_shell *sh, t_cursor *c, char *s, char **clean)
 {
 	char	*tmp;
 
 	c->quote = 0;
 	if (c->cur - c->start > 0)
 	{
-		tmp = fts_strndup(shell, &s[c->start], c->cur - c->start);
-		*clean = fts_strjoin_free(shell, *clean, tmp);
+		tmp = fts_strndup(sh, &s[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(sh, *clean, tmp);
 	}
 	c->cur++;
 	c->start = c->cur;
 }
 
-static void	ft_append_rest(t_shell *shell, t_cursor *c, char **s, char **clean)
+static void	ft_append_rest(t_shell *sh, t_cursor *c, char **s, char **clean)
 {
 	char	*tmp;
 
 	if (c->cur - c->start > 0)
 	{
-		tmp = fts_strndup(shell, &(*s)[c->start], c->cur - c->start);
-		*clean = fts_strjoin_free(shell, *clean, tmp);
+		tmp = fts_strndup(sh, &(*s)[c->start], c->cur - c->start);
+		*clean = fts_strjoin_free(sh, *clean, tmp);
 	}
 	if (*s)
 		free(*s);
 	if (!*clean)
-		*s = fts_strdup(shell, "");
+		*s = fts_strdup(sh, "");
 	else
 		*s = *clean;
 }
