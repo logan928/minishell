@@ -41,7 +41,7 @@ char	**argv_add(char **argv, int *argc, const char *word)
 		newv[i] = argv[i];
 		i++;
 	}
-	newv[i++] = strdup(word);
+	newv[i++] = ft_strdup(word);
 	newv[i] = NULL;
 	free(argv);
 	(*argc)++;
