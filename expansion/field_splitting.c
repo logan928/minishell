@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_split_ifs(t_shell *shell, char *s)
+static void	ft_split_ifs(t_shell *shell, char *s)
 {
 	t_token		*new_token;
 	t_cursor	c;

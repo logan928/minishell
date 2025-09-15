@@ -14,7 +14,7 @@
 
 extern volatile sig_atomic_t	g_abort;
 
-void	ft_run_lex(t_shell *shell)
+static void	ft_run_lex(t_shell *shell)
 {
 	t_token	*tok;
 
@@ -38,7 +38,7 @@ void	ft_run_lex(t_shell *shell)
 	ft_free_lexer(shell->lexer);
 }
 
-void	ft_interactive(t_shell *shell)
+static void	ft_interactive(t_shell *shell)
 {
 	while (1)
 	{
@@ -66,7 +66,7 @@ void	ft_interactive(t_shell *shell)
 	}
 }
 
-void	ft_non_interactive(t_shell *shell, char **argv)
+static void	ft_non_interactive(t_shell *shell, char **argv)
 {
 	char	**input;
 	int		i;
@@ -94,7 +94,7 @@ void	ft_non_interactive(t_shell *shell, char **argv)
 	}
 }
 
-void	ft_non_interactive_piped(t_shell *shell)
+static void	ft_non_interactive_piped(t_shell *shell)
 {
 	char	*line;
 

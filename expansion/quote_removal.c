@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	ft_append_before(t_shell *shell, t_cursor *c, char *s, char **clean)
+static void	ft_append_before(t_shell *shell, t_cursor *c, char *s, char **clean)
 {
 	char	*tmp;
 
@@ -26,7 +26,7 @@ void	ft_append_before(t_shell *shell, t_cursor *c, char *s, char **clean)
 	c->start = c->cur;
 }
 
-void	ft_append_between(t_shell *shell, t_cursor *c, char *s, char **clean)
+static void	ft_append_between(t_shell *shell, t_cursor *c, char *s, char **clean)
 {
 	char	*tmp;
 
@@ -40,7 +40,7 @@ void	ft_append_between(t_shell *shell, t_cursor *c, char *s, char **clean)
 	c->start = c->cur;
 }
 
-void	ft_append_rest(t_shell *shell, t_cursor *c, char **s, char **clean)
+static void	ft_append_rest(t_shell *shell, t_cursor *c, char **s, char **clean)
 {
 	char	*tmp;
 

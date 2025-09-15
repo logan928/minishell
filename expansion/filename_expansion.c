@@ -77,7 +77,7 @@ static void	ft_glob_dir(t_shell *shell, const char *pattern)
 	closedir(dir);
 }
 
-void	ft_copy_single_item(t_shell *sh, char *s)
+static void	ft_copy_single_item(t_shell *sh, char *s)
 {
 	char	*copy;
 	t_token	*t;

@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-uintptr_t	ft_get_rnd(t_shell *shell)
+static uintptr_t	ft_get_rnd(t_shell *shell)
 {
 	uintptr_t	rnd;
 	char		*ptr;
@@ -25,7 +25,7 @@ uintptr_t	ft_get_rnd(t_shell *shell)
 	return (rnd);
 }
 
-char	*ft_pseudo_random_filename(t_shell *shell)
+static char	*ft_pseudo_random_filename(t_shell *shell)
 {
 	char	*fn;
 	char	*id;
@@ -89,7 +89,8 @@ int	ft_heredoc_pipe(t_shell *shell, int w, int r, char *input)
 	input_len = ft_strlen(input);
 	if (input_len <= PIPE_BUF)
 	{
-		write(w, input, input_len);
+		if (write(w, input, input_len) != (ssize_t)input_len)
+			return (ft_io_error("write"));
 		return (r);
 	}
 	return (ft_heredoc_file(shell, input, input_len));

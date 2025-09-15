@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	ft_shlvl_warning(t_shell *sh, char *lvl)
+static void	ft_shlvl_warning(t_shell *sh, char *lvl)
 {
 	char	*left;
 	char	*right;
@@ -22,7 +22,7 @@ void	ft_shlvl_warning(t_shell *sh, char *lvl)
 	fts_write(sh, fts_strjoin3cpy(sh, left, lvl, right), STDERR_FILENO);
 }
 
-void	ft_increment_shlvl(t_shell *sh, char *shlvl)
+static void	ft_increment_shlvl(t_shell *sh, char *shlvl)
 {
 	int		lvl;
 	char	*end;

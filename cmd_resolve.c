@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
+static char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 {
 	char	*new;
 	size_t	len_base;
@@ -28,7 +28,7 @@ char	*ft_combine_path(t_shell *shell, char *base, char *cmd)
 	return (new);
 }
 
-void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
+static void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
 {
 	struct stat	st;
 
@@ -43,7 +43,7 @@ void	ft_check_cmd(t_shell *sh, t_command *cmd, t_cmd_access *cmd_access)
 	}
 }
 
-bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *acc)
+static bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *acc)
 {
 	int			i;
 	char		*full_path;
@@ -70,7 +70,7 @@ bool	ft_try_paths(t_shell *sh, char **p, t_command *cmd, t_cmd_access *acc)
 	return (false);
 }
 
-void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
+static void	ft_build_paths(t_shell *shell, t_command *cmd, t_cmd_access *cmd_access)
 {
 	char	**paths;
 	char	*path;

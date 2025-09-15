@@ -207,40 +207,6 @@ typedef struct s_pipe_parameters
 	t_ast	**cmd_nodes;
 }	t_pipe_parameters;
 
-char			*ft_get_env_var(t_shell *shell, char *s);
-void			ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_app_var(t_shell *s, t_cursor *c, char *t, char **res);
-void			ft_app_exit(t_shell *s, t_cursor *c, char **res);
-void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
-int				ft_pattern_match(const char *pattern, const char *filename);
-void			ft_free_env(char *envp[]);
-void			ft_echo(t_shell *shell, char **args);
-char			*ft_get_pwd(t_shell *shell);
-void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
-size_t			ft_arr_size(char **arr);
-size_t			ft_lst_size(t_token *tokens);
-void			ft_free_arr(char **arr);
-void			ft_merge(t_shell *sh, char ***arr, size_t lst_size, int is_cmd);
-void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
-void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
-t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd);
-void			ft_quote_removal_str(t_shell *shell, t_token *t);
-void			free_ast(t_ast *node);
-int				open_file(t_shell *shell, t_redir *redir, \
-				int flags);
-int				handle_redir(t_shell *shell, t_redir *redir, \
-				t_command_kind kind);
-void			ft_init_access(t_shell *shell, t_cmd_access *access);
-int				ft_check_access(t_shell *shell, t_command *cmd);
-int				ft_first_unquoted_char(const char *pattern);
-int				apply_redirs(t_shell *shell, t_redir *redir, \
-				t_command_kind kind);
-int				ft_heredoc_pipe(t_shell *shell, int w, int r, char *input);
-int				ft_io_error(char *msg);
-void			handle_check_access(t_shell *shell, t_command *cmd, \
-				t_pipe_parameters *tpp, pid_t *pids);
-
 /*
 			INITIALIZATION
 			Set default path if minishel is invoked
@@ -399,5 +365,34 @@ void			ft_skip_empty_vars(t_shell *shell, char **args);
 void			ft_variable_expansion(t_shell *shell, char **args, size_t idx);
 int				ft_valid_env_char(int c);
 int				ft_valid_env_first_char(int c);
+char			*ft_get_env_var(t_shell *shell, char *s);
+void			ft_app_uquote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_qquote(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_var(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_app_exit(t_shell *s, t_cursor *c, char **res);
+void			ft_app_char(t_shell *s, t_cursor *c, char *t, char **res);
+void			ft_field_splitting(t_shell *shell, char ***arr, size_t idx);
+size_t			ft_arr_size(char **arr);
+size_t			ft_lst_size(t_token *tokens);
+void			ft_merge(t_shell *sh, char ***arr, size_t lst_size, int is_cmd);
+void			ft_file_exp(t_shell *sh, char ***arr, size_t idx, int is_cmd);
+int				ft_pattern_match(const char *pattern, const char *filename);
+int				ft_first_unquoted_char(const char *pattern);
+void			ft_quote_removal(t_shell *shell, char **args, size_t idx);
+void			ft_quote_removal_str(t_shell *shell, t_token *t);
+int				apply_redirs(t_shell *shell, t_redir *redir, \
+				t_command_kind kind);
+int				handle_redir(t_shell *shell, t_redir *redir, \
+				t_command_kind kind);
+int				ft_heredoc_pipe(t_shell *shell, int w, int r, char *input);
+int				open_file(t_shell *shell, t_redir *redir, \
+				int flags);
+int				ft_io_error(char *msg);
+int				ft_check_access(t_shell *shell, t_command *cmd);
+void			handle_check_access(t_shell *shell, t_command *cmd, \
+				t_pipe_parameters *tpp, pid_t *pids);
+t_cmd_access	ft_get_cmd_path(t_shell *shell, t_command *cmd);
+void			ft_init_access(t_shell *shell, t_cmd_access *access);
+void			free_ast(t_ast *node);
 
 #endif
